@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { db, saveEntry, uid, updateSettings } from '../db';
+import { saveEntry, store, uid, updateSettings } from '../db';
 import { useApp } from '../state';
 import { DEFAULT_FEELINGS, DEFAULT_LOCATIONS, DEFAULT_TRIGGERS, MOODS, PALETTE } from '../lib/defaults';
 import { partWords, toLocalInput } from '../lib/util';
@@ -32,7 +32,9 @@ export default function LogEntry({ entryId }: { entryId?: string }) {
 
   useEffect(() => {
     if (!entryId) return;
-    db.entries.get(entryId).then((x) => { if (x) { setE(x); setWhen('earlier'); } setLoaded(true); });
+    const x = store.get('entries', entryId);
+    if (x) { setE(x); setWhen('earlier'); }
+    setLoaded(true);
   }, [entryId]);
 
   const set = <K extends keyof Entry>(k: K, v: Entry[K]) => setE((p) => ({ ...p, [k]: v }));
@@ -52,14 +54,13 @@ export default function LogEntry({ entryId }: { entryId?: string }) {
 
   const addPart = async (name: string, field: 'frontingPartIds' | 'coFrontPartIds') => {
     const p = { id: uid(), memberId: e.subjectId, name, color: PALETTE[(subjParts.length + 2) % PALETTE.length], createdAt: Date.now() };
-    await db.parts.put(p);
+    await store.put('parts', p);
     set(field, [...e[field], p.id]);
   };
 
   const save = async () => {
     const entry = { ...e, updatedAt: Date.now(), occurredAt: when === 'now' && !entryId ? Date.now() : e.occurredAt };
-    await saveEntry(entry, { requestObservations: ask });
-    const asked = ask && entry.visibility === 'circle' ? entry.noticedByIds.filter((id) => id !== me?.id && members.find((m) => m.id === id)?.canObserve).length : 0;
+    const asked = (await saveEntry(entry, { requestObservations: ask })).length;
     toast(asked ? `Saved. We'll gently ask ${asked === 1 ? 'them' : `${asked} people`} to add a note.` : 'Saved. Thank you for noticing.');
     go({ name: 'entry', id: entry.id });
   };

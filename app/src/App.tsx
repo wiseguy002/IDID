@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, getSettings, updateSettings } from './db';
+import { persist, store, updateDevice, useAll, useSettings } from './db';
+import { hasVault } from './data/vault';
 import { Ctx, type Route } from './state';
 import { Icon } from './components/Icon';
 import Onboarding from './screens/Onboarding';
@@ -26,18 +26,33 @@ const NAV: { name: Route['name']; label: string; icon: string }[] = [
 ];
 
 export default function App() {
-  const settings = useLiveQuery(() => getSettings(), []);
-  const members = useLiveQuery(() => db.members.toArray().then((m) => m.sort((a, b) => a.createdAt - b.createdAt)), []);
-  const parts = useLiveQuery(() => db.parts.toArray().then((p) => p.sort((a, b) => a.createdAt - b.createdAt)), []);
-  const [unlocked, setUnlocked] = useState(false);
+  const settings = useSettings();
+  const rawMembers = useAll('members');
+  const rawParts = useAll('parts');
+  const members = useMemo(() => [...rawMembers].sort((a, b) => a.createdAt - b.createdAt), [rawMembers]);
+  const parts = useMemo(() => [...rawParts].sort((a, b) => a.createdAt - b.createdAt), [rawParts]);
+  const [vault, setVault] = useState<boolean | null>(null);
+  const unlocked = store.unlocked;
   const [chosen, setChosen] = useState(false);
   const [route, setRoute] = useState<Route>({ name: 'home' });
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   // Snapshot of last-opened time before we update it, so Home can say "welcome back".
   const [prevOpened, setPrevOpened] = useState<number | null | undefined>(undefined);
 
+  useEffect(() => { hasVault(persist).then(setVault).catch(() => setVault(false)); }, []);
+
+  // Auto-lock: clear decrypted data from memory after time in the background.
   useEffect(() => {
-    if (!settings) return;
+    let hiddenAt = 0;
+    const onVis = () => {
+      if (document.visibilityState === 'hidden') hiddenAt = Date.now();
+      else if (hiddenAt && store.unlocked && Date.now() - hiddenAt >= settings.autoLockMins * 60000) { store.lock(); setChosen(false); }
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [settings.autoLockMins]);
+
+  useEffect(() => {
     const h = document.documentElement;
     h.dataset.theme = settings.theme;
     h.dataset.text = settings.textSize;
@@ -49,11 +64,11 @@ export default function App() {
   }, [settings]);
 
   useEffect(() => {
-    if (settings && prevOpened === undefined) {
+    if (unlocked && prevOpened === undefined) {
       setPrevOpened(settings.lastOpenedAt);
-      if (settings.onboarded) updateSettings({ lastOpenedAt: Date.now() });
+      updateDevice({ lastOpenedAt: Date.now() });
     }
-  }, [settings, prevOpened]);
+  }, [unlocked, settings.lastOpenedAt, prevOpened]);
 
   const go = useCallback((r: Route) => {
     setRoute(r);
@@ -64,13 +79,13 @@ export default function App() {
     setTimeout(() => setToastMsg(null), 2600);
   }, []);
 
-  const me = useMemo(() => members?.find((m) => m.id === settings?.activeMemberId) ?? members?.[0] ?? null, [members, settings]);
+  const me = useMemo(() => members.find((m) => m.id === settings.activeMemberId) ?? members[0] ?? null, [members, settings.activeMemberId]);
 
-  if (!settings || !members || !parts) return null;
-  if (!settings.onboarded) return <Onboarding onDone={() => setChosen(true)} />;
-  if (settings.pinHash && !unlocked) return <Lock settings={settings} onUnlock={() => setUnlocked(true)} />;
+  if (vault === null) return null;
+  if (!vault || (unlocked && members.length === 0)) return <Onboarding onDone={() => { setVault(true); setChosen(true); }} />;
+  if (!unlocked) return <Lock onUnlock={() => undefined} />;
   if (members.length > 1 && !chosen) {
-    return <WhoIsHere members={members} current={me?.id ?? null} onPick={async (id) => { await updateSettings({ activeMemberId: id }); setRoute({ name: 'home' }); setChosen(true); }} />;
+    return <WhoIsHere members={members} current={me?.id ?? null} onPick={(id) => { updateDevice({ activeMemberId: id }); setRoute({ name: 'home' }); setChosen(true); }} />;
   }
 
   const ctx = { settings, members, parts, me, route, go, toast };

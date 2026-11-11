@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, uid } from '../db';
+import { store, uid, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { fmtDateTime, greeting, relTime, sinceLast, welcomeLine } from '../lib/util';
 import { Icon } from '../components/Icon';
@@ -24,9 +23,11 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
   const { me, members, go, toast, settings } = useApp();
   const [dismissed, setDismissed] = useState(readDismissed);
   const [reply, setReply] = useState('');
-  const entries = useLiveQuery(() => db.entries.orderBy('occurredAt').reverse().limit(200).toArray(), []) ?? [];
-  const requests = useLiveQuery(() => (me ? db.observations.where('memberId').equals(me.id).and((o) => o.status === 'requested').toArray() : []), [me?.id]) ?? [];
-  const recentObs = useLiveQuery(() => db.observations.where('status').equals('done').reverse().sortBy('respondedAt'), []) ?? [];
+  const allEntries = useAll('entries');
+  const allObs = useAll('observations');
+  const entries = useMemo(() => [...allEntries].sort((a, b) => b.occurredAt - a.occurredAt), [allEntries]);
+  const requests = allObs.filter((o) => o.memberId === me?.id && o.status === 'requested');
+  const recentObs = useMemo(() => allObs.filter((o) => o.status === 'done').sort((a, b) => (b.respondedAt ?? 0) - (a.respondedAt ?? 0)), [allObs]);
 
   const visible = useMemo(() => entries.filter((e) => canSee(me, e)), [entries, me]);
   const mName = (id: string) => members.find((m) => m.id === id)?.name ?? 'Someone';
@@ -48,7 +49,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
   const dismiss = (id: string) => { const d = [...dismissed, id]; setDismissed(d); writeDismissed(d); };
   const addFollowUp = async () => {
     if (!checkIn || !me || !reply.trim()) return;
-    await db.entries.update(checkIn.id, { followUps: [...checkIn.followUps, { id: uid(), memberId: me.id, text: reply.trim(), createdAt: Date.now() }], updatedAt: Date.now() });
+    await store.patch('entries', checkIn.id, { followUps: [...checkIn.followUps, { id: uid(), memberId: me.id, text: reply.trim(), createdAt: Date.now() }], updatedAt: Date.now() });
     setReply('');
     dismiss(checkIn.id);
     toast('Thank you. Your reflection was added.');
@@ -78,7 +79,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
             <p style={{ marginBottom: '.6rem' }}><b>{mName(e.authorId)}</b> thought you might have noticed something around <b>{fmtDateTime(e.occurredAt)}</b>{e.location ? <> at {e.location}</> : null}. Would you add what you saw?</p>
             <div className="row">
               <button className="btn primary sm" onClick={() => go({ name: 'observe', id: r.id })}>Add my note</button>
-              <button className="btn ghost sm" onClick={async () => { await db.observations.update(r.id, { status: 'dismissed', respondedAt: Date.now() }); toast("Okay — we won't ask again."); }}>I didn't notice anything</button>
+              <button className="btn ghost sm" onClick={async () => { await store.patch('observations', r.id, { status: 'dismissed', respondedAt: Date.now() }); toast("Okay — we won't ask again."); }}>I didn't notice anything</button>
             </div>
           </div>
         );

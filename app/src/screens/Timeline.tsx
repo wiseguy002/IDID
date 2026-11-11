@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db';
+import { useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { fmtDate, partWords } from '../lib/util';
 import { EntryCard } from '../components/EntryCard';
@@ -11,8 +10,9 @@ export default function Timeline() {
   const [q, setQ] = useState('');
   const [who, setWho] = useState<string[]>([]);
   const [part, setPart] = useState<string[]>([]);
-  const entries = useLiveQuery(() => db.entries.orderBy('occurredAt').reverse().toArray(), []) ?? [];
-  const obs = useLiveQuery(() => db.observations.where('status').equals('done').toArray(), []) ?? [];
+  const allEntries = useAll('entries');
+  const entries = useMemo(() => [...allEntries].sort((a, b) => b.occurredAt - a.occurredAt), [allEntries]);
+  const obs = useAll('observations').filter((o) => o.status === 'done');
   const w = partWords(settings.partWord);
   const tracked = members.filter((m) => m.tracked);
 

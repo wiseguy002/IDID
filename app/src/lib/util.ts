@@ -64,10 +64,6 @@ export function sinceLast(last: number | null): string | null {
   return null;
 }
 
-export async function hashPin(pin: string, salt: string) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${salt}:${pin}`));
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
 
 export function download(filename: string, content: string | Blob, type = 'text/plain') {
   const blob = typeof content === 'string' ? new Blob([content], { type }) : content;

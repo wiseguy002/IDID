@@ -15,6 +15,8 @@ export interface Member {
   canObserve: boolean;
   color: string;
   createdAt: number;
+  /** Linked IDID account (when this person signs in on their own device). */
+  userId?: string;
 }
 
 /** A part / alter / headmate within a tracked person's system. */
@@ -100,26 +102,67 @@ export type ThemeName = 'morning' | 'dusk' | 'meadow' | 'clear';
 export type TextSize = 'small' | 'medium' | 'large' | 'xlarge';
 export type PartWord = 'parts' | 'alters' | 'headmates' | 'selves';
 
-export interface Settings {
-  id: 'settings';
-  onboarded: boolean;
+/** Shared, encrypted circle preferences (synced). */
+export interface Prefs {
+  id: 'prefs';
   circleName: string;
-  theme: ThemeName;
-  textSize: TextSize;
-  reduceMotion: boolean;
-  readableFont: boolean;
-  softEdges: boolean;
   partWord: PartWord;
-  /** SHA-256 hash of PIN + salt, or null when no lock. */
-  pinHash: string | null;
-  pinSalt: string | null;
-  lastOpenedAt: number | null;
-  activeMemberId: ID | null;
   customTriggers: string[];
   customLocations: string[];
   customFeelings: string[];
   showCheckIn: boolean;
 }
+
+/** Per-device comfort and notification settings (not sensitive, kept unencrypted so the lock screen can be styled). */
+export interface DeviceSettings {
+  theme: ThemeName;
+  textSize: TextSize;
+  reduceMotion: boolean;
+  readableFont: boolean;
+  softEdges: boolean;
+  activeMemberId: ID | null;
+  lastOpenedAt: number | null;
+  notifyObservations: boolean;
+  notifyAppointments: boolean;
+  /** "HH:MM" local time for a daily check-in reminder, or null for off. */
+  checkInTime: string | null;
+  /** Lock the journal after the app has been hidden this many minutes (0 = immediately). */
+  autoLockMins: number;
+}
+
+/** Combined view used by screens. */
+export type Settings = Prefs & DeviceSettings;
+
+export type AppointmentKind = 'therapy' | 'counseling' | 'support-group' | 'psychiatry' | 'medical' | 'other';
+export type Recurrence = 'none' | 'weekly' | 'biweekly' | 'monthly';
+
+export interface Appointment {
+  id: ID;
+  title: string;
+  kind: AppointmentKind;
+  startsAt: number;
+  durationMin: number;
+  location: string;
+  notes: string;
+  recurrence: Recurrence;
+  /** Stop repeating after this time (inclusive), or null for open-ended. */
+  until: number | null;
+  /** Minutes before the start to remind, e.g. [60, 1440]. */
+  reminderMins: number[];
+  /** Circle members this appointment is for / who get reminders. */
+  memberIds: ID[];
+  createdBy: ID;
+  createdAt: number;
+}
+
+export const APPOINTMENT_KINDS: { value: AppointmentKind; label: string }[] = [
+  { value: 'therapy', label: 'Therapy' },
+  { value: 'counseling', label: 'Counselling' },
+  { value: 'support-group', label: 'Support group' },
+  { value: 'psychiatry', label: 'Psychiatry / medication' },
+  { value: 'medical', label: 'Medical' },
+  { value: 'other', label: 'Other' },
+];
 
 export const DURATIONS: { value: Duration; label: string }[] = [
   { value: 'moments', label: 'A few moments' },

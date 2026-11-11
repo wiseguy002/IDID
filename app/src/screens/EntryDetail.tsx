@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, deleteEntry, uid } from '../db';
+import { deleteEntry, store, uid, useAll, useOne } from '../db';
 import { canSee, useApp } from '../state';
 import { durationLabel, fmtDateTime, moodLabel, partWords, relTime } from '../lib/util';
 import { Icon } from '../components/Icon';
@@ -19,14 +18,13 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 export default function EntryDetail({ id }: { id: string }) {
   const { me, members, parts, settings, go, toast } = useApp();
-  const e = useLiveQuery(() => db.entries.get(id), [id]);
-  const obs = useLiveQuery(() => db.observations.where('entryId').equals(id).toArray(), [id]) ?? [];
+  const e = useOne('entries', id);
+  const obs = useAll('observations').filter((o) => o.entryId === id);
   const [note, setNote] = useState('');
   const [askOpen, setAskOpen] = useState(false);
   const [confirmDel, setConfirmDel] = useState(false);
   const w = partWords(settings.partWord);
 
-  if (e === undefined) return null;
   if (!e || !canSee(me, e)) return <div><PageHead title="Not found" onBack={() => go({ name: 'timeline' })} /><p className="muted">This entry isn't available.</p></div>;
 
   const mName = (mid: string) => (mid === me?.id ? 'You' : members.find((m) => m.id === mid)?.name ?? 'Someone');
@@ -40,13 +38,13 @@ export default function EntryDetail({ id }: { id: string }) {
 
   const addNote = async () => {
     if (!note.trim() || !me) return;
-    await db.entries.update(e.id, { followUps: [...e.followUps, { id: uid(), memberId: me.id, text: note.trim(), createdAt: Date.now() }], updatedAt: Date.now() });
+    await store.patch('entries', e.id, { followUps: [...e.followUps, { id: uid(), memberId: me.id, text: note.trim(), createdAt: Date.now() }], updatedAt: Date.now() });
     setNote('');
     toast('Note added.');
   };
 
   const ask = async (mid: string) => {
-    await db.observations.put({ id: uid(), entryId: e.id, memberId: mid, status: 'requested', requestedAt: Date.now(), noticed: [], partIds: [], duration: null, text: '', present: null });
+    await store.put('observations', { id: uid(), entryId: e.id, memberId: mid, status: 'requested', requestedAt: Date.now(), noticed: [], partIds: [], duration: null, text: '', present: null });
     toast(`${mName(mid)} will be asked next time they open IDID.`);
     setAskOpen(false);
   };

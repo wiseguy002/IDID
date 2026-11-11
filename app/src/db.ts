@@ -1,111 +1,134 @@
-import Dexie, { type Table } from 'dexie';
-import type { Entry, Member, Observation, Part, Settings } from './types';
-import { defaultSettings } from './lib/defaults';
+/**
+ * App-wide data access: one encrypted Store, per-device settings, and the
+ * domain helpers screens use (save an entry, export, wipe…).
+ */
+import { useSyncExternalStore } from 'react';
+import { openIdb } from './data/idb';
+import { Store, useStoreVersion, type Kind, type KindMap } from './data/store';
+import { defaultDevice, defaultPrefs } from './lib/defaults';
+import type { DeviceSettings, Entry, Prefs, Settings } from './types';
 
-class IdidDB extends Dexie {
-  members!: Table<Member, string>;
-  parts!: Table<Part, string>;
-  entries!: Table<Entry, string>;
-  observations!: Table<Observation, string>;
-  settings!: Table<Settings, string>;
-
-  constructor() {
-    super('idid');
-    this.version(1).stores({
-      members: 'id, role, tracked',
-      parts: 'id, memberId, archived',
-      entries: 'id, subjectId, authorId, occurredAt, loggedAt',
-      observations: 'id, entryId, memberId, status',
-      settings: 'id',
-    });
-  }
-}
-
-export const db = new IdidDB();
+export const persist = openIdb('idid-secure');
+export const store = new Store(persist);
 
 export function uid(): string {
   return crypto.randomUUID();
 }
 
-/** Read-only (safe inside liveQuery): stored settings merged over defaults. */
-export async function getSettings(): Promise<Settings> {
-  const s = await db.settings.get('settings');
-  return { ...defaultSettings(), ...s, id: 'settings' };
+// ---------- Hooks ----------
+
+/** All live (non-deleted) records of a kind, re-rendering on any change. */
+export function useAll<K extends Kind>(kind: K): KindMap[K][] {
+  useStoreVersion(store);
+  return store.all(kind);
 }
 
-export async function updateSettings(patch: Partial<Settings>) {
-  const s = await getSettings();
-  await db.settings.put({ ...s, ...patch, id: 'settings' });
+export function useOne<K extends Kind>(kind: K, id: string | undefined): KindMap[K] | undefined {
+  useStoreVersion(store);
+  return id ? store.get(kind, id) : undefined;
 }
+
+// ---------- Device settings (unencrypted, this device only) ----------
+
+const DEVICE_KEY = 'idid.device';
+let device: DeviceSettings = (() => {
+  try { return { ...defaultDevice(), ...JSON.parse(localStorage.getItem(DEVICE_KEY) || '{}') }; } catch { return defaultDevice(); }
+})();
+const deviceListeners = new Set<() => void>();
+
+export function getDevice() { return device; }
+export function updateDevice(patch: Partial<DeviceSettings>) {
+  device = { ...device, ...patch };
+  try { localStorage.setItem(DEVICE_KEY, JSON.stringify(device)); } catch { /* storage unavailable */ }
+  for (const l of deviceListeners) l();
+}
+export function useDevice() {
+  return useSyncExternalStore((fn) => { deviceListeners.add(fn); return () => { deviceListeners.delete(fn); }; }, getDevice);
+}
+
+// ---------- Shared prefs (encrypted, synced) ----------
+
+export function getPrefs(): Prefs {
+  return { ...defaultPrefs(), ...store.get('prefs', 'prefs') };
+}
+export async function updatePrefs(patch: Partial<Prefs>) {
+  await store.put('prefs', { ...getPrefs(), ...patch, id: 'prefs' });
+}
+
+export function useSettings(): Settings {
+  const d = useDevice();
+  useStoreVersion(store);
+  return { ...getPrefs(), ...d };
+}
+
+/** Update either kind of setting; fields are routed to the right place. */
+export async function updateSettings(patch: Partial<Settings>) {
+  const prefKeys = Object.keys(defaultPrefs());
+  const p: Record<string, unknown> = {}, d: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(patch)) (prefKeys.includes(k) ? p : d)[k] = v;
+  if (Object.keys(d).length) updateDevice(d as Partial<DeviceSettings>);
+  if (Object.keys(p).length) await updatePrefs(p as Partial<Prefs>);
+}
+
+// ---------- Domain helpers ----------
 
 /** Save an entry and create observation requests for circle members who noticed. */
 export async function saveEntry(entry: Entry, opts: { requestObservations: boolean }) {
-  await db.transaction('rw', db.entries, db.observations, db.members, async () => {
-    await db.entries.put(entry);
-    if (!opts.requestObservations || entry.visibility === 'private') return;
-    const existing = await db.observations.where('entryId').equals(entry.id).toArray();
-    const have = new Set(existing.map((o) => o.memberId));
-    for (const mid of entry.noticedByIds) {
-      if (have.has(mid) || mid === entry.authorId) continue;
-      const m = await db.members.get(mid);
-      if (!m?.canObserve) continue;
-      await db.observations.put({
-        id: uid(), entryId: entry.id, memberId: mid, status: 'requested',
-        requestedAt: Date.now(), noticed: [], partIds: [], duration: null, text: '', present: null,
-      });
-    }
-  });
+  await store.put('entries', entry);
+  if (!opts.requestObservations || entry.visibility === 'private') return [];
+  const have = new Set(store.all('observations').filter((o) => o.entryId === entry.id).map((o) => o.memberId));
+  const created: string[] = [];
+  for (const mid of entry.noticedByIds) {
+    if (have.has(mid) || mid === entry.authorId) continue;
+    const m = store.get('members', mid);
+    if (!m?.canObserve) continue;
+    await store.put('observations', {
+      id: uid(), entryId: entry.id, memberId: mid, status: 'requested',
+      requestedAt: Date.now(), noticed: [], partIds: [], duration: null, text: '', present: null,
+    });
+    created.push(mid);
+  }
+  return created;
 }
 
 export async function deleteEntry(id: string) {
-  await db.transaction('rw', db.entries, db.observations, async () => {
-    await db.entries.delete(id);
-    await db.observations.where('entryId').equals(id).delete();
-  });
+  for (const o of store.all('observations').filter((o) => o.entryId === id)) await store.remove('observations', o.id);
+  await store.remove('entries', id);
 }
 
 export interface Backup {
   app: 'idid';
-  version: 1;
+  version: 2;
   exportedAt: string;
-  members: Member[];
-  parts: Part[];
-  entries: Entry[];
-  observations: Observation[];
-  settings?: Partial<Settings>;
+  members: KindMap['members'][];
+  parts: KindMap['parts'][];
+  entries: KindMap['entries'][];
+  observations: KindMap['observations'][];
+  appointments: KindMap['appointments'][];
+  prefs?: Prefs;
 }
 
-export async function exportAll(): Promise<Backup> {
-  const s = await getSettings();
-  const { pinHash: _p, pinSalt: _s, ...safe } = s;
+export function exportAll(): Backup {
   return {
-    app: 'idid', version: 1, exportedAt: new Date().toISOString(),
-    members: await db.members.toArray(),
-    parts: await db.parts.toArray(),
-    entries: await db.entries.toArray(),
-    observations: await db.observations.toArray(),
-    settings: safe,
+    app: 'idid', version: 2, exportedAt: new Date().toISOString(),
+    members: store.all('members'), parts: store.all('parts'), entries: store.all('entries'),
+    observations: store.all('observations'), appointments: store.all('appointments'), prefs: getPrefs(),
   };
 }
 
-export async function importAll(b: Backup, mode: 'merge' | 'replace') {
+export async function importAll(b: Partial<Backup> & { app: string }, mode: 'merge' | 'replace') {
   if (b.app !== 'idid') throw new Error('This file is not an IDID backup.');
-  await db.transaction('rw', [db.members, db.parts, db.entries, db.observations, db.settings], async () => {
-    if (mode === 'replace') {
-      await Promise.all([db.members.clear(), db.parts.clear(), db.entries.clear(), db.observations.clear()]);
-    }
-    await db.members.bulkPut(b.members ?? []);
-    await db.parts.bulkPut(b.parts ?? []);
-    await db.entries.bulkPut(b.entries ?? []);
-    await db.observations.bulkPut(b.observations ?? []);
-    if (mode === 'replace' && b.settings) {
-      const cur = await getSettings();
-      await db.settings.put({ ...cur, ...b.settings, id: 'settings', pinHash: cur.pinHash, pinSalt: cur.pinSalt, onboarded: true });
-    }
-  });
+  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments'] as const;
+  if (mode === 'replace') {
+    for (const k of kinds) for (const r of store.all(k)) await store.remove(k, r.id);
+  }
+  for (const k of kinds) for (const r of (b[k] ?? []) as { id: string }[]) await store.put(k, r as never);
+  if (b.prefs) await updatePrefs(b.prefs);
 }
 
 export async function wipeAll() {
-  await db.delete();
+  store.lock();
+  await persist.destroy();
+  try { localStorage.removeItem(DEVICE_KEY); localStorage.removeItem('idid.checkin.dismissed'); localStorage.removeItem('idid.account'); } catch { /* ignore */ }
   location.reload();
 }

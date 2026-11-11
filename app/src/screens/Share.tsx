@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, exportAll, importAll, type Backup } from '../db';
+import { exportAll, importAll, useAll, type Backup } from '../db';
 import { canSee, useApp } from '../state';
 import { computeStats } from '../lib/stats';
 import { download, durationLabel, entriesToCsv, fmtDateTime, moodLabel, partWords } from '../lib/util';
@@ -15,8 +14,9 @@ export default function Share() {
   const [who, setWho] = useState<string[]>(me?.tracked ? [me.id] : tracked[0] ? [tracked[0].id] : []);
   const [importFile, setImportFile] = useState<Backup | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const all = useLiveQuery(() => db.entries.orderBy('occurredAt').toArray(), []) ?? [];
-  const obs = useLiveQuery(() => db.observations.where('status').equals('done').toArray(), []) ?? [];
+  const rawEntries = useAll('entries');
+  const all = useMemo(() => [...rawEntries].sort((a, b) => a.occurredAt - b.occurredAt), [rawEntries]);
+  const obs = useAll('observations').filter((o) => o.status === 'done');
   const w = partWords(settings.partWord);
   const mName = (id: string) => members.find((m) => m.id === id)?.name ?? '';
   const pName = (id: string) => parts.find((p) => p.id === id)?.name ?? '';
@@ -39,6 +39,7 @@ export default function Share() {
     if (!f) return;
     try {
       const b = JSON.parse(await f.text()) as Backup;
+      if (!b.entries) throw new Error();
       if (b.app !== 'idid') throw new Error();
       setImportFile(b);
     } catch { toast("That file doesn't look like an IDID backup."); }
@@ -64,7 +65,7 @@ export default function Share() {
         <h2>Backup</h2>
         <p className="small muted">A full backup includes every person, {w.one}, entry and note. Keep it somewhere safe — it isn't encrypted.</p>
         <div className="stack">
-          <button className="btn block" onClick={async () => download(`idid-backup-${stamp}.json`, JSON.stringify(await exportAll(), null, 2), 'application/json')}><Icon name="download" size={18} /> Download full backup</button>
+          <button className="btn block" onClick={async () => download(`idid-backup-${stamp}.json`, JSON.stringify(exportAll(), null, 2), 'application/json')}><Icon name="download" size={18} /> Download full backup</button>
           <button className="btn block" onClick={() => fileRef.current?.click()}><Icon name="upload" size={18} /> Restore or merge a backup</button>
           <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => onPick(e.target.files?.[0])} />
         </div>

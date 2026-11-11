@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { db } from '../db';
+import { useState } from 'react';
+import { store } from '../db';
 import { useApp } from '../state';
 import { OBSERVED_SIGNS } from '../lib/defaults';
 import { fmtDateTime, partWords } from '../lib/util';
@@ -8,17 +8,9 @@ import { ChipSelect, PageHead, Segmented } from '../components/ui';
 
 export default function Observe({ id }: { id: string }) {
   const { members, parts, settings, go, toast } = useApp();
-  const [o, setO] = useState<Observation | null>(null);
-  const [e, setE] = useState<Entry | null>(null);
+  const [o, setO] = useState<Observation | null>(() => store.get('observations', id) ?? null);
+  const e: Entry | undefined = o ? store.get('entries', o.entryId) : undefined;
   const w = partWords(settings.partWord);
-
-  useEffect(() => {
-    db.observations.get(id).then(async (x) => {
-      if (!x) return;
-      setO(x);
-      setE((await db.entries.get(x.entryId)) ?? null);
-    });
-  }, [id]);
   if (!o || !e) return null;
 
   const subj = members.find((m) => m.id === e.subjectId);
@@ -26,7 +18,7 @@ export default function Observe({ id }: { id: string }) {
   const set = <K extends keyof Observation>(k: K, v: Observation[K]) => setO({ ...o, [k]: v });
 
   const save = async () => {
-    await db.observations.put({ ...o, status: 'done', respondedAt: Date.now() });
+    await store.put('observations', { ...o, status: 'done', respondedAt: Date.now() });
     toast('Thank you. Your note helps build a clearer picture.');
     go({ name: 'entry', id: e.id });
   };

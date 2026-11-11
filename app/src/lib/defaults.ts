@@ -1,4 +1,4 @@
-import type { Settings } from '../types';
+import type { DeviceSettings, Prefs } from '../types';
 
 export const DEFAULT_TRIGGERS = [
   'Loud noise', 'Crowds', 'Conflict / raised voices', 'A smell', 'Touch', 'A memory',
@@ -25,25 +25,25 @@ export const OBSERVED_SIGNS = [
 
 export const PALETTE = ['#7c9a8a', '#8a9bb8', '#b89a7c', '#a58bb0', '#c4a35a', '#6f9fa6', '#b88a8a', '#8fa36b'];
 
-export function defaultSettings(): Settings {
+const mq = (q: string) => typeof matchMedia !== 'undefined' && matchMedia(q).matches;
+
+export function defaultPrefs(): Prefs {
+  return { id: 'prefs', circleName: '', partWord: 'parts', customTriggers: [], customLocations: [], customFeelings: [], showCheckIn: true };
+}
+
+export function defaultDevice(): DeviceSettings {
   return {
-    id: 'settings',
-    onboarded: false,
-    circleName: '',
-    theme: typeof matchMedia !== 'undefined' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dusk' : 'morning',
+    theme: mq('(prefers-color-scheme: dark)') ? 'dusk' : 'morning',
     textSize: 'medium',
-    reduceMotion: typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches,
+    reduceMotion: mq('(prefers-reduced-motion: reduce)'),
     readableFont: false,
     softEdges: true,
-    partWord: 'parts',
-    pinHash: null,
-    pinSalt: null,
-    lastOpenedAt: null,
     activeMemberId: null,
-    customTriggers: [],
-    customLocations: [],
-    customFeelings: [],
-    showCheckIn: true,
+    lastOpenedAt: null,
+    notifyObservations: true,
+    notifyAppointments: true,
+    checkInTime: null,
+    autoLockMins: 5,
   };
 }
 

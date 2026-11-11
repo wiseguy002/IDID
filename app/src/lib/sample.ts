@@ -1,6 +1,8 @@
-import { db, uid, updateSettings } from '../db';
+import { store, uid, updateDevice, updatePrefs } from '../db';
 import { PALETTE } from './defaults';
 import type { Entry, Member, Part } from '../types';
+
+export const SAMPLE_PASSPHRASE = 'sample circle';
 
 /** Fills the app with a fictional circle so people can explore before using it for real. */
 export async function loadSample() {
@@ -37,14 +39,15 @@ export async function loadSample() {
       visibility: 'circle', followUps: [],
     });
   }
-  await db.members.bulkPut([alex, sam, jo]);
-  await db.parts.bulkPut(parts);
-  await db.entries.bulkPut(entries);
-  await db.observations.bulkPut(entries.filter((e) => e.noticedByIds.includes(sam.id)).slice(0, 6).map((e, i) => ({
+  await store.putMany('parts', parts);
+  await store.putMany('entries', entries);
+  await store.putMany('observations', entries.filter((e) => e.noticedByIds.includes(sam.id)).slice(0, 6).map((e, i) => ({
     id: uid(), entryId: e.id, memberId: sam.id, status: i === 0 ? 'requested' as const : 'done' as const, requestedAt: e.loggedAt,
     respondedAt: i === 0 ? undefined : e.loggedAt + 7200000, noticed: i === 0 ? [] : ['Voice changed', 'Seemed younger'].slice(0, (i % 2) + 1),
     partIds: i === 0 ? [] : e.frontingPartIds, duration: i === 0 ? null : e.duration, present: i === 0 ? null : true,
     text: i === 0 ? '' : 'Went quiet and sat on the floor. Calmed down once I turned the TV off.',
   })));
-  await updateSettings({ onboarded: true, circleName: 'Our circle', activeMemberId: alex.id, lastOpenedAt: null });
+  await updatePrefs({ circleName: 'Our circle' });
+  updateDevice({ activeMemberId: alex.id, lastOpenedAt: null });
+  await store.putMany('members', [alex, sam, jo]);
 }

@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db';
+import { useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { computeStats } from '../lib/stats';
 import { moodLabel, partWords } from '../lib/util';
@@ -50,7 +49,7 @@ export default function Insights() {
   const [range, setRange] = useState<'30' | '90' | 'all'>('30');
   const tracked = members.filter((m) => m.tracked);
   const [who, setWho] = useState<string[]>(me?.tracked ? [me.id] : tracked[0] ? [tracked[0].id] : []);
-  const all = useLiveQuery(() => db.entries.toArray(), []) ?? [];
+  const all = useAll('entries');
   const w = partWords(settings.partWord);
   const mName = (id: string) => members.find((m) => m.id === id)?.name ?? '';
 

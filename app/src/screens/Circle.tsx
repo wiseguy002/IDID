@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db, uid } from '../db';
+import { store, uid } from '../db';
 import { useApp } from '../state';
 import { PALETTE } from '../lib/defaults';
 import { partWords, roleLabel } from '../lib/util';
@@ -13,13 +13,13 @@ function MemberForm({ m, onClose }: { m: Member; onClose: () => void }) {
   const isNew = !members.some((y) => y.id === m.id);
   const save = async () => {
     if (!x.name.trim()) return;
-    await db.members.put({ ...x, name: x.name.trim() });
+    await store.put('members', { ...x, name: x.name.trim() });
     toast(isNew ? `${x.name} joined your circle.` : 'Saved.');
     onClose();
   };
   const remove = async () => {
-    await db.members.delete(m.id);
-    await db.observations.where('memberId').equals(m.id).delete();
+    for (const o of store.all('observations').filter((o) => o.memberId === m.id)) await store.remove('observations', o.id);
+    await store.remove('members', m.id);
     toast(`${m.name} was removed from the circle.`);
     onClose();
   };
@@ -52,7 +52,7 @@ function PartForm({ p, onClose }: { p: Part; onClose: () => void }) {
   const isNew = !parts.some((y) => y.id === p.id);
   const save = async () => {
     if (!x.name.trim()) return;
-    await db.parts.put({ ...x, name: x.name.trim() });
+    await store.put('parts', { ...x, name: x.name.trim() });
     toast('Saved.');
     onClose();
   };
@@ -71,7 +71,7 @@ function PartForm({ p, onClose }: { p: Part; onClose: () => void }) {
       </div>
       <div className="row">
         <button className="btn primary" onClick={save} disabled={!x.name.trim()}>Save</button>
-        {!isNew && <button className="btn ghost" onClick={async () => { await db.parts.update(p.id, { archived: !p.archived }); toast(p.archived ? 'Restored.' : 'Moved to resting — history is kept.'); onClose(); }}>{p.archived ? 'Restore' : 'Mark as resting / dormant'}</button>}
+        {!isNew && <button className="btn ghost" onClick={async () => { await store.patch('parts', p.id, { archived: !p.archived }); toast(p.archived ? 'Restored.' : 'Moved to resting — history is kept.'); onClose(); }}>{p.archived ? 'Restore' : 'Mark as resting / dormant'}</button>}
       </div>
     </Sheet>
   );

@@ -1,25 +1,35 @@
 import { useState } from 'react';
-import { updateSettings, wipeAll } from '../db';
+import { persist, store, updateSettings, wipeAll } from '../db';
+import { changePassphrase, passphraseStrength, rotateRecoveryCode, unlockVault } from '../data/vault';
 import { useApp } from '../state';
-import { hashPin } from '../lib/util';
 import type { PartWord, TextSize, ThemeName } from '../types';
 import { PageHead, Segmented, Sheet, Switch } from '../components/ui';
 import { Icon } from '../components/Icon';
 
 export default function Settings() {
   const { settings: s, go, toast } = useApp();
-  const [pinOpen, setPinOpen] = useState(false);
+  const [passOpen, setPassOpen] = useState(false);
+  const [oldPass, setOldPass] = useState('');
   const [pin, setPin] = useState('');
   const [pin2, setPin2] = useState('');
+  const [passErr, setPassErr] = useState('');
+  const [newCode, setNewCode] = useState<string | null>(null);
   const [wipe, setWipe] = useState(false);
   const [wipeText, setWipeText] = useState('');
   const up = (p: Parameters<typeof updateSettings>[0]) => updateSettings(p);
 
-  const savePin = async () => {
-    const salt = crypto.randomUUID();
-    await up({ pinHash: await hashPin(pin, salt), pinSalt: salt });
-    setPin(''); setPin2(''); setPinOpen(false);
-    toast('Passcode set. IDID will ask for it when it opens.');
+  const savePass = async () => {
+    const key = await unlockVault(persist, oldPass);
+    if (!key) { setPassErr("Your current passphrase didn't match."); return; }
+    await changePassphrase(persist, key, pin);
+    setOldPass(''); setPin(''); setPin2(''); setPassErr(''); setPassOpen(false);
+    toast('Passphrase changed.');
+  };
+  const newRecovery = async () => {
+    const key = await unlockVault(persist, oldPass);
+    if (!key) { setPassErr("Your current passphrase didn't match."); return; }
+    setNewCode(await rotateRecoveryCode(persist, key));
+    setOldPass(''); setPassErr('');
   };
 
   return (
@@ -48,11 +58,14 @@ export default function Settings() {
       </div>
       <div className="card">
         <h2>Privacy</h2>
-        <p className="small muted">All information is stored only in this browser on this device.</p>
-        {s.pinHash ? (
-          <div className="row"><span className="tag"><Icon name="lock" size={14} /> Passcode on</span>
-            <button className="btn sm" onClick={async () => { await up({ pinHash: null, pinSalt: null }); toast('Passcode removed.'); }}>Remove passcode</button></div>
-        ) : <button className="btn" onClick={() => setPinOpen(true)}><Icon name="lock" size={18} /> Set a passcode</button>}
+        <p className="small muted">Your journal is encrypted on this device with your passphrase (AES-256). When it's locked, nothing can be read without the passphrase or your recovery code.</p>
+        <div className="row">
+          <button className="btn sm" onClick={() => { store.lock(); }}><Icon name="lock" size={17} /> Lock now</button>
+          <button className="btn sm" onClick={() => setPassOpen(true)}>Change passphrase or recovery code</button>
+        </div>
+        <div className="eyebrow" style={{ marginTop: '.9rem' }}>Lock automatically when IDID is in the background for</div>
+        <Segmented label="Auto-lock" value={String(s.autoLockMins)} onChange={(v) => up({ autoLockMins: Number(v) })}
+          options={[{ value: '0', label: 'Right away' }, { value: '1', label: '1 min' }, { value: '5', label: '5 min' }, { value: '30', label: '30 min' }]} />
         <hr className="hr" />
         <button className="btn" onClick={() => go({ name: 'share' })}><Icon name="download" size={18} /> Export & backup</button>
         <button className="btn ghost danger" style={{ marginLeft: '.4rem' }} onClick={() => setWipe(true)}>Delete all data</button>
@@ -63,12 +76,23 @@ export default function Settings() {
         <p style={{ margin: 0 }}>If you are in danger or thinking about harming yourself, please contact local emergency services. In the US, call or text <b>988</b>. In the UK & Ireland, Samaritans: <b>116 123</b>.</p>
       </div>
 
-      {pinOpen && (
-        <Sheet title="Set a passcode" onClose={() => setPinOpen(false)}>
-          <p className="small muted">4–8 digits. If you forget it, the only way back in is to clear this browser's data — so keep a backup.</p>
-          <label className="field"><span>Passcode</span><input className="input" inputMode="numeric" type="password" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 8))} autoFocus /></label>
-          <label className="field"><span>Again, to confirm</span><input className="input" inputMode="numeric" type="password" value={pin2} onChange={(e) => setPin2(e.target.value.replace(/\D/g, '').slice(0, 8))} /></label>
-          <button className="btn primary" disabled={pin.length < 4 || pin !== pin2} onClick={savePin}>Save passcode</button>
+      {passOpen && (
+        <Sheet title="Passphrase & recovery" onClose={() => { setPassOpen(false); setNewCode(null); }}>
+          <label className="field"><span>Current passphrase</span><input id="old-pass" className="input" type="password" autoComplete="current-password" value={oldPass} onChange={(e) => setOldPass(e.target.value)} autoFocus /></label>
+          {passErr && <p className="small" role="alert" style={{ color: 'var(--warm)' }}>{passErr}</p>}
+          <label className="field"><span>New passphrase</span><input id="new-pass1" className="input" type="password" autoComplete="new-password" value={pin} onChange={(e) => setPin(e.target.value)} /></label>
+          {pin && <p className="small muted" style={{ marginTop: '-.5rem' }}>{passphraseStrength(pin).hint}</p>}
+          <label className="field"><span>New passphrase again</span><input id="new-pass2" className="input" type="password" autoComplete="new-password" value={pin2} onChange={(e) => setPin2(e.target.value)} /></label>
+          <div className="row">
+            <button className="btn primary" disabled={!oldPass || !passphraseStrength(pin).ok || pin !== pin2} onClick={savePass}>Change passphrase</button>
+            <button className="btn" disabled={!oldPass} onClick={newRecovery}>Make a new recovery code</button>
+          </div>
+          {newCode && (
+            <div className="card accent" style={{ marginTop: '1rem' }}>
+              <p className="small">Your old recovery code no longer works. Save this one somewhere safe:</p>
+              <div style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace', fontSize: '1.1rem', userSelect: 'all' }}>{newCode}</div>
+            </div>
+          )}
         </Sheet>
       )}
       {wipe && (

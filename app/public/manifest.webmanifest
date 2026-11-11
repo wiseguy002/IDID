@@ -1,0 +1,11 @@
+{
+  "name": "IDID — a gentle journal",
+  "short_name": "IDID",
+  "description": "A calm, private journal for tracking dissociative and trauma-related experiences with a trust circle.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5efe6",
+  "theme_color": "#f5efe6",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

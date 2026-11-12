@@ -24,7 +24,7 @@ for (const f of readdirSync(join(root, 'pages')).filter((x) => x.endsWith('.html
   writeFileSync(join(out, f), h + src.slice(m[0].length) + foot);
   if (name !== '404') pages.push(path);
 }
-for (const d of ['assets', 'press']) cpSync(join(root, d), join(out, d), { recursive: true });
-for (const f of ['_headers', '_redirects', 'robots.txt']) cpSync(join(root, f), join(out, f));
+for (const d of ['assets', 'press', 'errors']) cpSync(join(root, d), join(out, d), { recursive: true });
+for (const f of ['_headers', '_redirects', 'robots.txt', 'sw.js']) cpSync(join(root, f), join(out, f));
 writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((p) => `  <url><loc>https://idid.care${p}</loc></url>`).join('\n')}\n</urlset>\n`);
 console.log(`Built ${pages.length + 1} pages into site/dist/`);

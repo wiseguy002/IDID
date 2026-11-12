@@ -28,8 +28,10 @@ import Board from './screens/Board';
 import Body from './screens/Body';
 import Comfort from './screens/Comfort';
 import Prep from './screens/Prep';
+import Calm from './screens/Calm';
 import { CheckOnSheet } from './components/CheckOn';
 import { Cover, useHideShortcut } from './components/QuickHide';
+import { OfflineNotice } from './components/OfflineNotice';
 import { Tour } from './components/Tour';
 import { factsFor, getActivity, patchActivity } from './db';
 import { progress } from './lib/progress';
@@ -51,6 +53,11 @@ const NAV: { name: Route['name']; label: string; icon: string }[] = [
   { name: 'insights', label: 'Patterns', icon: 'chart' },
   { name: 'circle', label: 'Circle', icon: 'people' },
 ];
+
+function CrashTest(): null {
+  // Development only: open the app with #crash-test to see the error screen.
+  throw new Error('Test crash (development only)');
+}
 
 export default function App() {
   const settings = useSettings();
@@ -164,11 +171,13 @@ export default function App() {
   }
 
   const ctx = { settings, members, parts, me, route, go, toast, checkIn: openCheckIn, openTour: () => setTourOpen(true), checkOn: () => setCheckOnOpen(true) };
-  const inWizard = route.name === 'log' || route.name === 'observe';
+  const inWizard = route.name === 'log' || route.name === 'observe' || route.name === 'calm';
 
   return (
     <Ctx.Provider value={ctx}>
       <div className="app">
+        {import.meta.env.DEV && location.hash === '#crash-test' && <CrashTest />}
+        <OfflineNotice />
         <header className="topbar no-print">
           <div className="brand">
             <span className="brand-mark"><Icon name="leaf" size={17} /></span>
@@ -208,6 +217,7 @@ export default function App() {
           {route.name === 'board' && <Board />}
           {route.name === 'body' && <Body />}
           {route.name === 'comfort' && <Comfort />}
+          {route.name === 'calm' && <Calm />}
           {route.name === 'prep' && <Prep key={route.appointmentId ?? 'next'} appointmentId={route.appointmentId} />}
         </main>
         {!inWizard && (

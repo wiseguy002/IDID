@@ -47,6 +47,15 @@ for (const [w, h, label] of [[390, 844, 'phone'], [1280, 800, 'desktop']]) {
         const target = l.startsWith('/') ? l : new URL(l, origin + path).pathname;
         if (!fileFor(target === '/' ? '/index.html' : target)) problems.push(`${path}: broken link ${l}`);
       }
+      // Loose text beside elements inside a grid/flex container becomes separate items and breaks layout.
+      const loose = await p.evaluate(() => [...document.querySelectorAll('body *')].filter((el) => {
+        const d = getComputedStyle(el).display;
+        if (!/grid|flex/.test(d)) return false;
+        const kids = [...el.childNodes];
+        const phrasing = ['B', 'STRONG', 'I', 'EM', 'A', 'SPAN', 'CODE', 'SMALL'];
+        return kids.some((n) => n.nodeType === 3 && n.textContent.trim()) && kids.some((n) => n.nodeType === 1 && phrasing.includes(n.tagName));
+      }).map((el) => el.tagName.toLowerCase() + (el.className ? '.' + String(el.className).split(' ')[0] : '') + ': ' + el.textContent.trim().slice(0, 50)));
+      for (const l of loose) problems.push(`${path}: text split by layout in ${l}`);
       const noAlt = await p.$$eval('img:not([alt])', (els) => els.length);
       if (noAlt) problems.push(`${path}: ${noAlt} image(s) without alt`);
     }

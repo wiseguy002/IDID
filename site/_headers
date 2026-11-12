@@ -8,3 +8,12 @@
 
 /assets/*
   Cache-Control: public, max-age=86400
+
+# Error pages carry their own inline styles so they work even when the site is down.
+/errors/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; img-src data:; frame-ancestors 'none'
+  X-Robots-Tag: noindex
+
+/sw.js
+  Cache-Control: no-cache

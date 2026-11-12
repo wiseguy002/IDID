@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Taking a short pause · iDID</title>
+<style>
+/* Self-contained: this page has to work even when idid.care itself is down. */
+:root { --bg:#f5efe6; --surface:#fffaf2; --ink:#34312c; --muted:#6f675d; --line:#e3d8c8; --accent:#5d7f6f; --accent-ink:#fdfaf4; --accent-soft:#dfe8e0; --warm-soft:#f3e4d4; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root { --bg:#1d2024; --surface:#282c32; --ink:#e8e2d8; --muted:#a8a094; --line:#3b4148; --accent:#93b2a2; --accent-ink:#1d2024; --accent-soft:#33433c; --warm-soft:#40372e; color-scheme: dark; } }
+* { box-sizing: border-box; }
+body { margin:0; min-height:100vh; display:grid; place-items:center; background:var(--bg); color:var(--ink); font:17px/1.65 ui-rounded,'SF Pro Rounded','Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
+main { max-width: 36rem; text-align:center; }
+h1 { font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif; font-weight:500; font-size:clamp(2rem,6vw,2.8rem); line-height:1.15; margin:.4rem 0 .8rem; text-wrap: balance; }
+.eyebrow { font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; font-weight:650; color:var(--muted); }
+p { margin: 0 0 1rem; } .muted { color:var(--muted); }
+.leaf { width:96px; margin:0 auto; animation: sway 6s ease-in-out infinite; transform-origin:50% 90%; }
+@keyframes sway { 0%,100% { transform:rotate(-4deg); } 50% { transform:rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .leaf { animation:none; } }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:1.1rem 1.3rem; margin:1.4rem 0; text-align:left; }
+.help { background:var(--warm-soft); border-radius:18px; padding:.9rem 1.1rem; font-size:.95rem; }
+.btn { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:.6rem 1.3rem; border-radius:999px; font-weight:600; text-decoration:none; background:var(--accent); color:var(--accent-ink); margin:.3rem; }
+.btn.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+a { color:var(--accent); }
+details { margin-top:1.4rem; font-size:.85rem; color:var(--muted); text-align:left; }
+</style>
+</head>
+<body>
+<main>
+  <div class="leaf" aria-hidden="true"><svg viewBox="0 0 120 120" width="96" height="96"><circle cx="60" cy="60" r="58" fill="var(--accent-soft)"/><path d="M38 84c0-24 15-39 45-42-3 30-18 45-42 45M38 84c9-12 18-19.5 27-24" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <p class="eyebrow">Something went wrong on our side</p>
+  <h1>Our website is having a wobbly moment.</h1>
+  <p class="muted">Even websites have hard days. We've noticed, and we're taking a breath and sorting it out. Things don't always go as planned. What matters is how we respond, and we're responding.</p><p class="muted">Please try again in a few minutes. Maybe stretch, sip some water, or look out of a window while you wait.</p>
+  <div class="card"><b>Your journal is safe.</b> Everything you've written lives encrypted on your own device, and the iDID app keeps working offline. Nothing is lost.</div>
+  <p><a class="btn" href="">Try again</a> <a class="btn ghost" href="https://app.idid.care">Open the app</a></p>
+  <p class="help">Need support right now? Call or text <a href="tel:988"><b>988</b></a>, any time. In an emergency, call <a href="tel:911"><b>911</b></a>.</p>
+  <details><summary>Technical details</summary>::CLOUDFLARE_ERROR_500S_BOX::</details>
+</main>
+</body>
+</html>

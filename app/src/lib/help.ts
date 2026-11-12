@@ -143,6 +143,24 @@ export const HELP: HelpTopic[] = [
     keywords: 'kindness kind notes pay it forward encouragement anonymous tell a friend share',
   },
   {
+    id: 'garden', group: 'Everyday use', title: 'Mood Garden',
+    summary: 'A garden that grows from the ways you look after yourself.',
+    body: [
+      { p: 'Your **Mood Garden** has one plant for each of your parts, or one plant for you if you don’t use parts. Family members and supporters get a garden of their own.' },
+      { list: [
+        '**What makes it grow**: noting moments (a part’s plant grows when they were fronting), check-ins, pauses, box breathing, the Calm space, kind acts and kind notes, body basics, notes on the inner board, comfort kit items, and noticing things for someone else.',
+        '**Nothing ever wilts.** Plants only grow. There are no streaks to keep, and hard days add growth too.',
+        '**Choose plants and names**: tap a plant to pick one that fits, like a cactus for a protector or wildflowers for a little one, and give it a name.',
+        '**Weather** follows your recent check-ins: sun, clouds, a breeze, wind and rain, or a storm. Plants bend in the wind but keep growing, and a rainbow comes when things ease. You can turn weather off.',
+        '**Seasons** change through the year, or you can keep it always spring.',
+      ] },
+      { p: '**Ways to help it grow** offers a few gentle ideas, each one tap away: check in, breathe a box, play in the Calm space, send a kind note to pay it forward, or let a quieter part leave a note. On hard days the ideas get softer. **Look at what you’ve already done** counts the care you’ve given so far.' },
+      { tip: 'The garden is worked out on your device. Plant types and names are saved with each part, encrypted like everything else.' },
+    ],
+    open: [{ label: 'Open Mood Garden', route: { name: 'garden' } }],
+    keywords: 'garden plants grow progress motivation weather seasons parts alters habits encouragement',
+  },
+  {
     id: 'appointments', group: 'Everyday use', title: 'Appointments and therapy prep',
     summary: 'Reminders, calendar export, and notes to bring to sessions.',
     body: [

@@ -279,3 +279,40 @@ textarea.input { min-height: 96px; resize: vertical; }
 .help-steps, .help-list { padding-left: 1.3rem; line-height: 1.6; }
 .help-steps li, .help-list li { margin: .35rem 0; }
 .linkish { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; font: inherit; cursor: pointer; }
+
+/* ---------- Mood Garden ---------- */
+:root {
+  --g-sky: #e7f0ea; --g-sky-2: #f6efe4; --g-sky-summer: #dcebf5; --g-sky-autumn: #f3e3cf; --g-sky-winter: #e6ebf1; --g-sky-rain: #dfe4ec;
+  --g-soil: #d9c6ac; --g-soil-2: #c4ab8a; --g-snow: #fbfbfd; --g-stem: #5f8a6c; --g-leaf: #7fae8a; --g-leaf-2: #9cc3a3;
+  --g-sun: #f2c879; --g-cloud: #ffffff; --g-storm: #b9c0cc; --g-rain: #7f95ba; --g-ink: #34312c;
+}
+[data-theme='dusk'] {
+  --g-sky: #22302b; --g-sky-2: #262a30; --g-sky-summer: #22303c; --g-sky-autumn: #33291f; --g-sky-winter: #283039; --g-sky-rain: #262c36;
+  --g-soil: #4a3f33; --g-soil-2: #3c332a; --g-snow: #cfd6df; --g-stem: #7aa889; --g-leaf: #6f9f7b; --g-leaf-2: #8db897;
+  --g-sun: #e6bb6a; --g-cloud: #48505c; --g-storm: #3a404b; --g-rain: #9fb3d4; --g-ink: #e8e2d8;
+}
+.garden-scene { display: block; width: 100%; height: auto; border-radius: 18px; }
+.garden-scene text { font-family: inherit; }
+.g-plant { cursor: pointer; outline: none; }
+.g-plant:focus-visible .g-hit { stroke: var(--focus); stroke-width: 3; }
+@keyframes g-sway { 0%, 100% { transform: rotate(calc(var(--lean) - var(--sway))); } 50% { transform: rotate(calc(var(--lean) + var(--sway))); } }
+.g-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: g-sway 5.5s ease-in-out infinite; }
+.g-lean { transform-box: fill-box; transform-origin: 50% 100%; transform: rotate(var(--lean)); }
+@keyframes g-drop { from { transform: translateY(-24px); opacity: 0; } 20% { opacity: .9; } to { transform: translateY(220px); opacity: 0; } }
+.g-drop { animation: g-drop 1.5s linear infinite; }
+@keyframes g-gust { 0% { transform: translateX(-40px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateX(60px); opacity: 0; } }
+.g-gust { animation: g-gust 3.5s ease-in-out infinite; }
+@keyframes g-drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(14px); } }
+.g-drift { animation: g-drift 18s ease-in-out infinite; }
+@keyframes g-fall { from { transform: translate(0, -10px) rotate(0); opacity: 0; } 15% { opacity: .9; } to { transform: translate(30px, 200px) rotate(200deg); opacity: 0; } }
+.g-fall { transform-box: fill-box; animation: g-fall 7s linear infinite; }
+[data-motion='reduce'] .g-sway, [data-motion='reduce'] .g-drop, [data-motion='reduce'] .g-gust, [data-motion='reduce'] .g-drift, [data-motion='reduce'] .g-fall { animation: none; }
+.plant-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .5rem; }
+.plant-pick button { display: grid; gap: .15rem; text-align: left; padding: .6rem .7rem; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.plant-pick button[aria-pressed='true'] { border-color: var(--accent); background: var(--accent-soft); }
+.plant-pick svg { width: 54px; height: 54px; }
+.care-ideas { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.care-ideas li { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .65rem .75rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.care-ideas li > div { display: grid; gap: .15rem; min-width: 0; }
+.care-ideas .btn { flex-shrink: 0; }
+@media (max-width: 380px) { .care-ideas li { flex-direction: column; align-items: stretch; } }

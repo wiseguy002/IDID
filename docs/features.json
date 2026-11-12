@@ -590,6 +590,21 @@
         "help",
         "readme"
       ]
+    },
+    {
+      "name": "Mood Garden",
+      "match": "mood garden",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "jsonld"
+      ],
+      "changelog": [
+        "Mood Garden"
+      ]
     }
   ]
 }

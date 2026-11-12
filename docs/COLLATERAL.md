@@ -63,3 +63,4 @@ Do a full audit when any of these happens:
 | Version | Date | What changed |
 |---|---|---|
 | 0.12.1 | 2026-11-12 | First full audit (0.1.0 to 0.12.0). Press release, press kit, fact sheet and flyer updated for 0.9 to 0.12; home "Thoughtful details"; privacy server-visibility and limits; share messages; JSON-LD; 4 new help guides (28 total); Explore and tour updated; README and SECURITY.md. Feature registry and CI check added. |
+| 0.13.0 | 2026-11-12 | Mood Garden: help guide (29 total), tour step, Explore feature and Gardener badge, home feature card, fact sheet, press release, JSON-LD, README. Registry entry added. No privacy or sharing change: plant choices sync inside existing encrypted part/member records. |

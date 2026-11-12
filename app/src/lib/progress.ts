@@ -14,7 +14,7 @@ import type { Activity } from '../types';
 
 export type EventName =
   | 'tour' | 'pause' | 'patterns' | 'timeline' | 'export' | 'calendar' | 'support-viewed'
-  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered' | 'box-breath' | 'help';
+  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered' | 'box-breath' | 'help' | 'garden';
 
 /** Counts the app derives from stored data for one person. */
 export interface Facts {
@@ -66,6 +66,7 @@ export const FEATURES: Feature[] = [
   { id: 'parts', name: 'Parts', group: 'Noticing', route: { name: 'circle' }, about: 'Keep notes about the parts of your system.', used: (f) => f.parts > 0 },
   { id: 'pause', name: 'Pause tools', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathing, box breathing, 5-4-3-2-1 grounding and "right now" orientation.', used: (_f, a) => ev(a, 'pause'), tipPriority: 2, tip: 'Pause has breathing and grounding tools for when things feel like too much.' },
   { id: 'help', name: 'Help & guides', group: 'Make it yours', route: { name: 'help' }, about: 'Step-by-step guides to everything in iDID.', used: (_f, a) => ev(a, 'help'), tipPriority: 6, tip: 'Help & guides walks through everything in iDID, from logging a moment to sharing with your therapist.' },
+  { id: 'garden', name: 'Mood Garden', group: 'Calm & coping', route: { name: 'garden' }, about: 'A plant for each part, grown by the ways you look after yourself.', used: (_f, a) => ev(a, 'garden'), tipPriority: 3, tip: 'Your Mood Garden grows from check-ins, pauses and the moments you notice. Nothing in it ever wilts.' },
   { id: 'box', name: 'Box breathing', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathe in a square and build a little group of boxes.', used: (_f, a) => ev(a, 'box-breath') },
   { id: 'calm', name: 'Calm space', group: 'Calm & coping', route: { name: 'calm' }, about: 'Ripples, light trails and drifting lights to unwind for a minute.', used: (_f, a) => ev(a, 'calm'), tipPriority: 3, tip: 'The Calm space is a quiet minute of ripples or drifting lights, with nothing to do and nothing to win.' },
   { id: 'checkins', name: 'Gentle check-ins', group: 'Calm & coping', route: { name: 'settings' }, about: 'A kind word and a small idea, a few times a day.', used: (f) => f.checkins > 0 },
@@ -119,6 +120,7 @@ export const BADGES: Badge[] = [
   { id: 'mapped', name: 'Mapped my support', icon: 'heart', about: 'Set up your support profile.', earned: (f) => f.supportProfile },
   { id: 'planner', name: 'Planner', icon: 'clock', about: 'Added an appointment.', earned: (f) => f.appointments >= 1 },
   { id: 'shared', name: 'Shared with care', icon: 'share', about: 'Exported a summary for someone who helps you.', earned: (_f, a) => c(a, 'export') >= 1 },
+  { id: 'garden-visit', name: 'Gardener', icon: 'leaf', about: 'Visited your Mood Garden.', earned: (_f, a) => c(a, 'garden') >= 1 },
   { id: 'care-team', name: 'My care team', icon: 'shield', about: 'Shared a read-only view with someone who helps you.', earned: (f) => f.careShares >= 1 },
   { id: 'circle', name: 'Not alone', icon: 'people', about: 'Added someone to your trust circle.', earned: (f) => f.circlePeople >= 1 },
   { id: 'good-witness', name: 'Good witness', icon: 'note', about: 'Added what you noticed for someone in your circle.', earned: (f) => f.observationsGiven >= 1 },

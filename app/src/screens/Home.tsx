@@ -12,7 +12,7 @@ import { useProgress } from './Explore';
 import { nextTip } from '../lib/progress';
 import { KindActCard, KindNoteView, useKindNotes } from './Kindness';
 import { CheckOnCards } from '../components/CheckOn';
-import { useAccount } from '../sync/account';
+import { dismissNewOwner, useAccount } from '../sync/account';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -73,9 +73,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
     toast('Thank you. Your reflection was added.');
   };
 
-  const { role } = useAccount();
-  const [newOwner, setNewOwner] = useState(() => { try { return localStorage.getItem('idid.newOwner') === '1'; } catch { return false; } });
-  const dismissNewOwner = () => { try { localStorage.removeItem('idid.newOwner'); } catch { /* ignore */ } setNewOwner(false); };
+  const { role, newOwner } = useAccount();
   return (
     <div className="stack fade-in">
       <section style={{ padding: '.6rem 0 .2rem' }}>

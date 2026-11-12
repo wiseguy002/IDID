@@ -27,9 +27,9 @@ export type Phase =
   | 'needs-circle'   // keys ready; no circle yet
   | 'connected';
 
-interface State { phase: Phase; email: string; circleId: string | null; status: SyncEngine['status']; lastSyncedAt: number; error: string; role: CircleRole | null }
+interface State { phase: Phase; email: string; circleId: string | null; status: SyncEngine['status']; lastSyncedAt: number; error: string; role: CircleRole | null; newOwner: boolean }
 
-let state: State = { phase: cloudConfigured() ? 'signed-out' : 'off', email: '', circleId: null, status: 'idle', lastSyncedAt: 0, error: '', role: null };
+let state: State = { phase: cloudConfigured() ? 'signed-out' : 'off', email: '', circleId: null, status: 'idle', lastSyncedAt: 0, error: '', role: null, newOwner: (() => { try { return localStorage.getItem('idid.newOwner') === '1'; } catch { return false; } })() };
 const listeners = new Set<() => void>();
 const set = (p: Partial<State>) => { state = { ...state, ...p }; for (const l of listeners) l(); };
 export const useAccount = () => useSyncExternalStore((f) => { listeners.add(f); return () => { listeners.delete(f); }; }, () => state);
@@ -80,6 +80,12 @@ function startEngine() {
 }
 
 /** What this account may do in the circle. View-only members download but never upload. */
+/** Hide the one-time "You now manage this circle" note. */
+export function dismissNewOwner() {
+  try { localStorage.removeItem('idid.newOwner'); } catch { /* ignore */ }
+  set({ newOwner: false });
+}
+
 export async function refreshRole() {
   if (!remote || !keys?.circleId) return;
   const mine = (await remote.myMemberships()).find((m) => m.circle_id === keys!.circleId);
@@ -89,7 +95,7 @@ export async function refreshRole() {
   try {
     const key = `idid.role.${keys.circleId}`;
     const before = localStorage.getItem(key);
-    if (before && before !== 'owner' && role === 'owner') localStorage.setItem('idid.newOwner', '1');
+    if (before && before !== 'owner' && role === 'owner') { localStorage.setItem('idid.newOwner', '1'); set({ newOwner: true }); }
     if (role) localStorage.setItem(key, role);
   } catch { /* storage unavailable */ }
   set({ role });

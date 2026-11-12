@@ -28,6 +28,7 @@ import Board from './screens/Board';
 import Body from './screens/Body';
 import Comfort from './screens/Comfort';
 import Prep from './screens/Prep';
+import Calm from './screens/Calm';
 import { CheckOnSheet } from './components/CheckOn';
 import { Cover, useHideShortcut } from './components/QuickHide';
 import { OfflineNotice } from './components/OfflineNotice';
@@ -170,7 +171,7 @@ export default function App() {
   }
 
   const ctx = { settings, members, parts, me, route, go, toast, checkIn: openCheckIn, openTour: () => setTourOpen(true), checkOn: () => setCheckOnOpen(true) };
-  const inWizard = route.name === 'log' || route.name === 'observe';
+  const inWizard = route.name === 'log' || route.name === 'observe' || route.name === 'calm';
 
   return (
     <Ctx.Provider value={ctx}>
@@ -216,6 +217,7 @@ export default function App() {
           {route.name === 'board' && <Board />}
           {route.name === 'body' && <Body />}
           {route.name === 'comfort' && <Comfort />}
+          {route.name === 'calm' && <Calm />}
           {route.name === 'prep' && <Prep key={route.appointmentId ?? 'next'} appointmentId={route.appointmentId} />}
         </main>
         {!inWizard && (

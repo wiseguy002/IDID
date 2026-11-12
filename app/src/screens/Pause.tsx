@@ -28,6 +28,7 @@ export default function Pause() {
         <button className="btn sm" onClick={() => go({ name: 'safety' })}><Icon name="shield" size={16} /> {plan ? 'My safety plan' : 'Make a safety plan'}</button>
         <button className="btn sm" onClick={checkOn}><Icon name="bell" size={16} /> Check on me</button>
         <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>
+        <button className="btn sm primary" onClick={() => go({ name: 'calm' })}><Icon name="sparkle" size={16} /> Calm space</button>
       </div>
       <Segmented label="Tool" value={mode} onChange={setMode} options={[{ value: 'breathe', label: 'Breathe' }, { value: 'ground', label: '5-4-3-2-1' }, { value: 'orient', label: 'Right now' }]} />
       {mode === 'breathe' && (

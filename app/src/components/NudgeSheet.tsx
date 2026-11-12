@@ -105,6 +105,10 @@ export function NudgeSheet({ onClose, onSnooze }: { onClose: () => void; onSnooz
           <Idea k="breathe" icon="leaf" title="Breathe" body="Three slow breaths together, in for 4 and out for 5." />
           <Idea k="ritual" icon="sparkle" title="Interrupt the pattern" body={`${ritual}.`} />
           <Idea k="outside" icon="heart" title={outside.title} body={outside.body} />
+          <button className="card" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '.8rem', margin: '0 0 .6rem' }} onClick={() => leave({ name: 'calm' })}>
+            <span style={{ color: 'var(--accent)', paddingTop: 2 }}><Icon name="sparkle" size={22} /></span>
+            <span><b>A minute in the Calm space</b><br /><span className="small muted">Soft ripples and drifting lights. Nothing to do, nothing to win.</span></span>
+          </button>
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <button className="btn ghost sm" onClick={() => setRitual(ritualIdea(me?.rituals))}>Another ritual idea</button>
             <button className="btn ghost sm" onClick={() => { toast('Thanks for checking in.'); onClose(); }}>I'm okay for now</button>

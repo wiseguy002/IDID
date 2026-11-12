@@ -24,6 +24,7 @@ export type Route =
   | { name: 'board' }
   | { name: 'body' }
   | { name: 'comfort' }
+  | { name: 'calm' }
   | { name: 'prep'; appointmentId?: string }
   | { name: 'join'; invite: string };
 

@@ -23,7 +23,7 @@ At this point iDID works on-device only. People can install it from the browser 
 iDID signs people in with a 6-digit code from their email. A code is more reliable than a link when iDID is installed as an app.
 
 1. **Authentication → Providers → Email**: make sure Email is enabled. Turn on "Confirm email".
-2. **Authentication → Email Templates → Magic Link**: include the code, for example:
+2. **Authentication → Email Templates → Magic Link** and **Confirm signup**: include the code, for example (on the free plan, Supabase only lets you edit templates after custom SMTP is set up in step 4 below; until then its default emails send a sign-in link, which works when opened on the same device):
 
    ```html
    <h2>Your iDID sign-in code</h2>
@@ -32,7 +32,7 @@ iDID signs people in with a 6-digit code from their email. A code is more reliab
    ```
 
 3. **Authentication → URL Configuration**: set **Site URL** to `https://app.idid.care` and add it under **Redirect URLs**.
-4. For real use, set up custom SMTP under **Project Settings → Auth → SMTP**. Supabase's built-in email is rate-limited and meant for testing.
+4. For real use, set up custom SMTP under **Project Settings → Auth → SMTP**. Supabase's built-in email sends only a couple of emails an hour and is meant for testing. A free sender such as Resend works; send from a subdomain like `send.idid.care` so it doesn't clash with email forwarding on `idid.care`. Also set **Authentication → Providers → Email → Email OTP length** to 6, the length iDID asks for.
 
 ## 4. Push notifications
 
@@ -57,15 +57,15 @@ iDID signs people in with a 6-digit code from their email. A code is more reliab
 
 ## 5. Connect the web app to Supabase
 
-In GitHub, open **Settings → Secrets and variables → Actions → Variables** and add these repository variables:
+Put the three public values in `app/.env.production` and commit it:
 
 | Name | Value |
 |---|---|
-| `SUPABASE_URL` | Project URL from step 2 |
-| `SUPABASE_ANON_KEY` | anon public key from step 2 |
-| `VAPID_PUBLIC_KEY` | public key from step 4 |
+| `VITE_SUPABASE_URL` | Project URL from step 2 |
+| `VITE_SUPABASE_ANON_KEY` | anon public key from step 2 |
+| `VITE_VAPID_PUBLIC_KEY` | public key from step 4 |
 
-All three are public values; access is enforced by the database's row-level security. Re-run the deploy workflow.
+All three are safe to publish: access is enforced by the database's row-level security, and journal data is encrypted on the device before it is sent. Never put the service-role key, the VAPID private key or `CRON_SECRET` in this file. The deploy workflow builds with these values on the next push to `main`.
 
 For local development, copy `app/.env.example` to `app/.env.local` and fill in the same values.
 

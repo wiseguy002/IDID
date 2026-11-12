@@ -96,4 +96,20 @@ describe('a family member joins after starting on their own', () => {
     await new SyncEngine(b, ownerR, circle, mem()).sync();
     expect(b.get('entries', 'v1')).toBeUndefined();
   }, 30000);
+
+  it('the owner can hand the circle to someone in it, and stays as a member', async () => {
+    const server = new FakeServer();
+    const momR = server.as('u-mom'), samR = server.as('u-sam');
+    const mom = await createAccount(momR, 'mom pass phrase', ITER);
+    const circle = await createCircle(momR, mom);
+    await joinWithInvite(samR, await createAccount(samR, 'sam pass phrase', ITER), await makeInvite(momR, circle));
+    await expect(samR.transferOwnership(circle.circleId, 'u-sam')).rejects.toThrow(/owner/);
+    await expect(momR.transferOwnership(circle.circleId, 'u-stranger')).rejects.toThrow(/join the circle first/);
+    await momR.transferOwnership(circle.circleId, 'u-sam');
+    const roles = Object.fromEntries((await samR.circleMembers(circle.circleId)).map((m) => [m.user_id, m.role]));
+    expect(roles).toEqual({ 'u-mom': 'member', 'u-sam': 'owner' });
+    await expect(momR.setMemberRole(circle.circleId, 'u-sam', 'viewer')).rejects.toThrow(/owner/);
+    await samR.setMemberRole(circle.circleId, 'u-mom', 'viewer');
+    expect((await samR.circleMembers(circle.circleId)).find((m) => m.user_id === 'u-mom')?.role).toBe('viewer');
+  }, 30000);
 });

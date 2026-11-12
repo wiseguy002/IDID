@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAll } from '../db';
 import { useApp } from '../state';
 import {
-  cancelInvitation, circleAccounts, currentUserId, inviteStatuses, invitePerson, removeAccount, renewInvitation, setAccess, statusOf, useAccount,
+  cancelInvitation, circleAccounts, currentUserId, inviteStatuses, invitePerson, refreshRole, removeAccount, renewInvitation, setAccess, statusOf, transferCircle, useAccount,
   type InviteStatus,
 } from '../sync/account';
 import type { InviteRow, MembershipRow } from '../sync/remote';
@@ -48,6 +48,7 @@ export function useRoster() {
     if (a.phase !== 'connected') return;
     circleAccounts().then(setAccounts).catch(() => undefined);
     inviteStatuses().then(setRows).catch(() => undefined);
+    refreshRole().catch(() => undefined); // ownership may have been handed to this person
   }, [a.phase]);
   useEffect(() => { refresh(); }, [refresh, a.lastSyncedAt]);
   return { connected: a.phase === 'connected', isOwner: a.role === 'owner', canInvite: a.role === 'owner' || a.role === 'member', accounts, rows, refresh };
@@ -196,6 +197,8 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
   const [inviting, setInviting] = useState(false);
   const [busy, setBusy] = useState(false);
   const send = useSendSheet();
+  const [handing, setHanding] = useState(false);
+  const [sure, setSure] = useState(false);
   const account = member.userId ? roster.accounts.find((x) => x.user_id === member.userId) : undefined;
   const pending = invites.filter((i) => i.memberId === member.id && statusOf(i, roster.rows.get(i.id)) === 'waiting').sort((a, b) => b.createdAt - a.createdAt)[0];
   const share = shares.find((s) => s.memberId === member.id);
@@ -216,6 +219,7 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
                   if (v === 'selected') { go({ name: 'careteam', memberId: member.id, fromCircle: member.userId }); return; }
                   act(() => setAccess(member.userId!, v), v === 'viewer' ? `${member.name} can now only view.` : `${member.name} can now view and add.`);
                 }} />
+                <button className="btn sm" disabled={busy} onClick={() => setHanding(true)}><Icon name="people" size={15} /> Make {member.name} the circle's owner</button>
                 <button className="btn ghost danger sm" disabled={busy} onClick={() => act(() => removeAccount(member.userId!), `${member.name} no longer has access. Anything already on their device stays there.`)}>Remove {member.name}'s access</button>
               </>
             )}
@@ -234,6 +238,24 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
         )}
       {inviting && <InviteSheet member={member} onClose={() => setInviting(false)} />}
       {send.sheet}
+      {handing && (
+        <Sheet title={`Make ${member.name} the owner?`} onClose={() => { setHanding(false); setSure(false); }}>
+          <p>{member.name} will manage this circle: inviting people, choosing what each person can see and do, sharing with a care team, and removing access.</p>
+          <ul className="small" style={{ paddingLeft: '1.2rem' }}>
+            <li>You'll stay in the circle and can still view and add.</li>
+            <li>Only {member.name} can change people's access after this, including yours.</li>
+            <li>To get it back, {member.name} would need to hand it back to you.</li>
+          </ul>
+          <label className="row" style={{ alignItems: 'flex-start', gap: '.6rem', cursor: 'pointer', margin: '.6rem 0' }}>
+            <input id="handover-sure" type="checkbox" checked={sure} onChange={(e) => setSure(e.target.checked)} style={{ width: 22, height: 22, marginTop: 2 }} />
+            <span>I want {member.name} to manage this circle.</span>
+          </label>
+          <div className="row">
+            <button className="btn primary" disabled={!sure || busy} onClick={() => act(async () => { await transferCircle(member.userId!); setHanding(false); }, `${member.name} now manages the circle.`)}>Make {member.name} the owner</button>
+            <button className="btn ghost" onClick={() => { setHanding(false); setSure(false); }}>Cancel</button>
+          </div>
+        </Sheet>
+      )}
     </div>
   );
 }

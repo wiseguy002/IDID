@@ -29,6 +29,8 @@ export interface Remote {
   revokeInvite(inviteId: string): Promise<void>;
   /** Owner only: let someone add and change things ('member') or only view ('viewer'). */
   setMemberRole(circleId: string, userId: string, role: 'member' | 'viewer'): Promise<void>;
+  /** Owner only: make someone already in the circle its owner; the caller stays as a member. */
+  transferOwnership(circleId: string, newOwner: string): Promise<void>;
   getInvite(inviteId: string): Promise<{ circle_id: string; wrapped_circle_key: string } | null>;
   acceptInvite(inviteId: string, sealedKey: string): Promise<string>;
   removeMember(circleId: string, userId: string): Promise<void>;

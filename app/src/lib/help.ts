@@ -210,7 +210,7 @@ export const HELP: HelpTopic[] = [
     id: 'access', group: 'Your circle', title: 'Who can see what',
     summary: 'Choose each person’s access, and change it any time.',
     body: [
-      { p: 'Tap a person in **Circle** to choose their access. The circle’s owner decides.' },
+      { p: 'Tap a person in **Circle** to choose their access. The circle’s owner decides, and can hand the circle to someone else (see "Handing the circle to someone else").' },
       { list: [
         '**Can view and add**: sees what the circle shares, logs moments, adds what they noticed, and uses Check on me.',
         '**View only**: sees what the circle shares but can’t add or change anything. Our server refuses their changes.',
@@ -221,6 +221,26 @@ export const HELP: HelpTopic[] = [
     ],
     open: [{ label: 'Open Circle', route: { name: 'circle' } }],
     keywords: 'permissions roles view only read only remove access privacy selected',
+  },
+  {
+    id: 'ownership', group: 'Your circle', title: 'Handing the circle to someone else',
+    summary: 'When the person whose journal it is should manage the circle.',
+    body: [
+      { p: 'Often a parent, partner or friend sets iDID up first, and later the person whose journal it really is joins. They can become the circle’s **owner**, so they decide who sees what.' },
+      { steps: [
+        'Make sure they’ve joined the circle on their own device.',
+        'In **Circle**, tap their name.',
+        'Tap **Make [name] the circle’s owner**, read what changes, tick that you’re sure, and confirm.',
+      ] },
+      { list: [
+        'They can then invite people, choose each person’s access, share with a care team, and remove access, including yours.',
+        'You stay in the circle and can still view and add.',
+        'Only the owner can hand it on again. To get it back, ask them to hand it back to you.',
+      ] },
+      { tip: 'The next time they open iDID, they’ll see a note that they now manage the circle, with a shortcut to review who can see what.' },
+    ],
+    open: [{ label: 'Open Circle', route: { name: 'circle' } }],
+    keywords: 'owner ownership transfer hand over manage admin primary control',
   },
   {
     id: 'joining', group: 'Your circle', title: 'Joining someone else’s circle',

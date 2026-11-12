@@ -14,7 +14,7 @@ import type { Activity } from '../types';
 
 export type EventName =
   | 'tour' | 'pause' | 'patterns' | 'timeline' | 'export' | 'calendar' | 'support-viewed'
-  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered';
+  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered' | 'box-breath';
 
 /** Counts the app derives from stored data for one person. */
 export interface Facts {
@@ -60,7 +60,7 @@ export const FEATURES: Feature[] = [
   { id: 'reflect', name: 'Looking back', group: 'Noticing', route: { name: 'timeline' }, about: 'Add what you understand later to an earlier moment.', used: (f) => f.reflections > 0 },
   { id: 'patterns', name: 'Patterns', group: 'Noticing', route: { name: 'insights' }, about: 'See common triggers, places, times and what helps.', used: (_f, a) => ev(a, 'patterns'), tipPriority: 5, tip: 'Patterns can show what tends to come before hard moments, and what helps.' },
   { id: 'parts', name: 'Parts', group: 'Noticing', route: { name: 'circle' }, about: 'Keep notes about the parts of your system.', used: (f) => f.parts > 0 },
-  { id: 'pause', name: 'Pause tools', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathing, 5-4-3-2-1 grounding and "right now" orientation.', used: (_f, a) => ev(a, 'pause'), tipPriority: 2, tip: 'Pause has breathing and grounding tools for when things feel like too much.' },
+  { id: 'pause', name: 'Pause tools', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathing, box breathing, 5-4-3-2-1 grounding and "right now" orientation.', used: (_f, a) => ev(a, 'pause'), tipPriority: 2, tip: 'Pause has breathing and grounding tools for when things feel like too much.' },
   { id: 'calm', name: 'Calm space', group: 'Calm & coping', route: { name: 'calm' }, about: 'Ripples, light trails and drifting lights to unwind for a minute.', used: (_f, a) => ev(a, 'calm'), tipPriority: 3, tip: 'The Calm space is a quiet minute of ripples or drifting lights, with nothing to do and nothing to win.' },
   { id: 'checkins', name: 'Gentle check-ins', group: 'Calm & coping', route: { name: 'settings' }, about: 'A kind word and a small idea, a few times a day.', used: (f) => f.checkins > 0 },
   { id: 'rituals', name: 'Healthy rituals', group: 'Calm & coping', route: { name: 'settings' }, about: 'Your own small ways to interrupt a hard pattern.', used: (f) => f.rituals > 0, tipPriority: 4, tip: 'Adding a few of your own healthy rituals makes check-ins more personal.' },
@@ -99,6 +99,8 @@ export const BADGES: Badge[] = [
   { id: 'all-of-us', name: 'All of us', icon: 'people', about: 'Added a part of your system.', earned: (f) => f.parts >= 1 },
   { id: 'pause', name: 'Took a pause', icon: 'leaf', about: 'Used the Pause tools.', earned: (_f, a) => c(a, 'pause') >= 1 },
   { id: 'calm-practice', name: 'Calm practice', icon: 'leaf', about: 'Used Pause 10 times.', earned: (_f, a) => c(a, 'pause') >= 10 },
+  { id: 'first-box', name: 'First box', icon: 'box', about: 'Built a box with box breathing.', earned: (_f, a) => c(a, 'box-breath') >= 1 },
+  { id: 'box-builder', name: 'Box builder', icon: 'box', about: 'Built 50 boxes with box breathing.', earned: (_f, a) => c(a, 'box-breath') >= 50 },
   { id: 'calm-moment', name: 'A moment of calm', icon: 'leaf', about: 'Spent time in the Calm space.', earned: (_f, a) => c(a, 'calm') >= 1 },
   { id: 'calm-habit', name: 'Calm habit', icon: 'leaf', about: 'Visited the Calm space 10 times.', earned: (_f, a) => c(a, 'calm') >= 10 },
   { id: 'checked-in', name: 'Checked in', icon: 'sparkle', about: 'Answered a gentle check-in.', earned: (f) => f.checkins >= 1 },

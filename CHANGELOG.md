@@ -14,6 +14,15 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-12
+
+Breathe in a square, one box at a time.
+
+### Added
+- **Box breathing** on Pause: breathe in for 4, hold for 4, out for 4 and hold for 4 while a soft light traces each side of a square. Every square you finish adds a little box to a group you're building. Choose 4 boxes (about a minute), 8 boxes (about two minutes) or keep going, and pause any time.
+- With calm motion on, each side lights up in one step instead of a moving light, and new boxes appear without animation.
+- Two new badges: **First box** and **Box builder** (50 boxes).
+
 ## [0.9.0] - 2026-11-12
 
 A quiet place to decompress.
@@ -159,7 +168,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/wiseguy002/IDID/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/wiseguy002/IDID/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/wiseguy002/IDID/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/wiseguy002/IDID/compare/v0.7.1...v0.8.0

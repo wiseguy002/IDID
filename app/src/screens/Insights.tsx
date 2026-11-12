@@ -64,7 +64,7 @@ export default function Insights() {
 
   return (
     <div className="fade-in">
-      <PageHead title="Patterns" sub="Gentle summaries — not judgements." />
+      <PageHead title="Patterns" sub="Gentle summaries — not judgments." />
       <Segmented label="Time range" value={range} onChange={setRange} options={[{ value: '30', label: '30 days' }, { value: '90', label: '90 days' }, { value: 'all', label: 'All time' }]} />
       {tracked.length > 1 && <div style={{ marginTop: '.7rem' }}><ChipSelect value={who} onChange={setWho} options={tracked.map((m) => ({ value: m.id, label: m.name, color: m.color }))} /></div>}
 

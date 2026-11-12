@@ -36,9 +36,9 @@ export const HELP: HelpTopic[] = [
   },
   {
     id: 'settings', group: 'Getting started', title: 'Make iDID comfortable',
-    summary: 'Colours, text size, calm motion, a readable font and auto-lock.',
+    summary: 'Colors, text size, calm motion, a readable font and auto-lock.',
     body: [
-      { p: 'Open **Settings** (the gear at the top). You can choose a colour theme, larger text, a dyslexia-friendly font, and soft edges.' },
+      { p: 'Open **Settings** (the gear at the top). You can choose a color theme, larger text, a dyslexia-friendly font, and soft edges.' },
       { p: '**Calm motion** turns off animations and movement everywhere, including the breathing tools and Calm space, which switch to still versions.' },
       { p: '**Auto-lock** locks iDID after a few minutes away. **Quick hide** (the eye at the top) locks it instantly and shows an ordinary-looking screen.' },
       { p: 'You can also choose what to call parts: parts, alters, headmates or selves.' },

@@ -1,6 +1,6 @@
 /**
  * Curated US support resources. Phone numbers, text codes and links were checked
- * against each organisation's official site in November 2026 (see VERIFIED_ON).
+ * against each organization's official site in November 2026 (see VERIFIED_ON).
  * ZIP-prefilled links are used only where the site was confirmed to accept them;
  * for the others, people enter their ZIP on the site itself.
  *
@@ -57,7 +57,7 @@ export const CRISIS: Resource[] = [
   },
   {
     id: 'ctl', name: 'Crisis Text Line', kind: 'talk', needs: [],
-    about: 'Text with a trained crisis counsellor if talking out loud feels like too much.',
+    about: 'Text with a trained crisis counselor if talking out loud feels like too much.',
     text: { to: '741741', body: 'HOME', label: 'Text HOME to 741741' }, url: 'https://www.crisistextline.org/', hours: '24/7',
   },
 ];
@@ -118,11 +118,11 @@ export const RESOURCES: Resource[] = [
   },
   {
     id: 'pt-trauma', name: 'Trauma & PTSD therapists', kind: 'near', needs: ['trauma', 'did'],
-    about: 'Psychology Today listings of therapists who specialise in trauma and PTSD.',
+    about: 'Psychology Today listings of therapists who specialize in trauma and PTSD.',
     url: 'https://www.psychologytoday.com/us/therapists', zipUrl: (z) => `https://www.psychologytoday.com/us/therapists/${z}?category=trauma-and-ptsd`,
   },
   {
-    id: 'pt-all', name: 'Therapists, counsellors & social workers', kind: 'near', needs: [],
+    id: 'pt-all', name: 'Therapists, counselors & social workers', kind: 'near', needs: [],
     about: 'All Psychology Today listings near you. Filter by insurance, cost, language and more on the page.',
     url: 'https://www.psychologytoday.com/us/therapists', zipUrl: (z) => `https://www.psychologytoday.com/us/therapists/${z}`,
   },
@@ -148,7 +148,7 @@ export const RESOURCES: Resource[] = [
   },
   {
     id: 'rainn-centers', name: 'Local sexual assault service providers', kind: 'near', needs: ['sexual-assault'],
-    about: "RAINN's directory of local centers for counselling, advocacy and accompaniment.",
+    about: "RAINN's directory of local centers for counseling, advocacy and accompaniment.",
     url: 'https://centers.rainn.org/', asksForZip: true,
   },
 

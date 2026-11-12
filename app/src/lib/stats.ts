@@ -1,4 +1,5 @@
 import type { Entry, Part } from '../types';
+import { usLabel } from './defaults';
 import { countBy, durationLabel, timeOfDay } from './util';
 
 export function computeStats(entries: Entry[], parts: Part[], mName: (id: string) => string) {
@@ -26,7 +27,7 @@ export function computeStats(entries: Entry[], parts: Part[], mName: (id: string
   const partTriggers = new Map<string, Map<string, number>>();
   for (const e of entries) for (const p of [...e.frontingPartIds, ...e.coFrontPartIds]) {
     const m = partTriggers.get(p) ?? new Map<string, number>();
-    for (const t of e.triggers) m.set(t, (m.get(t) ?? 0) + 1);
+    for (const t of e.triggers.map(usLabel)) m.set(t, (m.get(t) ?? 0) + 1);
     partTriggers.set(p, m);
   }
   const byPart = [...partTriggers.entries()].map(([pid, m]) => ({ part: parts.find((p) => p.id === pid), top: [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3) })).filter((x) => x.part && x.top.length);
@@ -36,8 +37,8 @@ export function computeStats(entries: Entry[], parts: Part[], mName: (id: string
     avgMood,
     lostTimePct: entries.length ? Math.round((entries.filter((e) => e.lostTime).length / entries.length) * 100) : 0,
     coFrontPct: entries.length ? Math.round((entries.filter((e) => e.coFronting).length / entries.length) * 100) : 0,
-    triggers: countBy(entries, (e) => e.triggers),
-    locations: countBy(entries, (e) => e.location),
+    triggers: countBy(entries, (e) => e.triggers.map(usLabel)),
+    locations: countBy(entries, (e) => (e.location ? usLabel(e.location) : e.location)),
     feelings: countBy(entries, (e) => e.feelings),
     fronting: countBy(entries, (e) => [...e.frontingPartIds.map(pName), ...(e.frontingUnknown ? ['Not sure / unknown'] : [])]),
     durations: countBy(entries, (e) => (e.duration ? durationLabel(e.duration) : null)),

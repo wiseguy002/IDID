@@ -47,7 +47,7 @@ Do a full audit when any of these happens:
 | Learn | `site/pages/learn.html` | Education first; mention tools only where they help |
 | Privacy | `site/pages/privacy.html` | Anything that stores, shares or shows data; what the server sees; honest limits |
 | Spread the word | `site/pages/share.html` | Ready-to-send messages that describe current features |
-| Press kit | `site/pages/press.html` | Short and long descriptions, key facts, colours |
+| Press kit | `site/pages/press.html` | Short and long descriptions, key facts, colors |
 | Fact sheet | `site/press/fact-sheet.html` | Every feature, briefly |
 | Press release | `site/press/press-release.html` | Key features list and the description of sharing and privacy |
 | Flyer and images | `site/tools/build-assets.mjs` | The five flyer points; social image text |

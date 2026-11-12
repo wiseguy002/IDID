@@ -11,7 +11,7 @@ export function CrisisCard() {
   return (
     <div className="card warm" style={{ marginBottom: '.9rem' }}>
       <h3 style={{ marginBottom: '.25rem' }}>Need help right now?</h3>
-      <p className="small" style={{ margin: '0 0 .6rem' }}>If you or someone else is in immediate danger, call <b>911</b>. For any kind of emotional crisis, you can reach a trained counsellor any time, free:</p>
+      <p className="small" style={{ margin: '0 0 .6rem' }}>If you or someone else is in immediate danger, call <b>911</b>. For any kind of emotional crisis, you can reach a trained counselor any time, free:</p>
       <div className="row" style={{ gap: '.45rem' }}>
         <a className="btn sm primary" href="tel:988">Call 988</a>
         <a className="btn sm" href="sms:988">Text 988</a>
@@ -174,11 +174,11 @@ export default function Support() {
         <div className="row between"><h2 style={{ margin: 0 }}>{isSelf ? 'My' : `${who?.name}'s`} support contacts</h2>
           <button className="btn sm" onClick={() => setContact(blankContact(whoId))}><Icon name="plus" size={16} /> Add</button></div>
         {contacts.length === 0
-          ? <p className="small muted" style={{ marginTop: '.5rem', marginBottom: 0 }}>Keep your therapist, social worker, counsellor, local crisis center or group here, ready to call or text.</p>
+          ? <p className="small muted" style={{ marginTop: '.5rem', marginBottom: 0 }}>Keep your therapist, social worker, counselor, local crisis center or group here, ready to call or text.</p>
           : contacts.map((c) => <ContactRow key={c.id} c={c} onEdit={() => setContact(c)} />)}
       </div>
 
-      <p className="tiny muted">Services listed are run by other organisations. iDID doesn't endorse specific providers, and listings can change. Contact details checked {VERIFIED_ON}. Outside the US, contact your local emergency number.</p>
+      <p className="tiny muted">Services listed are run by other organizations. iDID doesn't endorse specific providers, and listings can change. Contact details checked {VERIFIED_ON}. Outside the US, contact your local emergency number.</p>
       {contact && <ContactForm c={contact} onClose={() => setContact(null)} />}
     </div>
   );

@@ -21,7 +21,7 @@ export const PLANTS: { kind: PlantKind; label: string; trait: string; bloom: str
   { kind: 'lavender', label: 'Lavender', trait: 'Calming, soothing, a caretaker', bloom: '#a58bd6' },
   { kind: 'oak', label: 'Oak sapling', trait: 'Steady and grounding, an anchor for others', bloom: '#8fbf7a' },
   { kind: 'willow', label: 'Willow', trait: 'Flexible, bends without breaking', bloom: '#b9d98c' },
-  { kind: 'wildflower', label: 'Wildflowers', trait: 'Playful, curious, full of colour', bloom: '#f08a6c' },
+  { kind: 'wildflower', label: 'Wildflowers', trait: 'Playful, curious, full of color', bloom: '#f08a6c' },
   { kind: 'rose', label: 'Rose', trait: 'Tender and fierce, beauty with thorns', bloom: '#d9566b' },
   { kind: 'moss', label: 'Moss', trait: 'Quiet and resting, softly there', bloom: '#c7d98b' },
   { kind: 'bamboo', label: 'Bamboo', trait: 'Persistent, grows fast, keeps going', bloom: '#9ccf8f' },
@@ -158,7 +158,7 @@ export function weatherFrom(checkins: CheckIn[], now = Date.now()): Weather {
 }
 
 export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
-/** Northern-hemisphere seasons by month, or always spring if the person prefers. */
+/** Northern Hemisphere seasons by month, or always spring if the person prefers. */
 export function seasonFor(date: Date, mode: 'seasons' | 'spring'): Season {
   if (mode === 'spring') return 'spring';
   const m = date.getMonth();
@@ -209,7 +209,7 @@ export interface IdeaInput {
 
 /**
  * A few gentle ideas for helping the garden grow, each linking to a part of iDID.
- * Ideas favour things tried least, rotate day to day, and get softer on hard days.
+ * Ideas favor things tried least, rotate day to day, and get softer on hard days.
  * They are invitations, never tasks: nothing is lost by ignoring them.
  */
 export function careIdeas(d: IdeaInput, max = 3): CareIdea[] {

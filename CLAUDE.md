@@ -22,4 +22,4 @@ After enough changes that help, website, press materials or docs may be out of d
 
 - Inline `style` attributes are fine in `site/pages`: the build moves them into classes because the CSP blocks inline styles.
 - Live database changes are migrations in `supabase/migrations/`, applied in filename order. Ask the owner before applying them to the live project.
-- Write user-facing text in plain, gentle language. Never put private details in notifications.
+- Write user-facing text in plain, gentle language and American English (color, organization, counselor, canceled). Never put private details in notifications.

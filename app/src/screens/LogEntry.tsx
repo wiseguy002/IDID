@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { saveEntry, store, uid, updateSettings } from '../db';
 import { useApp } from '../state';
-import { DEFAULT_FEELINGS, DEFAULT_LOCATIONS, DEFAULT_TRIGGERS, MOODS, PALETTE } from '../lib/defaults';
+import { usLabel, DEFAULT_FEELINGS, DEFAULT_LOCATIONS, DEFAULT_TRIGGERS, MOODS, PALETTE } from '../lib/defaults';
 import { partWords, toLocalInput } from '../lib/util';
 import { DURATIONS, type Entry } from '../types';
 import { ChipSelect, Segmented, Switch } from '../components/ui';
@@ -33,7 +33,7 @@ export default function LogEntry({ entryId }: { entryId?: string }) {
   useEffect(() => {
     if (!entryId) return;
     const x = store.get('entries', entryId);
-    if (x) { setE(x); setWhen('earlier'); }
+    if (x) { setE({ ...x, triggers: x.triggers.map(usLabel), location: x.location ? usLabel(x.location) : x.location }); setWhen('earlier'); }
     setLoaded(true);
   }, [entryId]);
 

@@ -6,7 +6,7 @@ interface Ripple { x: number; y: number; t0: number }
 interface Spark { x: number; y: number; t0: number; r: number }
 interface Orb { x: number; y: number; r: number; vx: number; vy: number; phase: number; hue: 0 | 1 | 2 }
 
-/** Reads the theme's colours so the canvas always matches light, dark or high contrast. */
+/** Reads the theme's colors so the canvas always matches light, dark or high contrast. */
 function palette() {
   const s = getComputedStyle(document.documentElement);
   const v = (n: string, f: string) => s.getPropertyValue(n).trim() || f;

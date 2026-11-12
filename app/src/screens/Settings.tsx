@@ -65,7 +65,7 @@ export default function Settings() {
       <PageHead title="Settings" onBack={() => go({ name: 'home' })} />
       <div className="card">
         <h2>Comfort</h2>
-        <div className="eyebrow">Colours</div>
+        <div className="eyebrow">Colors</div>
         <Segmented label="Theme" value={s.theme} onChange={(v: ThemeName) => up({ theme: v })}
           options={[{ value: 'morning', label: 'Morning' }, { value: 'meadow', label: 'Meadow' }, { value: 'dusk', label: 'Dusk' }, { value: 'clear', label: 'High contrast' }]} />
         <div className="eyebrow" style={{ marginTop: '.9rem' }}>Text size</div>
@@ -127,7 +127,7 @@ export default function Settings() {
           : perm === 'unsupported'
             ? <p className="small muted">This browser can't show notifications. Reminders will appear inside iDID instead. On iPhone, add iDID to your Home Screen first.</p>
             : <button className="btn" onClick={turnOnNotifications}><Icon name="bell" size={18} /> Turn on notifications</button>}
-        <Switch label="Appointment reminders" hint="Therapy, counselling, groups — at the times you choose" checked={s.notifyAppointments} onChange={(v) => up({ notifyAppointments: v })} />
+        <Switch label="Appointment reminders" hint="Therapy, counseling, groups — at the times you choose" checked={s.notifyAppointments} onChange={(v) => up({ notifyAppointments: v })} />
         <Switch label="Medication reminders" hint="Only says “it's time”, never the medication" checked={s.notifyMeds} onChange={(v) => up({ notifyMeds: v })} />
         <Switch label="When someone asks what I noticed" checked={s.notifyObservations} onChange={(v) => up({ notifyObservations: v })} />
         <Switch label="Daily check-in reminder" checked={!!s.checkInTime} onChange={(v) => up({ checkInTime: v ? '20:00' : null })} />

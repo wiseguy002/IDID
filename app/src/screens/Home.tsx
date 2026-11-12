@@ -5,6 +5,9 @@ import { fmtDateTime, greeting, relTime, sinceLast, welcomeLine } from '../lib/u
 import { Icon } from '../components/Icon';
 import { useUpcoming } from './Appointments';
 import { kindLabel } from '../lib/schedule';
+import { APP_VERSION, RELEASES } from '../version';
+import { compareVersions, releasesBetween } from '../lib/changelog';
+import { updateDevice } from '../db';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -45,6 +48,9 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
   }).slice(0, 3);
 
   const soon = useUpcoming(7).slice(0, 2);
+  // After an update: list what changed since the last version this device saw.
+  const seen = settings.lastSeenVersion;
+  const updated = seen && compareVersions(APP_VERSION, seen) > 0 ? releasesBetween(RELEASES, seen, APP_VERSION) : [];
   const weekCount = visible.filter((e) => Date.now() - e.occurredAt < 7 * 86400_000).length;
   const back = sinceLast(prevOpened);
   const reflection = REFLECTIONS[new Date().getDay() % REFLECTIONS.length];
@@ -64,6 +70,19 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         <h1 style={{ fontSize: '1.85rem' }}>{greeting(me?.name ?? '')}</h1>
         <p className="muted" style={{ fontSize: '1.05rem' }}>{back ?? welcomeLine()}</p>
       </section>
+
+      {updated.length > 0 && (
+        <div className="card blue" role="status">
+          <div className="eyebrow"><Icon name="sparkle" size={14} /> Updated to version {APP_VERSION}</div>
+          <ul style={{ margin: '.2rem 0 .6rem', paddingLeft: '1.2rem' }}>
+            {updated.map((r) => <li key={r.version} className="small"><b>{r.version}:</b> {r.summary}</li>)}
+          </ul>
+          <div className="row">
+            <button className="btn sm" onClick={() => { updateDevice({ lastSeenVersion: APP_VERSION }); go({ name: 'changelog' }); }}>See what's new</button>
+            <button className="btn ghost sm" onClick={() => updateDevice({ lastSeenVersion: APP_VERSION })}>Got it</button>
+          </div>
+        </div>
+      )}
 
       <button className="card accent" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '1rem', alignItems: 'center' }} onClick={() => go({ name: 'log' })}>
         <span className="brand-mark" style={{ width: 52, height: 52, background: 'var(--accent)', color: 'var(--accent-ink)' }}><Icon name="plus" size={26} /></span>

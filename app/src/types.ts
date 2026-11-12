@@ -194,6 +194,8 @@ export interface DeviceSettings {
   /** No nudges between quietStart and quietEnd ("HH:MM", local time). */
   quietStart: string;
   quietEnd: string;
+  /** Last app version this device has shown "What's new" for. */
+  lastSeenVersion: string | null;
 }
 
 /** Combined view used by screens. */

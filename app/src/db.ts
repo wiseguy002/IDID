@@ -7,6 +7,7 @@ import { openIdb } from './data/idb';
 import { Store, useStoreVersion, type Kind, type KindMap } from './data/store';
 import { defaultDevice, defaultPrefs } from './lib/defaults';
 import type { DeviceSettings, Entry, Prefs, Settings } from './types';
+import { APP_VERSION } from './version';
 
 export const persist = openIdb('idid-secure');
 export const store = new Store(persist);
@@ -99,7 +100,9 @@ export async function deleteEntry(id: string) {
 
 export interface Backup {
   app: 'idid';
+  /** Backup file format version (separate from the app version). */
   version: 2;
+  appVersion?: string;
   exportedAt: string;
   members: KindMap['members'][];
   parts: KindMap['parts'][];
@@ -113,7 +116,7 @@ export interface Backup {
 
 export function exportAll(): Backup {
   return {
-    app: 'idid', version: 2, exportedAt: new Date().toISOString(),
+    app: 'idid', version: 2, appVersion: APP_VERSION, exportedAt: new Date().toISOString(),
     members: store.all('members'), parts: store.all('parts'), entries: store.all('entries'),
     observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), checkins: store.all('checkins'), prefs: getPrefs(),
   };

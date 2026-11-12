@@ -48,6 +48,7 @@ export function defaultDevice(): DeviceSettings {
     nudgesPerDay: 2,
     quietStart: '21:00',
     quietEnd: '09:00',
+    lastSeenVersion: null,
   };
 }
 

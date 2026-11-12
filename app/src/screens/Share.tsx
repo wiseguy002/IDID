@@ -6,6 +6,7 @@ import { download, durationLabel, entriesToCsv, fmtDateTime, moodLabel, partWord
 import { ChipSelect, PageHead, Segmented, Sheet } from '../components/ui';
 import { Icon } from '../components/Icon';
 import { Bars } from './Insights';
+import { APP_VERSION } from '../version';
 
 export default function Share() {
   const { me, members, parts, settings, go, toast } = useApp();
@@ -75,7 +76,7 @@ export default function Share() {
       {/* Printable report (also shown as preview) */}
       <article className="card" style={{ background: 'var(--surface)' }}>
         <div className="row between"><h2 style={{ margin: 0 }}>IDID summary{who.length === 1 ? ` — ${mName(who[0])}` : ''}</h2><span className="small muted">{rangeLabel}</span></div>
-        <p className="small muted">Prepared {new Date().toLocaleDateString()} · self-reported journal entries and observations from a trust circle. Not a clinical assessment.</p>
+        <p className="small muted">Prepared {new Date().toLocaleDateString()} with IDID {APP_VERSION} · self-reported journal entries and observations from a trust circle. Not a clinical assessment.</p>
         <div className="grid2" style={{ gridTemplateColumns: 'repeat(4, 1fr)', margin: '.8rem 0' }}>
           <div className="stat"><span className="tiny muted">Entries</span><b>{s.total}</b></div>
           <div className="stat"><span className="tiny muted">Usual mood</span><b style={{ fontSize: '1rem' }}>{s.avgMood ? moodLabel(Math.round(s.avgMood)) : '—'}</b></div>

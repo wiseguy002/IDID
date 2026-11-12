@@ -9,6 +9,7 @@ import { permission, requestPermission } from '../lib/notify';
 import { pushAvailable, enablePush } from '../sync/push';
 import { passphraseChanged } from '../sync/account';
 import { DEFAULT_RITUALS } from '../lib/nudges';
+import { APP_VERSION, BUILD_COMMIT } from '../version';
 
 export default function Settings() {
   const { settings: s, go, toast, me, checkIn } = useApp();
@@ -142,7 +143,8 @@ export default function Settings() {
         <button className="btn ghost danger" style={{ marginLeft: '.4rem' }} onClick={() => setWipe(true)}>Delete all data</button>
       </div>
       <div className="card soft small">
-        <h3>About IDID</h3>
+        <div className="row between"><h3 style={{ margin: 0 }}>About IDID</h3><span className="tag">Version {APP_VERSION}</span></div>
+        <p className="small" style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => go({ name: 'changelog' })}><Icon name="sparkle" size={15} /> What's new</button> <span className="tiny muted">Build {BUILD_COMMIT}</span></p>
         <p>IDID is a private journal for noticing dissociative and trauma-related experiences, and for gathering gentle observations from people you trust. It is not a diagnostic tool or a substitute for professional care.</p>
         <p style={{ margin: 0 }}>If you are in danger or thinking about harming yourself, please contact local emergency services. In the US, call or text <b>988</b>. In the UK & Ireland, Samaritans: <b>116 123</b>.</p>
       </div>

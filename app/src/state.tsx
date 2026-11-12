@@ -15,6 +15,7 @@ export type Route =
   | { name: 'appointments' }
   | { name: 'account' }
   | { name: 'support' }
+  | { name: 'changelog' }
   | { name: 'join'; invite: string };
 
 export interface AppCtx {

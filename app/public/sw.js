@@ -1,5 +1,6 @@
 // Offline support: cache the app shell; network-first for navigations, cache-first for assets.
-const CACHE = 'idid-v1';
+// One cache per app version (passed as ?v= when registering), so updates replace old files cleanly.
+const CACHE = 'idid-' + (new URL(self.location.href).searchParams.get('v') || 'dev');
 self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html']))); });
 self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));

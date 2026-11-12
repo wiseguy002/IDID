@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { persist, store, updateDevice, useAll, useSettings } from './db';
+import { getDevice, persist, store, updateDevice, useAll, useSettings } from './db';
 import { hasVault } from './data/vault';
 import { Ctx, type Route } from './state';
 import { Icon } from './components/Icon';
@@ -19,6 +19,8 @@ import Pause from './screens/Pause';
 import Appointments from './screens/Appointments';
 import Account, { pendingInvite } from './screens/Account';
 import Support from './screens/Support';
+import Changelog from './screens/Changelog';
+import { APP_VERSION } from './version';
 import { lockAccount, resume } from './sync/account';
 import { useReminders } from './lib/useReminders';
 import { NudgeSheet } from './components/NudgeSheet';
@@ -94,6 +96,8 @@ export default function App() {
   // Start or stop the online circle along with the lock.
   useEffect(() => {
     if (unlocked) {
+      // Journals created before version tracking (0.6.0) count as having seen 0.5.0.
+      if (!getDevice().lastSeenVersion) updateDevice({ lastSeenVersion: '0.5.0' });
       resume().catch(() => undefined);
       if (pendingInvite()) setRoute({ name: 'account' });
     } else {
@@ -116,7 +120,7 @@ export default function App() {
   useReminders(unlocked ? me : null, settings, toast, onNudge);
 
   if (vault === null) return null;
-  if (!vault || (unlocked && members.length === 0)) return <Onboarding onDone={() => { writeHandled(Date.now()); setVault(true); setChosen(true); }} />;
+  if (!vault || (unlocked && members.length === 0)) return <Onboarding onDone={() => { writeHandled(Date.now()); updateDevice({ lastSeenVersion: APP_VERSION }); setVault(true); setChosen(true); }} />;
   if (!unlocked) return <Lock onUnlock={() => undefined} />;
   if (members.length > 1 && !chosen) {
     return <WhoIsHere members={members} current={me?.id ?? null} onPick={(id) => { updateDevice({ activeMemberId: id }); setRoute({ name: 'home' }); setChosen(true); }} />;
@@ -157,6 +161,7 @@ export default function App() {
           {route.name === 'appointments' && <Appointments />}
           {route.name === 'account' && <Account />}
           {route.name === 'support' && <Support />}
+          {route.name === 'changelog' && <Changelog />}
         </main>
         {!inWizard && (
           <nav className="bottomnav no-print" aria-label="Main">

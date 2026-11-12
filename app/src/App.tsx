@@ -16,6 +16,10 @@ import Circle from './screens/Circle';
 import Share from './screens/Share';
 import SettingsScreen from './screens/Settings';
 import Pause from './screens/Pause';
+import Appointments from './screens/Appointments';
+import Account, { pendingInvite } from './screens/Account';
+import { lockAccount, resume } from './sync/account';
+import { useReminders } from './lib/useReminders';
 
 const NAV: { name: Route['name']; label: string; icon: string }[] = [
   { name: 'home', label: 'Home', icon: 'home' },
@@ -81,6 +85,19 @@ export default function App() {
 
   const me = useMemo(() => members.find((m) => m.id === settings.activeMemberId) ?? members[0] ?? null, [members, settings.activeMemberId]);
 
+  // Start or stop the online circle along with the lock.
+  useEffect(() => {
+    if (unlocked) {
+      resume().catch(() => undefined);
+      if (pendingInvite()) setRoute({ name: 'account' });
+    } else {
+      lockAccount();
+      setChosen(false); // on a shared device, ask who's here again after unlocking
+    }
+  }, [unlocked]);
+
+  useReminders(unlocked ? me : null, { appointments: settings.notifyAppointments, checkInTime: settings.checkInTime }, toast);
+
   if (vault === null) return null;
   if (!vault || (unlocked && members.length === 0)) return <Onboarding onDone={() => { setVault(true); setChosen(true); }} />;
   if (!unlocked) return <Lock onUnlock={() => undefined} />;
@@ -120,6 +137,8 @@ export default function App() {
           {route.name === 'share' && <Share />}
           {route.name === 'settings' && <SettingsScreen />}
           {route.name === 'pause' && <Pause />}
+          {route.name === 'appointments' && <Appointments />}
+          {route.name === 'account' && <Account />}
         </main>
         {!inWizard && (
           <nav className="bottomnav no-print" aria-label="Main">

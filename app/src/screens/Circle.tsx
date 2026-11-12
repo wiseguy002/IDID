@@ -78,7 +78,7 @@ function PartForm({ p, onClose }: { p: Part; onClose: () => void }) {
 }
 
 export default function Circle() {
-  const { members, parts, settings, me } = useApp();
+  const { members, parts, settings, me, go } = useApp();
   const [editM, setEditM] = useState<Member | null>(null);
   const [editP, setEditP] = useState<Part | null>(null);
   const w = partWords(settings.partWord);
@@ -90,6 +90,10 @@ export default function Circle() {
   return (
     <div className="fade-in">
       <PageHead title="Trust circle" sub="The people who help, and the system within." />
+      <div className="row" style={{ marginBottom: '.9rem' }}>
+        <button className="btn sm" onClick={() => go({ name: 'appointments' })}><Icon name="clock" size={16} /> Appointments</button>
+        <button className="btn sm" onClick={() => go({ name: 'account' })}><Icon name="people" size={16} /> Connect devices & invite</button>
+      </div>
       <div className="card">
         <div className="row between"><h2 style={{ margin: 0 }}>People</h2><button className="btn sm" onClick={() => setEditM(newMember())}><Icon name="plus" size={17} /> Add</button></div>
         <div style={{ marginTop: '.6rem' }}>

@@ -11,7 +11,10 @@ export type Route =
   | { name: 'circle' }
   | { name: 'share' }
   | { name: 'settings' }
-  | { name: 'pause' };
+  | { name: 'pause' }
+  | { name: 'appointments' }
+  | { name: 'account' }
+  | { name: 'join'; invite: string };
 
 export interface AppCtx {
   settings: Settings;

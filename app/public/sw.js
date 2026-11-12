@@ -13,3 +13,20 @@ self.addEventListener('fetch', (e) => {
   }
   e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((r) => { if (r.ok) caches.open(CACHE).then((c) => c.put(req, r.clone())); return r; })));
 });
+
+// Web Push: notifications carry only generic text chosen by the server.
+self.addEventListener('push', (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch { d = { body: e.data && e.data.text() }; }
+  e.waitUntil(self.registration.showNotification(d.title || 'IDID', {
+    body: d.body || 'You have a gentle reminder.', tag: d.tag, icon: './favicon.svg', badge: './favicon.svg', silent: true, data: { kind: d.kind },
+  }));
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((cs) => {
+    const c = cs.find((x) => 'focus' in x);
+    return c ? c.focus() : self.clients.openWindow('./');
+  }));
+});

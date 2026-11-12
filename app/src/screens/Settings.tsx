@@ -5,6 +5,9 @@ import { useApp } from '../state';
 import type { PartWord, TextSize, ThemeName } from '../types';
 import { PageHead, Segmented, Sheet, Switch } from '../components/ui';
 import { Icon } from '../components/Icon';
+import { permission, requestPermission } from '../lib/notify';
+import { pushAvailable, enablePush } from '../sync/push';
+import { passphraseChanged } from '../sync/account';
 
 export default function Settings() {
   const { settings: s, go, toast } = useApp();
@@ -14,6 +17,17 @@ export default function Settings() {
   const [pin2, setPin2] = useState('');
   const [passErr, setPassErr] = useState('');
   const [newCode, setNewCode] = useState<string | null>(null);
+  const [perm, setPerm] = useState(permission());
+  const turnOnNotifications = async () => {
+    const p = await requestPermission();
+    setPerm(p);
+    if (p === 'granted') {
+      if (pushAvailable()) {
+        const ok = await enablePush().catch(() => false);
+        toast(ok ? 'Notifications are on, even when IDID is closed.' : 'Notifications are on while IDID is open.');
+      } else toast('Notifications are on while IDID is open.');
+    } else if (p === 'denied') toast('Notifications are blocked. You can allow them in your browser or phone settings.');
+  };
   const [wipe, setWipe] = useState(false);
   const [wipeText, setWipeText] = useState('');
   const up = (p: Parameters<typeof updateSettings>[0]) => updateSettings(p);
@@ -22,6 +36,7 @@ export default function Settings() {
     const key = await unlockVault(persist, oldPass);
     if (!key) { setPassErr("Your current passphrase didn't match."); return; }
     await changePassphrase(persist, key, pin);
+    await passphraseChanged(pin).catch(() => toast('Passphrase changed here. Sign in again on other devices to update your account.'));
     setOldPass(''); setPin(''); setPin2(''); setPassErr(''); setPassOpen(false);
     toast('Passphrase changed.');
   };
@@ -55,6 +70,23 @@ export default function Settings() {
         <Segmented label="Word for parts" value={s.partWord} onChange={(v: PartWord) => up({ partWord: v })}
           options={[{ value: 'parts', label: 'Parts' }, { value: 'alters', label: 'Alters' }, { value: 'headmates', label: 'Headmates' }, { value: 'selves', label: 'Selves' }]} />
         <Switch label="Looking-back check-ins" hint="When you return, gently ask if there's anything to add about a recent moment" checked={s.showCheckIn} onChange={(v) => up({ showCheckIn: v })} />
+      </div>
+      <div className="card">
+        <h2>Notifications</h2>
+        <p className="small muted">Notifications never show what you wrote, only a gentle nudge to open IDID.</p>
+        {perm === 'granted'
+          ? <p className="small"><span className="tag"><Icon name="bell" size={14} /> Notifications allowed on this device</span></p>
+          : perm === 'unsupported'
+            ? <p className="small muted">This browser can't show notifications. Reminders will appear inside IDID instead. On iPhone, add IDID to your Home Screen first.</p>
+            : <button className="btn" onClick={turnOnNotifications}><Icon name="bell" size={18} /> Turn on notifications</button>}
+        <Switch label="Appointment reminders" hint="Therapy, counselling, groups — at the times you choose" checked={s.notifyAppointments} onChange={(v) => up({ notifyAppointments: v })} />
+        <Switch label="When someone asks what I noticed" checked={s.notifyObservations} onChange={(v) => up({ notifyObservations: v })} />
+        <Switch label="Daily check-in reminder" checked={!!s.checkInTime} onChange={(v) => up({ checkInTime: v ? '20:00' : null })} />
+        {s.checkInTime && (
+          <label className="field"><span className="small">Remind me at</span>
+            <input id="checkin-time" className="input" type="time" value={s.checkInTime} onChange={(e) => e.target.value && up({ checkInTime: e.target.value })} style={{ maxWidth: 180 }} /></label>
+        )}
+        <button className="btn sm" onClick={() => go({ name: 'appointments' })}><Icon name="clock" size={16} /> Manage appointments</button>
       </div>
       <div className="card">
         <h2>Privacy</h2>

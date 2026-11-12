@@ -3,6 +3,8 @@ import { store, uid, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { fmtDateTime, greeting, relTime, sinceLast, welcomeLine } from '../lib/util';
 import { Icon } from '../components/Icon';
+import { useUpcoming } from './Appointments';
+import { kindLabel } from '../lib/schedule';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -42,6 +44,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
     return e && (e.subjectId === me?.id || e.authorId === me?.id) && o.memberId !== me?.id;
   }).slice(0, 3);
 
+  const soon = useUpcoming(7).slice(0, 2);
   const weekCount = visible.filter((e) => Date.now() - e.occurredAt < 7 * 86400_000).length;
   const back = sinceLast(prevOpened);
   const reflection = REFLECTIONS[new Date().getDay() % REFLECTIONS.length];
@@ -105,6 +108,17 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
           </div>
         </div>
       )}
+
+      <div className="card">
+        <div className="row between"><div className="eyebrow" style={{ margin: 0 }}><Icon name="clock" size={14} /> Coming up</div>
+          <button className="btn ghost sm" onClick={() => go({ name: 'appointments' })}>{soon.length ? 'All' : 'Add an appointment'}</button></div>
+        {soon.length === 0 ? <p className="small muted" style={{ margin: '.3rem 0 0' }}>No appointments in the next week.</p> : soon.map(({ a, next }) => (
+          <button key={a.id} className="entry" style={{ background: 'none', border: 0, padding: '.45rem 0' }} onClick={() => go({ name: 'appointments' })}>
+            <span className="bar" style={{ background: 'var(--accent-2)' }} />
+            <span><b>{a.title || kindLabel(a)}</b><br /><span className="small muted">{fmtDateTime(next)}{a.location ? ` · ${a.location}` : ''}</span></span>
+          </button>
+        ))}
+      </div>
 
       {myObsOnMine.length > 0 && (
         <div className="card">

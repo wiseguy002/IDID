@@ -67,6 +67,19 @@ export class Store {
     this.emit();
   }
 
+  /** Encrypt a small private value with the device data key (e.g. account keys). */
+  async sealLocal(name: string, value: unknown) {
+    if (!this.key) throw new Error('Store is locked');
+    await this.persist.put('kv', `sealed:${name}`, await encryptJson(this.key, value, `sealed:${name}`));
+  }
+  async openLocal<T>(name: string): Promise<T | null> {
+    if (!this.key) return null;
+    const box = await this.persist.get<string>('kv', `sealed:${name}`);
+    if (!box) return null;
+    try { return await decryptJson<T>(this.key, box, `sealed:${name}`); } catch { return null; }
+  }
+  async dropLocal(name: string) { await this.persist.del('kv', `sealed:${name}`); }
+
   lock() { this.key = null; this.recs.clear(); this.emit(); }
 
   all<K extends Kind>(kind: K): KindMap[K][] {

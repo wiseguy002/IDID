@@ -83,6 +83,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const steps = [
     <div key="0" className="stack">
       <div className="brand-mark" style={{ width: 64, height: 64 }}><Icon name="leaf" size={32} /></div>
+      {(() => { try { return sessionStorage.getItem('idid.invite'); } catch { return null; } })() && <div className="card blue small">You've been invited to a trust circle. Set up IDID on this device first, then you'll join.</div>}
       <h1>A quiet place to notice</h1>
       <p>IDID helps you gently record moments that felt different — when and where they happened, what may have set them off, how you felt, and who was around — so that over time, patterns become easier to see and share.</p>
       <div className="card accent">
@@ -150,7 +151,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     <div key="5" className="stack">
       <h1>Save your recovery code</h1>
       <p>If you ever forget your passphrase, this code is the only way back into your journal. Write it down or keep it in a password manager, somewhere safe and private.</p>
-      <div className="card" style={{ textAlign: 'center', fontFamily: 'ui-monospace, Menlo, Consolas, monospace', fontSize: '1.15rem', letterSpacing: '.06em', userSelect: 'all' }} aria-label="Recovery code">{recovery}</div>
+      <div className="card" style={{ textAlign: 'center', fontFamily: 'ui-monospace, Menlo, Consolas, monospace', fontSize: '1.15rem', letterSpacing: '.06em', userSelect: 'all' }} aria-label="Recovery code">{recovery?.split('-').map((g, i) => <span key={i} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>{g}{i < 4 ? '-' : ''}</span>)}</div>
       <button className="btn sm" onClick={() => { navigator.clipboard?.writeText(recovery ?? '').catch(() => undefined); }}>Copy code</button>
       <Switch label="I've saved my recovery code" checked={savedCode} onChange={setSavedCode} />
     </div>,

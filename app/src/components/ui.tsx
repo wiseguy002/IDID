@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Icon } from './Icon';
 
 export function Chip({ on, onClick, children, color }: { on?: boolean; onClick: () => void; children: ReactNode; color?: string }) {
@@ -73,7 +74,7 @@ export function Segmented<T extends string>({ options, value, onChange, label }:
 }
 
 export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
-  return (
+  return createPortal(
     <div className="overlay" onClick={onClose}>
       <div className="sheet" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <div className="row between" style={{ marginBottom: '.6rem' }}>
@@ -82,7 +83,8 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

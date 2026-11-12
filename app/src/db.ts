@@ -42,6 +42,7 @@ export function updateDevice(patch: Partial<DeviceSettings>) {
   try { localStorage.setItem(DEVICE_KEY, JSON.stringify(device)); } catch { /* storage unavailable */ }
   for (const l of deviceListeners) l();
 }
+export function subscribeDevice(fn: () => void) { deviceListeners.add(fn); return () => { deviceListeners.delete(fn); }; }
 export function useDevice() {
   return useSyncExternalStore((fn) => { deviceListeners.add(fn); return () => { deviceListeners.delete(fn); }; }, getDevice);
 }

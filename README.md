@@ -8,17 +8,18 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 
 | Area | What it does |
 |---|---|
-| **Welcome & check-ins** | Greets you by name, says "welcome back" after time away, and asks reflective follow-ups about recent moments ("With a little distance, is there anything you'd add?"). |
-| **Quick log** (5 optional steps, "Save now" at any point) | When (now / earlier, with a "best guess" flag) · Where · Triggers + possible cause · Mood (soft colour scale, no faces) · Feelings · Intensity · Fronting part(s) / unknown · Co-fronting with whom · Lost time · Duration · Who noticed (circle + others) · Notes · Privacy (circle or private) |
-| **Trust circle** | People with roles (partner, family, friend, clinician…) and permissions: *tracked*, *can view*, *can be asked to add notes*. More than one person can be tracked. |
-| **Observation requests** | When you mark that a circle member noticed, they get a gentle request. They answer with chips ("voice changed", "seemed younger"…), which part it seemed to be, duration, and free text. |
-| **Parts / system** | Per-person list of parts with pronouns, age, role, notes, and colour. Parts can be marked "resting" without losing history. You choose the word: parts / alters / headmates / selves. |
-| **Timeline** | Grouped by day, with search and filters by person and part. |
-| **Patterns** | Mood over 12 weeks, top triggers, who was fronting, **triggers per part**, locations, a day × time-of-day heatmap, feelings, durations, who tends to notice. |
-| **Share & export** | Printable clinician summary (save as PDF), CSV for spreadsheets (or the share sheet on phones), full JSON backup, restore/merge. |
-| **Pause** | Breathing circle, 5-4-3-2-1 grounding, "right now" orientation (date, time, place), and crisis line info. |
-| **Sensory comfort** | 4 themes (Morning, Meadow, Dusk dark, High contrast), 4 text sizes, calm-motion mode (honours the OS setting), extra-readable font, square or rounded edges. No sounds, vibration, flashing, or red alerts. |
-| **Privacy** | All data stays on the device (IndexedDB). Optional passcode lock. Nothing leaves the device unless you export it. |
+| **Welcome & check-ins** | Greets each person by name, notices time away, and asks reflective follow-ups about recent moments. |
+| **Quick log** (5 optional steps, "Save now" anytime) | When (with a "best guess" flag) · Where · Triggers & possible cause · Mood, feelings, intensity · Fronting / co-fronting parts, unknown fronter · Lost time · Duration · Who noticed · Notes · Circle or "only me" |
+| **Trust circle** | People with roles and permissions. Ask anyone who noticed something to add their observation. |
+| **Online circle** | Each person on their own phone: sign in with an email code, invite with a one-time link, automatic end-to-end encrypted sync. |
+| **Appointments** | Therapy, counselling, support groups, psychiatry: repeating schedules, reminders, "since last session" summaries, **add to Apple, Outlook or Google Calendar**. |
+| **Alerts** | Push notifications for appointment reminders, daily check-ins, and requests from the circle. The text is always generic so nothing private shows on a lock screen. |
+| **Parts / system** | Parts with pronouns, age, role, notes and colour. Your choice of word (parts / alters / headmates / selves). |
+| **Timeline & Patterns** | Search and filters; mood trend, triggers, fronting, triggers per part, places, day × time heatmap. |
+| **Share & export** | Clinician summary (print/PDF), CSV, full backup and restore. |
+| **Pause** | Breathing, 5-4-3-2-1 grounding, "right now" orientation, crisis lines. |
+| **Sensory comfort** | Morning, Meadow, Dusk (dark) and High contrast themes; 4 text sizes; calm motion; readable font. No sounds, vibration or flashing. |
+| **Privacy** | Encrypted on the device with your passphrase (AES-256-GCM) and a recovery code; auto-lock; end-to-end encrypted sync. See [docs/SECURITY.md](docs/SECURITY.md). |
 
 ## Running it
 
@@ -28,27 +29,26 @@ npm install
 npm run dev            # local development at http://localhost:5173
 npm run build          # production PWA in app/dist/ (host on any static host)
 npm run build:single   # one self-contained HTML file in app/dist-single/
+npm test               # unit tests: encryption, sync, scheduling
+../supabase/tests/run.sh  # database row-level security tests (needs PostgreSQL)
 ```
 
-The first screen has **"Explore with a sample circle"**, which loads fictional data so you can try every feature.
+The first screen has **"Explore with a sample circle"**, which loads fictional data so you can try every feature. The sample's passphrase is `sample circle`.
 
-## Current architecture
+## Architecture
 
-- **Storage:** IndexedDB via Dexie (`app/src/db.ts`). The data model is in `app/src/types.ts`.
-- **Multi-user:** for now the circle shares **one device**. A "Who's here?" picker appears when the app opens. Sharing with other devices is done through export files.
-- **Hosting:** static files only, so it can be hosted free (GitHub Pages, Netlify, Cloudflare Pages).
+- **App:** React + TypeScript PWA in `app/` (installable, works offline).
+- **On-device data:** an in-memory store backed by per-record AES-GCM ciphertext in IndexedDB (`app/src/data/`).
+- **Online circle:** Supabase (Postgres + auth + realtime) stores only ciphertext. Schema and row-level security are in `supabase/migrations/`, the push sender in `supabase/functions/send-push/`, and the sync engine in `app/src/sync/`.
+- **Hosting:** GitHub Pages via `.github/workflows/deploy.yml` (free). CI runs type checks, unit tests, the build, and database security tests on every pull request.
 
-## Decisions still open
+**Setup guide:** [docs/SETUP.md](docs/SETUP.md) · **Security model:** [docs/SECURITY.md](docs/SECURITY.md)
 
-1. **Multi-device trust circle (the biggest one).** Today, circle members must share a device.
-   - **A. Supabase** (Postgres + auth + row-level security + realtime). Fastest to build; free tier; sign in by email link. *Recommended.*
-   - **B. Firebase** (Firestore + Auth + push notifications). Similar to A, with good mobile push.
-   - **C. Self-hosted** Node/Postgres server. Full control and data residency, but you run it.
-   - **D. End-to-end encrypted sync** (on top of A or C). The server can't read entries. Best privacy, but more work, and a lost key means lost data.
-2. **Notifications.** For example, nudge a circle member when they're asked for a note, or send optional daily check-in reminders. This needs option A or B.
-3. **App stores.** Keep it as a PWA (installable from the browser, no store fees), or wrap it with Capacitor for the iOS/Android stores.
-4. **Encryption at rest.** The passcode currently locks the screen only. The data itself could also be encrypted with a key derived from the passcode.
-5. **Clinician access.** PDF/CSV export only (today), or a read-only clinician login once sync exists.
-6. **Wording & prompts.** All prompts and chip lists are in `app/src/lib/defaults.ts` and `app/src/lib/util.ts`. Review by someone with lived experience or a clinician is very welcome.
+## Roadmap
+
+1. ✅ Free web app with on-device encryption
+2. ✅ Online circle with end-to-end encryption, invites, push alerts, appointments and calendar export
+3. ⏭️ Android (Google Play) and iOS (App Store) apps via Capacitor, with on-device notifications and Face ID / fingerprint unlock
+4. Later: rotate the circle key when someone leaves; read-only clinician access
 
 > IDID is a journaling tool, not a medical device, and is not a substitute for professional care.

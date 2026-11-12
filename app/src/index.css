@@ -178,7 +178,7 @@ textarea.input { min-height: 96px; resize: vertical; }
 }
 .wizard-foot > div { max-width: 680px; margin: 0 auto; display: flex; gap: .6rem; }
 .wizard-foot .btn { flex: 1; }
-.fade-in { animation: fade .35s ease both; }
+.fade-in { animation: fade .35s ease backwards; }
 @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
 /* ---------- Timeline ---------- */

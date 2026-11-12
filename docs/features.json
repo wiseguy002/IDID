@@ -1,0 +1,610 @@
+{
+  "$comment": "Every user-facing feature and the materials that must describe it. Checked in CI by scripts/check-collateral.mjs. See docs/COLLATERAL.md.",
+  "materials": {
+    "home": "site/pages/index.html",
+    "learn": "site/pages/learn.html",
+    "privacy": "site/pages/privacy.html",
+    "share": "site/pages/share.html",
+    "presskit": "site/pages/press.html",
+    "fact": "site/press/fact-sheet.html",
+    "release": "site/press/press-release.html",
+    "flyer": "site/tools/build-assets.mjs",
+    "jsonld": "site/tools/seo.mjs",
+    "help": "app/src/lib/help.ts",
+    "tour": "app/src/components/Tour.tsx",
+    "explore": "app/src/lib/progress.ts",
+    "readme": "README.md",
+    "security": "docs/SECURITY.md"
+  },
+  "features": [
+    {
+      "name": "Log a moment",
+      "match": "log(ging)? a moment|note a moment|logging",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help"
+      ]
+    },
+    {
+      "name": "Parts and your own words",
+      "match": "alters|headmates",
+      "requiredIn": [
+        "home",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Timeline and reflections",
+      "match": "timeline|reflection",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Patterns",
+      "match": "pattern",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Patterns"
+      ]
+    },
+    {
+      "name": "Clinician summary and exports",
+      "match": "csv|clinician summary|print",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy"
+      ]
+    },
+    {
+      "name": "Backups",
+      "match": "backup",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme",
+        "privacy"
+      ]
+    },
+    {
+      "name": "Sensory comfort settings",
+      "match": "calm motion|text size|readable font|dyslexi",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Passphrase and recovery code",
+      "match": "recovery code",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ]
+    },
+    {
+      "name": "Auto-lock",
+      "match": "auto-?lock|lock now|locks itself",
+      "requiredIn": [
+        "home",
+        "help",
+        "readme",
+        "privacy"
+      ]
+    },
+    {
+      "name": "Online circle",
+      "match": "online circle|sync",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Online circle"
+      ]
+    },
+    {
+      "name": "Appointments",
+      "match": "appointment",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Appointments"
+      ]
+    },
+    {
+      "name": "Add to calendar",
+      "match": "calendar",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Add to calendar"
+      ]
+    },
+    {
+      "name": "Private notifications",
+      "match": "notification",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Notifications"
+      ]
+    },
+    {
+      "name": "Find support by ZIP code",
+      "match": "zip",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "security"
+      ]
+    },
+    {
+      "name": "Saved support contacts",
+      "match": "support contact|saved contact|pin(ned)? (them|it)? ?to",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Gentle check-ins",
+      "match": "check-?in",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Healthy rituals",
+      "match": "ritual",
+      "requiredIn": [
+        "home",
+        "release",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "What's new",
+      "match": "what's new|changelog",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Quick tour",
+      "match": "quick tour|\\btour\\b",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Explore and badges",
+      "match": "badge",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Explore"
+      ]
+    },
+    {
+      "name": "Gentle feature suggestions",
+      "match": "something that might help|suggestion",
+      "requiredIn": [
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Pay it forward",
+      "match": "kind(ness)? act|pay it forward|act of kindness",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Pay it forward"
+      ]
+    },
+    {
+      "name": "Kind notes",
+      "match": "kind note",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme",
+        "privacy"
+      ],
+      "changelog": [
+        "Kind notes"
+      ]
+    },
+    {
+      "name": "Suggest a feature",
+      "match": "suggest a feature|feature request",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme",
+        "privacy"
+      ],
+      "changelog": [
+        "Suggest a feature"
+      ]
+    },
+    {
+      "name": "Tell a friend",
+      "match": "tell a friend",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help"
+      ],
+      "changelog": [
+        "Tell a friend"
+      ]
+    },
+    {
+      "name": "Safety plan",
+      "match": "safety plan",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Safety plan"
+      ]
+    },
+    {
+      "name": "Check on me",
+      "match": "check on me",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Check on me"
+      ]
+    },
+    {
+      "name": "Quick hide",
+      "match": "quick hide",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Quick hide"
+      ]
+    },
+    {
+      "name": "Inner board",
+      "match": "inner board",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Inner board"
+      ]
+    },
+    {
+      "name": "Body basics and medications",
+      "match": "body basics|medication",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Body basics"
+      ]
+    },
+    {
+      "name": "Comfort kit",
+      "match": "comfort kit",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Comfort kit"
+      ]
+    },
+    {
+      "name": "Prepare for therapy",
+      "match": "(prepare|prep) (for )?therapy|therapy prep",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Prepare for therapy"
+      ]
+    },
+    {
+      "name": "Calm space",
+      "match": "calm space",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Calm space"
+      ]
+    },
+    {
+      "name": "Works offline",
+      "match": "offline",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Box breathing",
+      "match": "box breathing",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Box breathing"
+      ]
+    },
+    {
+      "name": "Restore on a new device",
+      "match": "already use idid|new device|another device|any device",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy"
+      ],
+      "changelog": [
+        "I already use iDID"
+      ]
+    },
+    {
+      "name": "Invite status and reminders",
+      "match": "remind|joined",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy"
+      ],
+      "changelog": [
+        "Invitations you can follow up on"
+      ]
+    },
+    {
+      "name": "Per-person access",
+      "match": "view only|selected information|who can see what|each person can",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Choose what each person can do"
+      ]
+    },
+    {
+      "name": "Joining after starting alone",
+      "match": "is one of these people you|appear twice|duplicate",
+      "requiredIn": [
+        "home",
+        "fact",
+        "help"
+      ],
+      "changelog": [
+        "Joining after starting on your own"
+      ]
+    },
+    {
+      "name": "Therapist & care team",
+      "match": "therapist",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Therapist & care team"
+      ]
+    },
+    {
+      "name": "Help & guides",
+      "match": "help & guides|help &amp; guides|help guides|help when you need",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "readme"
+      ],
+      "changelog": [
+        "Help & guides"
+      ]
+    },
+    {
+      "name": "Handing the circle over",
+      "match": "owner|hand(ing)? (the|your) circle",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Hand the circle to someone else"
+      ]
+    },
+    {
+      "name": "End-to-end encryption",
+      "match": "end-to-end",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "privacy",
+        "security"
+      ]
+    },
+    {
+      "name": "No ads or trackers",
+      "match": "no ads|no trackers",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "privacy"
+      ]
+    },
+    {
+      "name": "Crisis resources (988)",
+      "match": "988",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ]
+    },
+    {
+      "name": "Mood Garden",
+      "match": "mood garden",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "jsonld"
+      ],
+      "changelog": [
+        "Mood Garden"
+      ]
+    }
+  ]
+}

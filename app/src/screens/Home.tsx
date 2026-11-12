@@ -221,6 +221,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         <div className="eyebrow">My tools</div>
         <div className="row" style={{ gap: '.45rem' }}>
           <button className="btn sm" onClick={() => go({ name: 'calm' })}><Icon name="sparkle" size={16} /> Calm space</button>
+          <button className="btn sm" onClick={() => go({ name: 'garden' })}><Icon name="leaf" size={16} /> Mood Garden</button>
           <button className="btn sm" onClick={() => go({ name: 'body' })}><Icon name="body" size={16} /> Body basics</button>
           <button className="btn sm" onClick={() => go({ name: 'safety' })}><Icon name="shield" size={16} /> Safety plan</button>
           <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>

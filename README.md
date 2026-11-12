@@ -1,6 +1,6 @@
 # iDID — a gentle journal
 
-**Current version: 0.12.1** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.13.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
 iDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 
@@ -22,12 +22,13 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Tools for hard days** | A wordless **Calm space** (ripples, light trails, drifting lights), a guided **safety plan**, **Check on me** (quietly ask people to reach out), **Quick hide**, a **comfort kit**, an **inner board** for notes between parts, **body basics** with medication reminders, and **therapy prep**. |
 | **Explore & badges** | A quick tour, every feature in one place with what you've tried, gentle milestone badges (no streaks, no comparison), and at most a weekly suggestion of something that might help. |
 | **Kindness** | A daily small act of kindness to pay it forward, and anonymous **kind notes**: pick a caring message to brighten a random person's day. Opt-in, curated, no direct messages. |
-| **Help & guides** | 28 searchable in-app guides with steps and shortcuts, plus **What's new** after every update. Works offline, with a calm error page if something breaks. |
+| **Help & guides** | 29 searchable in-app guides with steps and shortcuts, plus **What's new** after every update. Works offline, with a calm error page if something breaks. |
 | **Suggest a feature** | Ideas and requests go to the iDID team, who can reply and track status in an in-app **Manage requests** screen. |
 | **Find support** | ZIP code and needs (DID specialist, trauma, low-cost care, LGBTQ+, veterans, family…) drive matched crisis lines, nearby specialists and health centers, helplines, and learning and community resources. Personal support contacts (therapist, social worker, crisis center) are one tap away on the Pause screen. |
 | **Parts / system** | Parts with pronouns, age, role, notes and colour. Your choice of word (parts / alters / headmates / selves). |
 | **Timeline & Patterns** | Search and filters; mood trend, triggers, fronting, triggers per part, places, day × time heatmap. |
 | **Share & export** | Clinician summary (print/PDF), CSV, full backup and restore. |
+| **Mood Garden** | One plant per part (or per person, including family members), grown only by care: moments, check-ins, pauses, box breathing, kind notes. Choose plant types and names; optional weather from check-ins (wind and storms on hard days, plants keep growing); seasons or always spring; gentle "ways to help it grow" ideas linked to the rest of the app, and a tally of what you've already done. |
 | **Pause** | Breathing, **box breathing** (build a group of boxes), 5-4-3-2-1 grounding, "right now" orientation, crisis lines. |
 | **Sensory comfort** | Morning, Meadow, Dusk (dark) and High contrast themes; 4 text sizes; calm motion; readable font. No sounds, vibration or flashing. |
 | **Privacy** | Encrypted on the device with your passphrase (AES-256-GCM) and a recovery code; auto-lock; end-to-end encrypted sync. See [docs/SECURITY.md](docs/SECURITY.md). |

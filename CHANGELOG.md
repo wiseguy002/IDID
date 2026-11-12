@@ -14,6 +14,14 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-12
+
+A garden that grows from the care you give, and never wilts.
+
+### Added
+- **Mood Garden**: a calm garden with one plant for each part (or one for you), grown by the care you give: noting moments, check-ins, pauses, box breathing, the Calm space, kind notes and more. Pick plant types and names that fit each part. Family members have a garden of their own. Weather follows your recent check-ins, so hard days bring wind and rain, but plants bend and keep growing and nothing ever wilts. Choose seasons through the year or always spring. "Ways to help it grow" offers a few gentle ideas that link to the rest of iDID, softer on hard days, and "Look at what you've already done" counts the care you've given. Find it under My tools on Home.
+- A help guide, **Mood Garden**, and a new badge, **Gardener**.
+
 ## [0.12.1] - 2026-11-12
 
 Everything documented, from the tour to the help guides.
@@ -206,7 +214,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.12.1...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/wiseguy002/IDID/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/wiseguy002/IDID/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/wiseguy002/IDID/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/wiseguy002/IDID/compare/v0.10.0...v0.11.0

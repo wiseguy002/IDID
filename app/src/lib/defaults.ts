@@ -55,6 +55,8 @@ export function defaultDevice(): DeviceSettings {
     kindActs: true,
     notifyMeds: true,
     hideStyle: 'calm',
+    gardenWeather: true,
+    gardenSeasons: 'seasons',
   };
 }
 

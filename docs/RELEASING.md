@@ -44,6 +44,8 @@ npm run release -- minor     # or patch / major
 
 This bumps `package.json` and moves everything under **Unreleased** into a new dated version section, with compare links. It refuses to release when nothing is under Unreleased. Also add a one-line summary under the new version heading if there isn't one; it's shown on Home after people update.
 
+If the release adds a feature, register it in [`docs/features.json`](features.json) and describe it in the required materials. CI's collateral check (`node scripts/check-collateral.mjs`) fails until you do. The release script also tells you when a **full collateral audit** is due; follow [COLLATERAL.md](COLLATERAL.md).
+
 Then:
 
 1. Commit (`Release v0.7.0`) and merge to `main`. The deploy workflow publishes the web app.

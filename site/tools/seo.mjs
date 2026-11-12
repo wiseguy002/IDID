@@ -37,6 +37,7 @@ const app = (description) => ({
     'Parts and system profiles with an inner message board',
     'Patterns and trends for triggers, places, feelings and what helps',
     'Breathing, box breathing, 5-4-3-2-1 grounding and a wordless Calm space',
+    'Mood Garden: a plant for each part that grows from self-care, never wilts',
     'Safety plan and a quiet "Check on me" request',
     'Trust circle with invite status, reminders and per-person access',
     'Read-only sharing with a therapist after explicit consent, removable at any time',

@@ -21,6 +21,8 @@ export interface Member {
   support?: SupportProfile;
   /** This person's own healthy rituals for interrupting a hard pattern. */
   rituals?: string[];
+  /** Their plant in the Mood Garden (used when they have no parts, such as family members). */
+  plant?: { kind: string; name?: string };
 }
 
 export type CheckInFeeling = 'good' | 'okay' | 'wobbly' | 'struggling';
@@ -107,6 +109,8 @@ export interface Part {
   color: string;
   archived?: boolean;
   createdAt: number;
+  /** This part's plant in the Mood Garden. */
+  plant?: { kind: string; name?: string };
 }
 
 export type Duration = 'moments' | 'minutes' | 'under-hour' | 'hours' | 'day-plus' | 'unsure';
@@ -213,6 +217,10 @@ export interface DeviceSettings {
   lastSeenVersion: string | null;
   /** Show badges and celebrate milestones. */
   badges: boolean;
+  /** Mood Garden: show check-ins as weather. */
+  gardenWeather: boolean;
+  /** Mood Garden: follow the seasons through the year, or always spring. */
+  gardenSeasons: 'seasons' | 'spring';
   /** Occasionally suggest a feature that might help. */
   featureTips: boolean;
   /** The quick tour has been offered on this device. */

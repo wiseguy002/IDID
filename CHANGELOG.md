@@ -16,9 +16,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [0.10.0] - 2026-11-12
 
-Breathe in a square, one box at a time.
+Breathe in a square, and pick up where you left off on a new device.
 
 ### Added
+- **I already use iDID**: on a new phone or computer, tap this on the welcome screen, sign in with your email code and your journal passphrase, and your journal comes back: your profile, parts, entries, private notes and circle, with no setup questions. This device gets its own recovery code. (Your journal needs to be in an online circle on your other device first.)
 - **Box breathing** on Pause: breathe in for 4, hold for 4, out for 4 and hold for 4 while a soft light traces each side of a square. Every square you finish adds a little box to a group you're building. Choose 4 boxes (about a minute), 8 boxes (about two minutes) or keep going, and pause any time.
 - With calm motion on, each side lights up in one step instead of a moving light, and new boxes appear without animation.
 - Two new badges: **First box** and **Box builder** (50 boxes).

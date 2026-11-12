@@ -3,14 +3,16 @@
  * a circle, invites, the running sync engine, and server-side reminders for push.
  */
 import { useSyncExternalStore } from 'react';
-import { factsFor, getActivity, getDevice, persist, store, subscribeDevice } from '../db';
+import { factsFor, getActivity, getDevice, persist, store, subscribeDevice, updateDevice } from '../db';
 import { nextTip } from '../lib/progress';
 import { doseTimesBetween } from '../lib/body';
 import { unlockVault } from '../data/vault';
+import { APP_VERSION } from '../version';
 import { checkInTimes, remindersBetween } from '../lib/schedule';
 import { nudgeTimesBetween } from '../lib/nudges';
 import { nudgesFor } from '../lib/useReminders';
 import { SyncEngine } from './engine';
+import { restoreJournal } from './restore';
 import { createAccount, createCircle, rewrapAccount, joinWithInvite, makeInvite, openAccount, openCircle, restoreSession, serialiseSession, type AccountKeys, type CircleSession } from './keys';
 import type { Remote, ReminderRow } from './remote';
 import { cloudConfigured, supabase, SupabaseRemote } from './supabase';
@@ -85,6 +87,7 @@ export async function resume() {
   const { data } = await sb.auth.getSession();
   const user = data.session?.user;
   if (!user) { set({ phase: 'signed-out' }); return; }
+  if (keys) return; // already connected (for example, just restored on a new device)
   remote = new SupabaseRemote(sb, user.id);
   set({ email: user.email ?? '' });
   const saved = await store.openLocal<Parameters<typeof restoreSession>[0]>(SESSION);
@@ -102,11 +105,36 @@ export function lockAccount() {
   if (state.phase !== 'off') set({ phase: remote ? 'needs-keys' : 'signed-out', status: 'idle' });
 }
 
-export async function sendCode(email: string) {
+/** Email a sign-in code. `existingOnly` (signing in on a new device) never creates a new account. */
+export async function sendCode(email: string, existingOnly = false) {
   const redirect = location.origin + location.pathname;
-  const { error } = await supabase().auth.signInWithOtp({ email, options: { emailRedirectTo: redirect, shouldCreateUser: true } });
-  if (error) throw new Error(error.message);
+  const { error } = await supabase().auth.signInWithOtp({ email, options: { emailRedirectTo: redirect, shouldCreateUser: !existingOnly } });
+  if (error) {
+    if (existingOnly && /signups? not allowed|not found|otp_disabled/i.test(error.message)) throw new Error("We couldn't find an iDID account for that email. Check the spelling, or set up iDID as new.");
+    throw new Error(error.message);
+  }
   set({ email });
+}
+
+export type RestoreResult =
+  | { result: 'ok'; recoveryCode: string; entries: number }
+  | { result: 'no-account' | 'wrong-passphrase' | 'no-circle' };
+
+/** Returning person on a new device, already signed in with their email code: bring their journal here. */
+export async function restoreOnNewDevice(passphrase: string): Promise<RestoreResult> {
+  if (!remote) throw new Error('Not signed in');
+  const r = await restoreJournal({
+    remote, persist, store, passphrase, syncState,
+    beforeOpen: (session) => {
+      keys = session; // set first, so the app's automatic resume() leaves this session alone
+      try { localStorage.setItem('idid.nudge.handled', String(Date.now())); } catch { /* ignore */ }
+    },
+  });
+  if (r.result !== 'ok') return r;
+  await persistKeys();
+  updateDevice({ activeMemberId: r.meId, lastSeenVersion: APP_VERSION });
+  startEngine();
+  return { result: 'ok', recoveryCode: r.recoveryCode, entries: r.entries };
 }
 
 export async function verifyCode(email: string, code: string) {

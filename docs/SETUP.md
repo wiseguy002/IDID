@@ -85,6 +85,7 @@ You can also browse requests in **Table Editor → feedback**.
 2. Sign in with your email code, enter your journal passphrase, and choose **Create our circle**.
 3. **Make an invite link** and send it privately to someone you trust. They open it, set up iDID, sign in, and join.
 4. In **Settings → Notifications**, turn on notifications on each device.
+5. On another phone or computer of your own, tap **I already use iDID** on the welcome screen, then sign in with the same email and your journal passphrase. Everything syncs down, and that device gets its own recovery code.
 
 > **iPhone and iPad:** web push works only after iDID is added to the Home Screen (Share → Add to Home Screen) on iOS 16.4 or later.
 

@@ -12,6 +12,7 @@
   document.querySelectorAll('a[href^="http"]').forEach((a) => {
     if (new URL(a.href).hostname.endsWith('idid.care')) return;
     a.target = '_blank'; a.rel = 'noopener noreferrer';
+    if (!a.querySelector('.sr-only')) { const t = document.createElement('span'); t.className = 'sr-only'; t.textContent = ' (opens in a new tab)'; a.append(t); }
   });
 
   const toast = (m) => {

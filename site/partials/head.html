@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
+<meta name="keywords" content="{{keywords}}">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="author" content="iDID">
 <link rel="canonical" href="https://idid.care{{path}}">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="application-name" content="iDID">
+<meta name="apple-mobile-web-app-title" content="iDID">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/img/icon-180.png">
 <meta name="theme-color" content="#f5efe6" media="(prefers-color-scheme: light)">
@@ -18,19 +25,26 @@
 <meta property="og:image" content="https://idid.care/assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="iDID: a gentle, private journal for dissociation, DID and trauma responses">
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{title}}">
+<meta name="twitter:description" content="{{description}}">
+<meta name="twitter:image" content="https://idid.care/assets/img/og-image.png">
+<meta name="twitter:image:alt" content="iDID: a gentle, private journal for dissociation, DID and trauma responses">
+{{jsonld}}
 <link rel="stylesheet" href="/assets/site.css?v={{v}}">
 <script src="/assets/site.js?v={{v}}" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="crisis" role="note">
+<aside class="crisis" aria-label="Crisis support">
   <div class="wrap"><span class="long">In crisis or thinking about suicide? You're not alone.</span> <span class="short">Need help now?</span> <span>Call or text <a href="tel:988">988</a><span class="long"> (US) · Text HOME to <a href="sms:741741?&amp;body=HOME">741741</a></span> · Emergency <a href="tel:911">911</a></span></div>
-</div>
+</aside>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="34" height="34">iDID</a>
-    <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
+    <button type="button" class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
     <nav class="main" id="nav" aria-label="Main">
       <a href="/#features" {{nav-features}}>Features</a>
       <a href="/learn" {{nav-learn}}>Learn</a>

@@ -1,5 +1,6 @@
-// Checks the built site: internal links resolve, pages render without errors,
-// nothing scrolls sideways on a phone, and no third-party requests are made.
+// Checks the built site: internal links resolve, pages render without errors under the real
+// Content-Security-Policy, nothing scrolls sideways on a phone, no third-party requests are made,
+// pages pass the axe accessibility audit (WCAG 2.2 AA, light and dark), and the HTML validates.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -9,16 +10,21 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const dist = resolve(dirname(fileURLToPath(import.meta.url)), '../dist');
-const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.pdf': 'application/pdf', '.xml': 'application/xml', '.txt': 'text/plain' };
+const types = { '.webmanifest': 'application/manifest+json', '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.pdf': 'application/pdf', '.xml': 'application/xml', '.txt': 'text/plain' };
 const fileFor = (p) => {
   const clean = decodeURIComponent(p.split('#')[0].split('?')[0]);
   for (const c of [clean, clean + '.html', join(clean, 'index.html')]) { const f = join(dist, c); if (existsSync(f) && !f.endsWith('/')) try { readFileSync(f); return f; } catch { /* dir */ } }
   return null;
 };
+// The same Content-Security-Policy the live site sends (from _headers), so blocked styles or scripts fail here.
+const csp = readFileSync(join(dist, '_headers'), 'utf8').match(/^\/\*\n(?:  .*\n)*?  Content-Security-Policy: (.*)$/m)?.[1];
+if (!csp) throw new Error('No Content-Security-Policy found for /* in _headers');
+let axeSource = null;
+try { axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'); } catch { console.warn('axe-core not installed: skipping the accessibility audit'); }
 const server = createServer((req, res) => {
   const f = fileFor(req.url === '/' ? '/index.html' : req.url);
   if (!f) { res.writeHead(404, { 'content-type': 'text/html' }); res.end(readFileSync(join(dist, '404.html'))); return; }
-  res.writeHead(200, { 'content-type': types[extname(f)] ?? 'application/octet-stream' });
+  res.writeHead(200, { 'content-type': types[extname(f)] ?? 'application/octet-stream', ...(f.includes('/errors/') ? {} : { 'content-security-policy': csp }) });
   res.end(readFileSync(f));
 }).listen(0);
 const port = server.address().port;
@@ -59,10 +65,28 @@ for (const [w, h, label] of [[390, 844, 'phone'], [1280, 800, 'desktop']]) {
       const noAlt = await p.$$eval('img:not([alt])', (els) => els.length);
       if (noAlt) problems.push(`${path}: ${noAlt} image(s) without alt`);
     }
+    if (axeSource) {
+      for (const scheme of ['light', 'dark']) {
+        await p.emulateMedia({ colorScheme: scheme });
+        // Injected through the test harness (not the page), so the page's CSP doesn't apply to it.
+        await p.evaluate(axeSource);
+        const r = await p.evaluate(() => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] } }));
+        for (const v of r.violations) problems.push(`${label} ${scheme} ${path}: accessibility (${v.impact}) ${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(', ')}`);
+      }
+    }
     await p.close();
   }
 }
 await b.close();
 server.close();
+// Standards-conformant HTML (html-validate's standard rules), when installed.
+try {
+  const { HtmlValidate } = require('html-validate');
+  const hv = new HtmlValidate({ extends: ['html-validate:standard'] });
+  for (const f of [...readdirSync(dist).filter((x) => x.endsWith('.html')), 'press/fact-sheet.html', 'press/press-release.html']) {
+    const report = await hv.validateFile(join(dist, f));
+    for (const r of report.results) for (const m of r.messages) problems.push(`${f}:${m.line}: HTML ${m.ruleId}: ${m.message}`);
+  }
+} catch (e) { if (e.code === 'MODULE_NOT_FOUND') console.warn('html-validate not installed: skipping HTML validation'); else throw e; }
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
-console.log(`Site OK: ${pages.length} pages × phone and desktop. No broken links, sideways scrolling, errors or third-party requests.`);
+console.log(`Site OK: ${pages.length} pages × phone and desktop, light and dark. No broken links, sideways scrolling, CSP errors, third-party requests${axeSource ? ', accessibility violations' : ''} or invalid HTML.`);

@@ -29,9 +29,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install Playwright for the site checks
-        run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
-      - name: Build and check website (links, phone layout, no third-party requests)
+      - name: Install Playwright, axe-core and html-validate for the site checks
+        run: npm i --no-save playwright@1 axe-core@4.10.2 html-validate@9.4.1 && npx playwright install --with-deps chromium
+      - name: Build and check website (links, layout, CSP, accessibility, valid HTML)
         run: node site/tools/build-site.mjs && NODE_PATH=$PWD/node_modules node site/tools/check-site.mjs
 
   database:

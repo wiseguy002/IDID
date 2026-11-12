@@ -24,6 +24,9 @@ Breathe in a square, and pick up where you left off on a new device.
 - With calm motion on, each side lights up in one step instead of a moving light, and new boxes appear without animation.
 - Two new badges: **First box** and **Box builder** (50 boxes).
 
+### Fixed
+- Removing someone's online account no longer fails when they've saved entries, and the entries they shared stay with the circle.
+
 ## [0.9.0] - 2026-11-12
 
 A quiet place to decompress.

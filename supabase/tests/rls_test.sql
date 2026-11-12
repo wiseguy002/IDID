@@ -132,6 +132,14 @@ select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
 select pg_temp.expect((select status = 'planned' and admin_note like 'Great%' from public.feedback where id = :'fb'), 'submitter sees the reply');
 select pg_temp.expect_error('select * from public.app_admins', 'admin list is private');
 
+-- ---------- Deleting an account ----------
+-- Records someone last edited stay in the circle when their account is deleted (by an admin, so no signed-in user).
+reset role; select set_config('request.jwt.claim.sub', '', false);
+insert into auth.users values ('00000000-0000-0000-0000-00000000000d', 'dee@example.test');
+insert into public.records (circle_id, rid, ct, updated_by) values (:'cid', 'rid-dee-0000000000001', 'v1.ciphertext', '00000000-0000-0000-0000-00000000000d');
+delete from auth.users where id = '00000000-0000-0000-0000-00000000000d';
+select pg_temp.expect((select updated_by is null from public.records where rid = 'rid-dee-0000000000001'), 'deleting an account keeps records it edited');
+
 -- Anonymous
 reset role; select set_config('request.jwt.claim.sub', '', false); set role anon;
 select pg_temp.expect_error('select * from public.records', 'anon cannot read records');

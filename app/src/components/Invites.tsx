@@ -56,9 +56,8 @@ export function useRoster() {
 export const STATUS_LABEL: Record<InviteStatus, string> = { waiting: 'Invited · waiting', joined: 'Joined', expired: 'Invite expired', cancelled: 'Invite cancelled' };
 
 /** One invitation with its status and what you can do about it. */
-function InviteRowView({ inv, row, onChange }: { inv: Invitation; row?: InviteRow; onChange: () => void }) {
+function InviteRowView({ inv, row, onChange, onSend }: { inv: Invitation; row?: InviteRow; onChange: () => void; onSend: (i: Invitation, expiresAt?: string) => void }) {
   const { toast } = useApp();
-  const [sending, setSending] = useState<Invitation | null>(null);
   const [busy, setBusy] = useState(false);
   const st = statusOf(inv, row);
   const act = async (fn: () => Promise<void>) => { setBusy(true); try { await fn(); } catch (e) { toast(e instanceof Error ? e.message : 'Something went wrong.'); } setBusy(false); onChange(); };
@@ -78,25 +77,32 @@ function InviteRowView({ inv, row, onChange }: { inv: Invitation; row?: InviteRo
       </div>
       {st !== 'joined' && (
         <div className="row" style={{ marginTop: '.5rem', flexWrap: 'wrap' }}>
-          {st === 'waiting' && <button className="btn sm" disabled={busy} onClick={() => setSending(inv)}><Icon name="bell" size={15} /> Remind</button>}
-          <button className="btn sm" disabled={busy} onClick={() => act(async () => { setSending(await renewInvitation(inv.id)); toast('New link ready. The old one no longer works.'); })}>New link</button>
+          {st === 'waiting' && <button className="btn sm" disabled={busy} onClick={() => onSend(inv, row?.expires_at)}><Icon name="bell" size={15} /> Remind</button>}
+          <button className="btn sm" disabled={busy} onClick={() => act(async () => { onSend(await renewInvitation(inv.id)); toast('New link ready. The old one no longer works.'); })}>New link</button>
           {st === 'waiting' && <button className="btn ghost sm" disabled={busy} onClick={() => act(async () => { await cancelInvitation(inv.id); toast('Invite cancelled.'); })}>Cancel invite</button>}
         </div>
       )}
-      {sending && (
-        <Sheet title={`Send to ${sending.name || 'them'}`} onClose={() => setSending(null)}>
-          <p className="small muted">Send it the way they're most likely to see it. If it went to spam, a text often works best. It's sent from your device, so the key in the link never passes through our server.</p>
-          <SendOptions inv={sending} expiresAt={sending.id === inv.id ? row?.expires_at : undefined} />
-        </Sheet>
-      )}
     </div>
   );
+}
+
+/** The "send it again" sheet, kept outside the rows so it stays open when a row moves (e.g. after New link). */
+function useSendSheet() {
+  const [sending, setSending] = useState<{ inv: Invitation; expiresAt?: string } | null>(null);
+  const sheet = sending && (
+    <Sheet title={`Send to ${sending.inv.name || 'them'}`} onClose={() => setSending(null)}>
+      <p className="small muted">Send it the way they're most likely to see it. If it went to spam, a text often works best. It's sent from your device, so the key in the link never passes through our server.</p>
+      <SendOptions inv={sending.inv} expiresAt={sending.expiresAt} />
+    </Sheet>
+  );
+  return { onSend: (inv: Invitation, expiresAt?: string) => setSending({ inv, expiresAt }), sheet };
 }
 
 /** All invitations for this circle, newest first. */
 export function InvitationsCard({ roster }: { roster: ReturnType<typeof useRoster> }) {
   const invites = useAll('invitations');
   const [showOld, setShowOld] = useState(false);
+  const send = useSendSheet();
   if (!roster.connected || !invites.length) return null;
   const sorted = [...invites].sort((a, b) => b.createdAt - a.createdAt);
   const live = sorted.filter((i) => ['waiting', 'expired'].includes(statusOf(i, roster.rows.get(i.id))));
@@ -105,9 +111,10 @@ export function InvitationsCard({ roster }: { roster: ReturnType<typeof useRoste
     <div className="card">
       <h2 style={{ marginTop: 0 }}>Invitations</h2>
       {!live.length && <p className="small muted">No invitations waiting.</p>}
-      {live.map((i) => <InviteRowView key={i.id} inv={i} row={roster.rows.get(i.id)} onChange={roster.refresh} />)}
+      {live.map((i) => <InviteRowView key={i.id} inv={i} row={roster.rows.get(i.id)} onChange={roster.refresh} onSend={send.onSend} />)}
       {done.length > 0 && <button className="btn ghost sm" onClick={() => setShowOld(!showOld)}>{showOld ? 'Hide' : 'Show'} joined and cancelled ({done.length})</button>}
-      {showOld && done.map((i) => <InviteRowView key={i.id} inv={i} row={roster.rows.get(i.id)} onChange={roster.refresh} />)}
+      {showOld && done.map((i) => <InviteRowView key={i.id} inv={i} row={roster.rows.get(i.id)} onChange={roster.refresh} onSend={send.onSend} />)}
+      {send.sheet}
     </div>
   );
 }
@@ -188,6 +195,7 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
   const shares = useAll('careShares');
   const [inviting, setInviting] = useState(false);
   const [busy, setBusy] = useState(false);
+  const send = useSendSheet();
   const account = member.userId ? roster.accounts.find((x) => x.user_id === member.userId) : undefined;
   const pending = invites.filter((i) => i.memberId === member.id && statusOf(i, roster.rows.get(i.id)) === 'waiting').sort((a, b) => b.createdAt - a.createdAt)[0];
   const share = shares.find((s) => s.memberId === member.id);
@@ -216,7 +224,7 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
           <div className="row between"><span className="small">{member.name} sees <b>selected information</b>{share.publishedAt ? '' : ' (not sent yet)'}.</span>
             <button className="btn sm" onClick={() => go({ name: 'careteam' })}>Manage</button></div>
         ) : pending ? (
-          <InviteRowView inv={pending} row={roster.rows.get(pending.id)} onChange={roster.refresh} />
+          <InviteRowView inv={pending} row={roster.rows.get(pending.id)} onChange={roster.refresh} onSend={send.onSend} />
         ) : (
           <>
             <p className="small muted" style={{ margin: 0 }}>{member.name} doesn't use iDID yet{member.userId ? ' in this circle' : ''}.</p>
@@ -225,6 +233,7 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
           </>
         )}
       {inviting && <InviteSheet member={member} onClose={() => setInviting(false)} />}
+      {send.sheet}
     </div>
   );
 }

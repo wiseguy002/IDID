@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { exportAll, importAll, useAll, type Backup } from '../db';
+import { exportAll, importAll, track, useAll, type Backup } from '../db';
 import { canSee, useApp } from '../state';
 import { computeStats } from '../lib/stats';
 import { download, durationLabel, entriesToCsv, fmtDateTime, moodLabel, partWords } from '../lib/util';
@@ -30,6 +30,7 @@ export default function Share() {
 
   const csv = () => entriesToCsv(entries, members, parts);
   const shareCsv = async () => {
+    track(me?.id, 'export');
     const file = new File([csv()], `idid-entries-${stamp}.csv`, { type: 'text/csv' });
     if (navigator.canShare?.({ files: [file] })) {
       try { await navigator.share({ files: [file], title: 'IDID entries' }); } catch { /* cancelled */ }
@@ -58,9 +59,9 @@ export default function Share() {
           <p className="small muted" style={{ margin: '.6rem 0 0' }}>{entries.length} entries selected. Private entries are only included when they're yours.</p>
         </div>
         <div className="stack">
-          <button className="btn block primary" onClick={() => window.print()} disabled={!entries.length}><Icon name="print" size={18} /> Clinician summary (print or save as PDF)</button>
+          <button className="btn block primary" onClick={() => { track(me?.id, 'export'); window.print(); }} disabled={!entries.length}><Icon name="print" size={18} /> Clinician summary (print or save as PDF)</button>
           <button className="btn block" onClick={shareCsv} disabled={!entries.length}><Icon name="share" size={18} /> Share spreadsheet (CSV)</button>
-          <button className="btn block" onClick={() => download(`idid-entries-${stamp}.csv`, csv(), 'text/csv')} disabled={!entries.length}><Icon name="download" size={18} /> Download spreadsheet (CSV)</button>
+          <button className="btn block" onClick={() => { track(me?.id, 'export'); download(`idid-entries-${stamp}.csv`, csv(), 'text/csv'); }} disabled={!entries.length}><Icon name="download" size={18} /> Download spreadsheet (CSV)</button>
         </div>
         <hr className="hr" />
         <h2>Backup</h2>

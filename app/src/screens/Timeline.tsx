@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useAll } from '../db';
+import { useEffect, useMemo, useState } from 'react';
+import { track, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { fmtDate, partWords } from '../lib/util';
 import { EntryCard } from '../components/EntryCard';
@@ -10,6 +10,7 @@ export default function Timeline() {
   const [q, setQ] = useState('');
   const [who, setWho] = useState<string[]>([]);
   const [part, setPart] = useState<string[]>([]);
+  useEffect(() => { track(me?.id, 'timeline'); }, [me?.id]);
   const allEntries = useAll('entries');
   const entries = useMemo(() => [...allEntries].sort((a, b) => b.occurredAt - a.occurredAt), [allEntries]);
   const obs = useAll('observations').filter((o) => o.status === 'done');

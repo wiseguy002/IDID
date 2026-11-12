@@ -17,7 +17,7 @@ At this point IDID works on-device only. People can install it from the browser 
 ## 2. Create the Supabase project
 
 1. Create a new project at supabase.com. Choose a region close to your users and keep the database password somewhere safe.
-2. Open **SQL Editor**, paste the contents of `supabase/migrations/20261112000000_idid_init.sql`, and run it.
+2. Open **SQL Editor** and run each file in `supabase/migrations/` in order (`…_idid_init.sql`, then `…_community.sql`). Or, with the Supabase CLI linked (step 4), run `supabase db push`.
 3. Under **Project Settings → API**, note the **Project URL** and the **anon public** key.
 
 ## 3. Sign-in emails
@@ -71,7 +71,17 @@ All three are public values; access is enforced by the database's row-level secu
 
 For local development, copy `app/.env.example` to `app/.env.local` and fill in the same values.
 
-## 6. Try it
+## 6. Make yourself an admin
+
+To review and answer feature requests in the app (**Settings → Suggest a feature → Manage**), sign in to IDID once with your email, then run this in the SQL Editor:
+
+```sql
+insert into public.app_admins select id from auth.users where email = 'you@example.com';
+```
+
+You can also browse requests in **Table Editor → feedback**.
+
+## 7. Try it
 
 1. Open IDID, set up your journal, then go to **Circle → Connect devices & invite**.
 2. Sign in with your email code, enter your journal passphrase, and choose **Create our circle**.

@@ -49,6 +49,10 @@ export function defaultDevice(): DeviceSettings {
     quietStart: '21:00',
     quietEnd: '09:00',
     lastSeenVersion: null,
+    badges: true,
+    featureTips: true,
+    tourOffered: false,
+    kindActs: true,
   };
 }
 

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { store, uid, useAll } from '../db';
+import { useEffect, useState } from 'react';
+import { store, track, uid, useAll } from '../db';
 import { useApp } from '../state';
 import { CRISIS, NEEDS, VERIFIED_ON, isZip, matchResources } from '../lib/resources';
 import { CONTACT_ROLES, type ContactRole, type Member, type SupportContact, type SupportNeed } from '../types';
@@ -107,6 +107,7 @@ export default function Support() {
   const [needs, setNeeds] = useState<SupportNeed[]>(who?.support?.needs ?? ['did', 'trauma']);
   const [contact, setContact] = useState<SupportContact | null>(null);
   const contacts = useAll('contacts').filter((c) => c.memberId === whoId);
+  useEffect(() => { track(me?.id, 'support-viewed'); }, [me?.id]);
 
   const pick = (id: string) => {
     const m = members.find((x) => x.id === id);

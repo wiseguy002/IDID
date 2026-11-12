@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { track } from '../db';
 import { useApp } from '../state';
 import { APP_VERSION, BUILD_COMMIT, BUILD_DATE, RELEASES } from '../version';
 import { boldSegments } from '../lib/changelog';
@@ -31,7 +33,8 @@ export function ReleaseNotes({ r, current }: { r: (typeof RELEASES)[number]; cur
 }
 
 export default function Changelog() {
-  const { go } = useApp();
+  const { go, me } = useApp();
+  useEffect(() => { track(me?.id, 'whats-new'); }, [me?.id]);
   return (
     <div className="fade-in">
       <PageHead title="What's new" sub={`You're using IDID ${APP_VERSION}.`} onBack={() => go({ name: 'settings' })} />

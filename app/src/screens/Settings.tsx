@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { persist, store, updateSettings, wipeAll } from '../db';
+import { persist, store, track, updateSettings, wipeAll } from '../db';
 import { changePassphrase, passphraseStrength, rotateRecoveryCode, unlockVault } from '../data/vault';
 import { useApp } from '../state';
 import type { PartWord, TextSize, ThemeName } from '../types';
@@ -35,7 +35,10 @@ export default function Settings() {
   };
   const [wipe, setWipe] = useState(false);
   const [wipeText, setWipeText] = useState('');
-  const up = (p: Parameters<typeof updateSettings>[0]) => updateSettings(p);
+  const up = (p: Parameters<typeof updateSettings>[0]) => {
+    if (['theme', 'textSize', 'reduceMotion', 'readableFont', 'softEdges'].some((k) => k in p)) track(me?.id, 'comfort');
+    return updateSettings(p);
+  };
 
   const savePass = async () => {
     const key = await unlockVault(persist, oldPass);
@@ -144,7 +147,7 @@ export default function Settings() {
       </div>
       <div className="card soft small">
         <div className="row between"><h3 style={{ margin: 0 }}>About IDID</h3><span className="tag">Version {APP_VERSION}</span></div>
-        <p className="small" style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => go({ name: 'changelog' })}><Icon name="sparkle" size={15} /> What's new</button> <span className="tiny muted">Build {BUILD_COMMIT}</span></p>
+        <p className="small" style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => go({ name: 'changelog' })}><Icon name="sparkle" size={15} /> What's new</button> <button className="btn sm" onClick={() => go({ name: 'explore' })}>Explore & badges</button> <button className="btn sm" onClick={() => go({ name: 'feedback' })}>Suggest a feature</button> <span className="tiny muted">Build {BUILD_COMMIT}</span></p>
         <p>IDID is a private journal for noticing dissociative and trauma-related experiences, and for gathering gentle observations from people you trust. It is not a diagnostic tool or a substitute for professional care.</p>
         <p style={{ margin: 0 }}>If you are in danger or thinking about harming yourself, please contact local emergency services. In the US, call or text <b>988</b>. In the UK & Ireland, Samaritans: <b>116 123</b>.</p>
       </div>

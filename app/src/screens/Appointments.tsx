@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { store, uid, useAll } from '../db';
+import { store, track, uid, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { calendarTitle, googleCalendarUrl, kindLabel, leadLabel, nextOccurrence, previousOccurrence, recurrenceLabel, toIcs } from '../lib/schedule';
 import { countBy, download, fmtDateTime, toLocalInput } from '../lib/util';
@@ -62,7 +62,7 @@ function AppointmentForm({ a, onClose }: { a: Appointment; onClose: () => void }
 }
 
 function CalendarSheet({ a, onClose }: { a: Appointment; onClose: () => void }) {
-  const { toast } = useApp();
+  const { toast, me } = useApp();
   const [neutralTitle, setNeutral] = useState(true);
   const [includeNotes, setNotes] = useState(false);
   const o = { neutralTitle, includeNotes };
@@ -72,10 +72,10 @@ function CalendarSheet({ a, onClose }: { a: Appointment; onClose: () => void }) 
       <Switch label="Use a neutral title" hint={`Shows as "${calendarTitle(a, { neutralTitle: true, includeNotes })}" instead of "${a.title || kindLabel(a)}"`} checked={neutralTitle} onChange={setNeutral} />
       <Switch label="Include my notes" checked={includeNotes} onChange={setNotes} />
       <div className="stack" style={{ marginTop: '.6rem' }}>
-        <button className="btn block primary" onClick={() => { download('appointment.ics', toIcs(a, o), 'text/calendar'); toast('Calendar file saved. Open it to add the event.'); }}>
+        <button className="btn block primary" onClick={() => { track(me?.id, 'calendar'); download('appointment.ics', toIcs(a, o), 'text/calendar'); toast('Calendar file saved. Open it to add the event.'); }}>
           <Icon name="download" size={18} /> Apple, Outlook or other calendar (.ics)
         </button>
-        <a className="btn block" href={googleCalendarUrl(a, o)} target="_blank" rel="noopener noreferrer"><Icon name="share" size={18} /> Google Calendar</a>
+        <a className="btn block" href={googleCalendarUrl(a, o)} target="_blank" rel="noopener noreferrer" onClick={() => track(me?.id, 'calendar')}><Icon name="share" size={18} /> Google Calendar</a>
       </div>
       <p className="tiny muted" style={{ marginTop: '.8rem' }}>Repeating appointments and reminders are included. If you change the appointment later, add it to your calendar again.</p>
     </Sheet>

@@ -1,6 +1,6 @@
 # IDID — a gentle journal
 
-**Current version: 0.6.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.7.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
 IDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 
@@ -17,6 +17,9 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Appointments** | Therapy, counselling, support groups, psychiatry: repeating schedules, reminders, "since last session" summaries, **add to Apple, Outlook or Google Calendar**. |
 | **Alerts** | Push notifications for appointment reminders, daily check-ins, and requests from the circle. The text is always generic so nothing private shows on a lock screen. |
 | **Gentle check-ins** | At random times (never in quiet hours) IDID asks whoever is here "How are you doing right now?", answers with a kind, honest word, and offers something small: breathe together, interrupt the pattern with one of your own healthy rituals, or get some fresh air and sunshine (suited to the time of day). "Struggling" leads to grounding, your contacts and 988. Patterns shows what actually helps. |
+| **Explore & badges** | A quick tour, every feature in one place with what you've tried, gentle milestone badges (no streaks, no comparison), and at most a weekly suggestion of something that might help. |
+| **Kindness** | A daily small act of kindness to pay it forward, and anonymous **kind notes**: pick a caring message to brighten a random person's day. Opt-in, curated, no direct messages. |
+| **Suggest a feature** | Ideas and requests go to the IDID team, who can reply and track status in an in-app **Manage requests** screen. |
 | **Find support** | ZIP code and needs (DID specialist, trauma, low-cost care, LGBTQ+, veterans, family…) drive matched crisis lines, nearby specialists and health centers, helplines, and learning and community resources. Personal support contacts (therapist, social worker, crisis center) are one tap away on the Pause screen. |
 | **Parts / system** | Parts with pronouns, age, role, notes and colour. Your choice of word (parts / alters / headmates / selves). |
 | **Timeline & Patterns** | Search and filters; mood trend, triggers, fronting, triggers per part, places, day × time heatmap. |

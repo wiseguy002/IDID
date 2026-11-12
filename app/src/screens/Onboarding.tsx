@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { persist, store, uid, updateDevice, updatePrefs } from '../db';
 import { createVault, hasVault, passphraseStrength } from '../data/vault';
+import { APP_VERSION } from '../version';
 import { PALETTE } from '../lib/defaults';
 import { partWords } from '../lib/util';
 import type { Member, PartWord, SupportNeed, ThemeName, TextSize } from '../types';
@@ -35,6 +36,9 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const ensureVault = async (passphrase: string) => {
     if (store.unlocked) return null;
     if (await hasVault(persist)) throw new Error('vault exists');
+    // A brand-new journal: nothing to catch up on (no old check-ins, no "updated" note).
+    try { localStorage.setItem('idid.nudge.handled', String(Date.now())); } catch { /* ignore */ }
+    updateDevice({ lastSeenVersion: APP_VERSION });
     const { dataKey, recoveryCode } = await createVault(persist, passphrase);
     await store.open(dataKey);
     return recoveryCode;

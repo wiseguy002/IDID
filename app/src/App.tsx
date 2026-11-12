@@ -20,6 +20,14 @@ import Appointments from './screens/Appointments';
 import Account, { pendingInvite } from './screens/Account';
 import Support from './screens/Support';
 import Changelog from './screens/Changelog';
+import Explore from './screens/Explore';
+import Kindness from './screens/Kindness';
+import Feedback, { AdminRequests } from './screens/Feedback';
+import { Tour } from './components/Tour';
+import { factsFor, getActivity, patchActivity } from './db';
+import { progress } from './lib/progress';
+import { permission } from './lib/notify';
+import { getAccount } from './sync/account';
 import { APP_VERSION } from './version';
 import { lockAccount, resume } from './sync/account';
 import { useReminders } from './lib/useReminders';
@@ -116,6 +124,18 @@ export default function App() {
   const closeNudge = () => { if (nudgeAt) writeHandled(nudgeAt); setNudgeOpen(false); setNudgeAt(null); };
   const snoozeNudge = () => { snoozeUntil.current = Date.now() + 30 * 60000; setNudgeOpen(false); toast("Okay, I'll ask again in a little while."); };
   const openCheckIn = useCallback(() => { setNudgeAt(null); setNudgeOpen(true); }, []);
+  const [tourOpen, setTourOpen] = useState(false);
+
+  // Celebrate newly earned badges once (gently; can be turned off in Explore).
+  useEffect(() => {
+    if (!unlocked || !me) return;
+    const a = getActivity(me.id);
+    const p = progress(factsFor(me.id, { online: getAccount().phase === 'connected', notifications: permission() === 'granted' }), a);
+    if (!p.newBadges.length) return;
+    const now = Date.now();
+    patchActivity(me.id, { badges: { ...a.badges, ...Object.fromEntries(p.newBadges.map((b) => [b.id, now])) } });
+    if (settings.badges) toast(p.newBadges.length === 1 ? `New badge: ${p.newBadges[0].name} — ${p.newBadges[0].about}` : `${p.newBadges.length} new badges in Explore`);
+  }, [unlocked, me, rawMembers, settings.badges, toast, store.getVersion()]); // eslint-disable-line
 
   useReminders(unlocked ? me : null, settings, toast, onNudge);
 
@@ -126,7 +146,7 @@ export default function App() {
     return <WhoIsHere members={members} current={me?.id ?? null} onPick={(id) => { updateDevice({ activeMemberId: id }); setRoute({ name: 'home' }); setChosen(true); }} />;
   }
 
-  const ctx = { settings, members, parts, me, route, go, toast, checkIn: openCheckIn };
+  const ctx = { settings, members, parts, me, route, go, toast, checkIn: openCheckIn, openTour: () => setTourOpen(true) };
   const inWizard = route.name === 'log' || route.name === 'observe';
 
   return (
@@ -162,6 +182,10 @@ export default function App() {
           {route.name === 'account' && <Account />}
           {route.name === 'support' && <Support />}
           {route.name === 'changelog' && <Changelog />}
+          {route.name === 'explore' && <Explore />}
+          {route.name === 'kindness' && <Kindness />}
+          {route.name === 'feedback' && <Feedback />}
+          {route.name === 'admin' && <AdminRequests />}
         </main>
         {!inWizard && (
           <nav className="bottomnav no-print" aria-label="Main">
@@ -177,7 +201,8 @@ export default function App() {
           </nav>
         )}
         {toastMsg && <div className="toast" role="status">{toastMsg}</div>}
-        {nudgeOpen && !inWizard && <NudgeSheet onClose={closeNudge} onSnooze={nudgeAt ? snoozeNudge : undefined} />}
+        {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
+        {nudgeOpen && !inWizard && !tourOpen && <NudgeSheet onClose={closeNudge} onSnooze={nudgeAt ? snoozeNudge : undefined} />}
       </div>
     </Ctx.Provider>
   );

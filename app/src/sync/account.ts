@@ -3,7 +3,8 @@
  * a circle, invites, the running sync engine, and server-side reminders for push.
  */
 import { useSyncExternalStore } from 'react';
-import { getDevice, persist, store, subscribeDevice } from '../db';
+import { factsFor, getActivity, getDevice, persist, store, subscribeDevice } from '../db';
+import { nextTip } from '../lib/progress';
 import { unlockVault } from '../data/vault';
 import { checkInTimes, remindersBetween } from '../lib/schedule';
 import { nudgeTimesBetween } from '../lib/nudges';
@@ -64,6 +65,7 @@ function startEngine() {
   const unsubStore = store.subscribe(onChange);
   const unsubDevice = subscribeDevice(onChange);
   stopEngine = () => { stopSync(); unsubStore(); unsubDevice(); if (t) clearTimeout(t); };
+  import('./community').then((c) => c.flushRequests()).catch(() => undefined);
   set({ phase: 'connected', circleId: keys.circleId });
   linkMe();
   scheduleServerReminders().catch(() => undefined);
@@ -196,6 +198,17 @@ export async function scheduleServerReminders() {
     }
   }
   for (const t of checkInTimes(d.checkInTime, now, until)) rows.push({ user_id: keys.userId, kind: 'checkin', fire_at: new Date(t).toISOString(), tag: `checkin-${t}` });
+  // At most one generic "something might help" push a week, if there are untried helpful features.
+  if (me && d.featureTips) {
+    const a = getActivity(me.id);
+    const f = factsFor(me.id, { online: true, notifications: true });
+    const lastTip = a.lastTipAt ?? me.createdAt;
+    const due = Math.max(now + 3600000, lastTip + 7 * 86400000);
+    if (due < until && nextTip(f, a, me.createdAt, due)) {
+      const [t] = nudgeTimesBetween(`tip-${me.id}`, due, due + 86400000, 1, d.quietStart, d.quietEnd);
+      if (t) rows.push({ user_id: keys.userId, kind: 'tip', fire_at: new Date(t).toISOString(), tag: `tip-${t}` });
+    }
+  }
   if (me && nudgesFor(me, d)) {
     for (const t of nudgeTimesBetween(me.id, now, until, d.nudgesPerDay, d.quietStart, d.quietEnd)) rows.push({ user_id: keys.userId, kind: 'checkin', fire_at: new Date(t).toISOString(), tag: `nudge-${t}` });
   }

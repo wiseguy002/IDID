@@ -16,6 +16,10 @@ export type Route =
   | { name: 'account' }
   | { name: 'support' }
   | { name: 'changelog' }
+  | { name: 'explore' }
+  | { name: 'kindness' }
+  | { name: 'feedback' }
+  | { name: 'admin' }
   | { name: 'join'; invite: string };
 
 export interface AppCtx {
@@ -28,6 +32,8 @@ export interface AppCtx {
   toast: (msg: string) => void;
   /** Open the "How are you doing?" check-in now. */
   checkIn: () => void;
+  /** Open the quick tour. */
+  openTour: () => void;
 }
 
 export const Ctx = createContext<AppCtx | null>(null);

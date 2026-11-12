@@ -21,6 +21,10 @@ const P: Record<string, string> = {
   upload: 'M12 15V4M8 8l4-4 4 4M5 20h14',
   print: 'M7 9V4h10v5M7 17H5v-6h14v6h-2M7 14h10v6H7z',
   clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+  sun: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+  flower: 'M12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM12 9.5C10 6 12 3 12 3s2 3 0 6.5M14.5 12c3.5-2 6.5 0 6.5 0s-3 2-6.5 0M12 14.5c2 3.5 0 6.5 0 6.5s-2-3 0-6.5M9.5 12C6 14 3 12 3 12s3-2 6.5 0',
+  star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z',
+  send: 'M4 12l16-8-6 16-2.5-6.5z',
 };
 
 export function Icon({ name, size = 22 }: { name: keyof typeof P | string; size?: number }) {

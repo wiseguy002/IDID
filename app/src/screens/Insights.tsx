@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useAll } from '../db';
+import { useEffect, useMemo, useState } from 'react';
+import { track, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { computeStats } from '../lib/stats';
 import { moodLabel, partWords } from '../lib/util';
@@ -49,6 +49,7 @@ export default function Insights() {
   const [range, setRange] = useState<'30' | '90' | 'all'>('30');
   const tracked = members.filter((m) => m.tracked);
   const [who, setWho] = useState<string[]>(me?.tracked ? [me.id] : tracked[0] ? [tracked[0].id] : []);
+  useEffect(() => { track(me?.id, 'patterns'); }, [me?.id]);
   const all = useAll('entries');
   const allCheckins = useAll('checkins');
   const w = partWords(settings.partWord);

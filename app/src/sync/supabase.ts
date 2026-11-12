@@ -53,7 +53,7 @@ export class SupabaseRemote implements Remote {
     return () => { this.sb.removeChannel(ch); };
   }
   async replaceOwnReminders(rows: ReminderRow[]) {
-    check(await this.sb.from('reminders').delete().eq('user_id', this.uid!).in('kind', ['appointment', 'checkin']).is('sent_at', null));
+    check(await this.sb.from('reminders').delete().eq('user_id', this.uid!).in('kind', ['appointment', 'checkin', 'tip']).is('sent_at', null));
     if (rows.length) check(await this.sb.from('reminders').upsert(rows, { onConflict: 'user_id,tag', ignoreDuplicates: true }));
   }
   async addReminder(row: ReminderRow) {

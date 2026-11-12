@@ -26,6 +26,21 @@ export interface Member {
 export type CheckInFeeling = 'good' | 'okay' | 'wobbly' | 'struggling';
 export type IdeaKind = 'breathe' | 'ritual' | 'outside' | 'positive' | 'pause' | 'reach-out' | 'note';
 
+/** What a person has tried in IDID, for the Explore page and badges. One record per person. */
+export interface Activity {
+  /** Same as the member id. */
+  id: ID;
+  /** First time each event happened (event name → ms). */
+  firsts: Record<string, number>;
+  /** How many times each event happened. */
+  counts: Record<string, number>;
+  /** Badges already celebrated (badge id → ms), so each is only announced once. */
+  badges: Record<string, number>;
+  /** Suggestions the person chose not to see again. */
+  dismissedTips: string[];
+  lastTipAt: number | null;
+}
+
 /** A quick answer to a gentle nudge ("How are you doing right now?"). */
 export interface CheckIn {
   id: ID;
@@ -196,6 +211,14 @@ export interface DeviceSettings {
   quietEnd: string;
   /** Last app version this device has shown "What's new" for. */
   lastSeenVersion: string | null;
+  /** Show badges and celebrate milestones. */
+  badges: boolean;
+  /** Occasionally suggest a feature that might help. */
+  featureTips: boolean;
+  /** The quick tour has been offered on this device. */
+  tourOffered: boolean;
+  /** Daily small act of kindness suggestion on Home. */
+  kindActs: boolean;
 }
 
 /** Combined view used by screens. */

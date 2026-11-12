@@ -14,6 +14,22 @@ Write each entry for the people who use IDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-12
+
+Explore, badges, kindness and your ideas.
+
+### Added
+- A **quick tour** offered after setup (and any time from Explore), with "Show me" buttons that open each feature.
+- **Explore**: every feature in one place, which ones you've tried, and gentle milestone **badges**. No streaks to break and no comparisons. Badges only ever add up, and you can hide them.
+- An occasional **"Something that might help"** suggestion for a feature you haven't tried yet. At most once a week, never in your first two days, and you can turn it off or say "Don't suggest this".
+- **Pay it forward**: a small act of kindness to try each day, like smiling at someone or saying hi.
+- **Kind notes**: send an anonymous note of encouragement to a random person using IDID. You choose from caring messages and a little picture. There are no replies or direct messages, only light. Receiving is opt-in and limited to three a day.
+- **Suggest a feature**: send ideas, services and fixes to the IDID team and see their replies. Requests made while offline are sent later.
+- For the IDID team: a **Manage requests** screen to review, reply to, and track every request.
+
+### Fixed
+- A check-in or update note could appear for a moment during first-time setup.
+
 ## [0.6.0] - 2026-11-12
 
 A clear record of how IDID changes.
@@ -88,7 +104,8 @@ The first version of IDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/wiseguy002/IDID/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/wiseguy002/IDID/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/wiseguy002/IDID/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/wiseguy002/IDID/compare/v0.3.0...v0.4.0

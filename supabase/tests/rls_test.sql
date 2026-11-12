@@ -74,9 +74,58 @@ delete from public.circle_members where user_id = '00000000-0000-0000-0000-00000
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
 select pg_temp.expect((select count(*) = 0 from public.records), 'removed member loses access');
 
+-- ---------- Kind notes ----------
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+select pg_temp.expect((select public.send_kindness(3, 'sun') = false), 'no recipients yet: nothing sent');
+insert into public.kindness_optin (receive) values (true);
+select pg_temp.expect((select public.send_kindness(3, 'sun') = false), 'cannot send to yourself');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+insert into public.kindness_optin (receive) values (true);
+select pg_temp.expect((select public.send_kindness(7, 'flower')), 'carol sends a kind note');
+select pg_temp.expect((select public.send_kindness(8, 'star') = false), 'not the same person twice in a week');
+select pg_temp.expect_error($q$select public.send_kindness(500, 'sun')$q$, 'only curated messages');
+select pg_temp.expect_error($q$select public.send_kindness(1, 'skull')$q$, 'only curated icons');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+select pg_temp.expect((select count(*) = 1 from public.kind_notes), 'alice received one note');
+select pg_temp.expect((select message_id = 7 from public.kind_notes), 'alice reads the message');
+select pg_temp.expect_error('select sender_id from public.kind_notes', 'recipient cannot see the sender');
+select pg_temp.expect_error('select * from public.kind_notes', 'recipient cannot select all columns');
+update public.kind_notes set read_at = now();
+select pg_temp.expect_error($q$update public.kind_notes set message_id = 1$q$, 'recipient cannot change the note');
+select pg_temp.expect((select count(*) = 1 from public.reminders where kind = 'kindness'), 'push queued for recipient');
+select pg_temp.expect_error($q$insert into public.kind_notes (recipient_id, message_id, icon) values ('00000000-0000-0000-0000-00000000000c', 1, 'sun')$q$, 'no direct inserts');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect((select count(*) = 0 from public.kind_notes), 'sender cannot read sent notes');
+update public.kindness_optin set receive = false;
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+select pg_temp.expect((select public.send_kindness(2, 'leaf') = false), 'opted-out people receive nothing');
+
+-- ---------- Feature requests ----------
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+insert into public.feedback (kind, title, details, app_version) values ('feature', 'Sleep tracking', 'Would help me', '0.7.0') returning id as fb \gset
+select pg_temp.expect_error($q$insert into public.feedback (kind, title, status) values ('idea', 'Sneaky', 'done')$q$, 'cannot set own status');
+select pg_temp.expect_error($q$insert into public.feedback (kind, title, created_by) values ('idea', 'Spoof', '00000000-0000-0000-0000-00000000000a')$q$, 'cannot submit as someone else');
+select pg_temp.expect_error($q$insert into public.feedback (kind, title) values ('idea', 'x')$q$, 'title too short');
+update public.feedback set status = 'done';
+select pg_temp.expect((select status = 'new' from public.feedback where id = :'fb'), 'submitter cannot change status');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect((select count(*) = 0 from public.feedback), 'others cannot read requests');
+select pg_temp.expect((select not public.is_app_admin()), 'carol is not an admin');
+reset role;
+insert into public.app_admins values ('00000000-0000-0000-0000-00000000000c');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect((select public.is_app_admin()), 'carol is now an admin');
+select pg_temp.expect((select count(*) = 1 from public.feedback), 'admin sees all requests');
+update public.feedback set status = 'planned', admin_note = 'Great idea, planned for 0.8' where id = :'fb';
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+select pg_temp.expect((select status = 'planned' and admin_note like 'Great%' from public.feedback where id = :'fb'), 'submitter sees the reply');
+select pg_temp.expect_error('select * from public.app_admins', 'admin list is private');
+
 -- Anonymous
-reset role; set role anon;
+reset role; select set_config('request.jwt.claim.sub', '', false); set role anon;
 select pg_temp.expect_error('select * from public.records', 'anon cannot read records');
 select pg_temp.expect_error($q$select public.get_invite(gen_random_uuid())$q$, 'anon cannot call functions');
+select pg_temp.expect_error($q$select public.send_kindness(1, 'sun')$q$, 'anon cannot send kind notes');
+select pg_temp.expect_error('select * from public.feedback', 'anon cannot read requests');
 reset role;
 \echo ALL RLS TESTS PASSED

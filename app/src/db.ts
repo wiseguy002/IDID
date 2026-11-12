@@ -111,6 +111,7 @@ export interface Backup {
   appointments: KindMap['appointments'][];
   contacts?: KindMap['contacts'][];
   checkins?: KindMap['checkins'][];
+  activity?: KindMap['activity'][];
   prefs?: Prefs;
 }
 
@@ -118,13 +119,13 @@ export function exportAll(): Backup {
   return {
     app: 'idid', version: 2, appVersion: APP_VERSION, exportedAt: new Date().toISOString(),
     members: store.all('members'), parts: store.all('parts'), entries: store.all('entries'),
-    observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), checkins: store.all('checkins'), prefs: getPrefs(),
+    observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), checkins: store.all('checkins'), activity: store.all('activity'), prefs: getPrefs(),
   };
 }
 
 export async function importAll(b: Partial<Backup> & { app: string }, mode: 'merge' | 'replace') {
   if (b.app !== 'idid') throw new Error('This file is not an IDID backup.');
-  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins'] as const;
+  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity'] as const;
   if (mode === 'replace') {
     for (const k of kinds) for (const r of store.all(k)) await store.remove(k, r.id);
   }
@@ -137,4 +138,43 @@ export async function wipeAll() {
   await persist.destroy();
   try { localStorage.removeItem(DEVICE_KEY); localStorage.removeItem('idid.checkin.dismissed'); localStorage.removeItem('idid.account'); } catch { /* ignore */ }
   location.reload();
+}
+
+// ---------- Explore: activity, facts, badges ----------
+
+import { emptyActivity, recordEvent, type EventName, type Facts } from './lib/progress';
+
+export function getActivity(memberId: string) {
+  return store.get('activity', memberId) ?? emptyActivity(memberId);
+}
+
+/** Count something the person did (only stored inside their encrypted journal). */
+export async function track(memberId: string | undefined, e: EventName) {
+  if (!memberId || !store.unlocked) return;
+  await store.put('activity', recordEvent(getActivity(memberId), e));
+}
+
+export async function patchActivity(memberId: string, patch: Partial<KindMap['activity']>) {
+  await store.put('activity', { ...getActivity(memberId), ...patch, id: memberId });
+}
+
+/** What a person has done, worked out from their data. */
+export function factsFor(memberId: string, extra: { online: boolean; notifications: boolean }): Facts {
+  const entries = store.all('entries').filter((e) => e.subjectId === memberId || e.authorId === memberId);
+  const checkins = store.all('checkins').filter((c) => c.memberId === memberId);
+  const me = store.get('members', memberId);
+  return {
+    entries: entries.length,
+    reflections: store.all('entries').reduce((n, e) => n + e.followUps.filter((f) => f.memberId === memberId).length, 0),
+    parts: store.all('parts').filter((p) => p.memberId === memberId).length,
+    circlePeople: store.all('members').filter((m) => m.id !== memberId).length,
+    observationsGiven: store.all('observations').filter((o) => o.memberId === memberId && o.status === 'done').length,
+    checkins: checkins.length,
+    helped: checkins.filter((c) => c.helped).length,
+    rituals: me?.rituals?.length ?? 0,
+    supportProfile: !!me?.support?.zip,
+    contacts: store.all('contacts').filter((c) => c.memberId === memberId).length,
+    appointments: store.all('appointments').filter((a) => !a.memberIds.length || a.memberIds.includes(memberId)).length,
+    ...extra,
+  };
 }

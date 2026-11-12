@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../state';
-import { useAll } from '../db';
+import { track, useAll } from '../db';
 import { ContactRow, CrisisCard } from './Support';
 import { Icon } from '../components/Icon';
 import { PageHead, Segmented } from '../components/ui';
@@ -15,6 +15,7 @@ const GROUNDING = [
 
 export default function Pause() {
   const { go, settings, me, checkIn } = useApp();
+  useEffect(() => { track(me?.id, 'pause'); }, [me?.id]);
   const pinned = useAll('contacts').filter((c) => c.pinned && (c.memberId === me?.id || !me?.tracked));
   const [mode, setMode] = useState<'breathe' | 'ground' | 'orient'>('breathe');
   const [g, setG] = useState(0);

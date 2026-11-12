@@ -7,7 +7,10 @@ import { useUpcoming } from './Appointments';
 import { kindLabel } from '../lib/schedule';
 import { APP_VERSION, RELEASES } from '../version';
 import { compareVersions, releasesBetween } from '../lib/changelog';
-import { updateDevice } from '../db';
+import { patchActivity, updateDevice } from '../db';
+import { useProgress } from './Explore';
+import { nextTip } from '../lib/progress';
+import { KindActCard, KindNoteView, useKindNotes } from './Kindness';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -25,7 +28,11 @@ const REFLECTIONS = [
 ];
 
 export default function Home({ prevOpened }: { prevOpened: number | null }) {
-  const { me, members, go, toast, settings } = useApp();
+  const { me, members, go, toast, settings, openTour } = useApp();
+  const { a: activity, facts, p: prog } = useProgress();
+  const [kindNotes] = useKindNotes();
+  const unreadKind = kindNotes.filter((n) => !n.read_at);
+  const tip = settings.featureTips && facts && me ? nextTip(facts, activity, me.createdAt) : null;
   const [dismissed, setDismissed] = useState(readDismissed);
   const [reply, setReply] = useState('');
   const allEntries = useAll('entries');
@@ -80,6 +87,17 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
           <div className="row">
             <button className="btn sm" onClick={() => { updateDevice({ lastSeenVersion: APP_VERSION }); go({ name: 'changelog' }); }}>See what's new</button>
             <button className="btn ghost sm" onClick={() => updateDevice({ lastSeenVersion: APP_VERSION })}>Got it</button>
+          </div>
+        </div>
+      )}
+
+      {!settings.tourOffered && (
+        <div className="card blue">
+          <div className="eyebrow"><Icon name="sparkle" size={14} /> New here?</div>
+          <p style={{ margin: '0 0 .6rem' }}>Would you like a one-minute tour of what IDID can do?</p>
+          <div className="row">
+            <button className="btn sm primary" onClick={() => { updateDevice({ tourOffered: true }); openTour(); }}>Show me around</button>
+            <button className="btn sm ghost" onClick={() => { updateDevice({ tourOffered: true }); toast('No problem. The tour is in Explore whenever you want it.'); }}>Not now</button>
           </div>
         </div>
       )}
@@ -152,6 +170,31 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         </div>
       )}
 
+      {unreadKind.length > 0 && (
+        <div className="card warm">
+          <div className="eyebrow"><Icon name="sun" size={14} /> A kind note for you</div>
+          <KindNoteView n={unreadKind[0]} />
+          <div className="row" style={{ marginTop: '.4rem' }}>
+            <button className="btn sm primary" onClick={() => go({ name: 'kindness' })}>Send one forward</button>
+            {unreadKind.length > 1 && <span className="small muted">+{unreadKind.length - 1} more</span>}
+          </div>
+        </div>
+      )}
+
+      {settings.kindActs && <KindActCard compact />}
+
+      {tip && me && (
+        <div className="card soft">
+          <div className="eyebrow"><Icon name="sparkle" size={14} /> Something that might help</div>
+          <p style={{ margin: '0 0 .6rem' }}><b>{tip.name}.</b> {tip.tip}</p>
+          <div className="row">
+            <button className="btn sm" onClick={() => { patchActivity(me.id, { lastTipAt: Date.now() }); go(tip.route); }}>Show me</button>
+            <button className="btn sm ghost" onClick={() => patchActivity(me.id, { lastTipAt: Date.now() })}>Not now</button>
+            <button className="btn sm ghost" onClick={() => patchActivity(me.id, { lastTipAt: Date.now(), dismissedTips: [...activity.dismissedTips, tip.id] })}>Don't suggest this</button>
+          </div>
+        </div>
+      )}
+
       <button className="card blue" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '.9rem', alignItems: 'center' }} onClick={() => go({ name: 'support' })}>
         <span style={{ color: 'var(--accent-2)' }}><Icon name="people" size={26} /></span>
         <span><b>Find support{me?.support?.zip ? ` near ${me.support.zip}` : ''}</b><br />
@@ -164,10 +207,10 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
           <b style={{ fontSize: '1.6rem' }}>{weekCount}</b>
           <div className="small muted">moment{weekCount === 1 ? '' : 's'} noted</div>
         </button>
-        <button className="card" style={{ cursor: 'pointer', textAlign: 'left', margin: 0 }} onClick={() => go({ name: 'pause' })}>
-          <div className="eyebrow">Need a pause?</div>
-          <div style={{ color: 'var(--accent)' }}><Icon name="heart" size={28} /></div>
-          <div className="small muted">Breathing & grounding</div>
+        <button className="card" style={{ cursor: 'pointer', textAlign: 'left', margin: 0 }} onClick={() => go({ name: 'explore' })}>
+          <div className="eyebrow">Explore</div>
+          <b style={{ fontSize: '1.6rem' }}>{prog?.used.length ?? 0}<span className="small muted" style={{ fontWeight: 400 }}> / {prog?.total ?? 0}</span></b>
+          <div className="small muted">features tried{settings.badges && prog ? ` · ${prog.earned.length} badges` : ''}</div>
         </button>
       </div>
     </div>

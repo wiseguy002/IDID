@@ -23,6 +23,8 @@ const NUDGES = [
 function message(kind: string, minutesBefore: number | null, tag: string) {
   if (kind === 'observation') return 'Someone in your circle wondered if you noticed something. Open IDID when you are ready.';
   if (tag.startsWith('nudge-')) return NUDGES[(Number(tag.slice(6)) || 0) % NUDGES.length];
+  if (kind === 'kindness') return 'Someone using IDID sent you a kind note.';
+  if (kind === 'tip') return "There's something in IDID that might help. Take a look when you're ready.";
   if (kind === 'checkin') return 'A gentle check-in: how are you all doing?';
   const m = minutesBefore ?? 0;
   if (m === 0) return 'An appointment is starting now.';

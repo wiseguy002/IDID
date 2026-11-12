@@ -6,7 +6,7 @@
  * Deletions are kept as tombstones so they can sync too.
  */
 import { useSyncExternalStore } from 'react';
-import type { Appointment, CheckIn, Entry, Member, Observation, Part, Prefs, SupportContact } from '../types';
+import type { Activity, Appointment, CheckIn, Entry, Member, Observation, Part, Prefs, SupportContact } from '../types';
 import { decryptJson, encryptJson } from './crypto';
 import type { Persist } from './idb';
 
@@ -18,10 +18,11 @@ export interface KindMap {
   appointments: Appointment;
   contacts: SupportContact;
   checkins: CheckIn;
+  activity: Activity;
   prefs: Prefs;
 }
 export type Kind = keyof KindMap;
-export const KINDS: Kind[] = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'prefs'];
+export const KINDS: Kind[] = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity', 'prefs'];
 
 export interface Envelope<T = unknown> {
   kind: Kind;

@@ -41,7 +41,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: app
-          preCommands: npx wrangler pages project create idid-app --production-branch main || true
+          # Pinned: newer wrangler 4 releases turn `pages` commands into Workers uploads.
+          wranglerVersion: '3.114.0'
           command: pages deploy dist --project-name idid-app --branch main --commit-dirty=true
 
   site:
@@ -62,5 +63,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: site
-          preCommands: npx wrangler pages project create idid-site --production-branch main || true
+          wranglerVersion: '3.114.0'
           command: pages deploy dist --project-name idid-site --branch main --commit-dirty=true

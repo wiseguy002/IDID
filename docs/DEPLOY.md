@@ -7,10 +7,12 @@
 
 Both deploy automatically on every merge to `main` (`.github/workflows/deploy.yml`). Your domain is already on Cloudflare, so DNS and HTTPS certificates are set up for you when you attach the custom domains.
 
+> **Status (12 November 2026):** the Pages projects `idid-site` and `idid-app` exist; `idid.care`, `www.idid.care` and `app.idid.care` are attached with DNS records; the www → idid.care redirect, Always Use HTTPS and minimum TLS 1.2 are on. What remains: the GitHub secrets (step 2), the first deploy (step 3), and email routing (step 6).
+
 ## 1. Create a Cloudflare API token (once)
 
 1. Cloudflare dashboard → **My Profile → API Tokens → Create Token → Create Custom Token**.
-2. Permissions: **Account → Cloudflare Pages → Edit**. Account resources: your account.
+2. Permissions: **Account → Cloudflare Pages → Edit** (enough for deploys). Account resources: your account.
 3. Copy the token. Also copy your **Account ID** (dashboard home → right sidebar, or the URL).
 
 ## 2. Add them to GitHub (once)
@@ -22,7 +24,7 @@ Repository → **Settings → Secrets and variables → Actions**:
 
 ## 3. First deploy
 
-Merge to `main`, or open **Actions → Deploy to Cloudflare Pages → Run workflow**. The workflow creates the two Pages projects the first time it runs.
+Merge to `main`, or open **Actions → Deploy to Cloudflare Pages → Run workflow**. The two Pages projects must already exist; they do.
 
 ## 4. Attach the domains (once)
 

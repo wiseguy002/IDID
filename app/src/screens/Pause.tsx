@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '../state';
 import { track, useAll, useOne } from '../db';
 import { ContactRow, CrisisCard } from './Support';
 import { Icon } from '../components/Icon';
 import { PageHead, Segmented } from '../components/ui';
+import BoxBreath from '../components/BoxBreath';
 
 const GROUNDING = [
   { n: 5, sense: 'things you can see', hint: 'Look slowly around. Name colours, shapes, light.' },
@@ -18,7 +19,8 @@ export default function Pause() {
   const plan = useOne('safety', me ? `safety:${me.id}` : undefined);
   useEffect(() => { track(me?.id, 'pause'); }, [me?.id]);
   const pinned = useAll('contacts').filter((c) => c.pinned && (c.memberId === me?.id || !me?.tracked));
-  const [mode, setMode] = useState<'breathe' | 'ground' | 'orient'>('breathe');
+  const [mode, setMode] = useState<'breathe' | 'box' | 'ground' | 'orient'>('breathe');
+  const onBox = useCallback(() => { track(me?.id, 'box-breath'); }, [me?.id]);
   const [g, setG] = useState(0);
   const now = new Date();
   return (
@@ -30,7 +32,7 @@ export default function Pause() {
         <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>
         <button className="btn sm primary" onClick={() => go({ name: 'calm' })}><Icon name="sparkle" size={16} /> Calm space</button>
       </div>
-      <Segmented label="Tool" value={mode} onChange={setMode} options={[{ value: 'breathe', label: 'Breathe' }, { value: 'ground', label: '5-4-3-2-1' }, { value: 'orient', label: 'Right now' }]} />
+      <Segmented label="Tool" value={mode} onChange={setMode} options={[{ value: 'breathe', label: 'Breathe' }, { value: 'box', label: 'Box' }, { value: 'ground', label: '5-4-3-2-1' }, { value: 'orient', label: 'Right now' }]} />
       {mode === 'breathe' && (
         <div className="card soft" style={{ marginTop: '1rem', textAlign: 'center' }}>
           {settings.reduceMotion ? (
@@ -39,6 +41,11 @@ export default function Pause() {
             <><div className="breath-wrap"><div className="breath" /></div>
               <p className="muted">Breathe in as the circle grows, out as it softens.</p></>
           )}
+        </div>
+      )}
+      {mode === 'box' && (
+        <div className="card soft" style={{ marginTop: '1rem', textAlign: 'center' }}>
+          <BoxBreath reduceMotion={settings.reduceMotion} onBox={onBox} />
         </div>
       )}
       {mode === 'ground' && (

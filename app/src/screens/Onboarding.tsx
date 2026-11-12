@@ -10,9 +10,12 @@ import { isZip } from '../lib/resources';
 import { Segmented, Switch } from '../components/ui';
 import { Icon } from '../components/Icon';
 import { loadSample, SAMPLE_PASSPHRASE } from '../lib/sample';
+import { cloudConfigured } from '../sync/supabase';
+import Restore from './Restore';
 
 export default function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
+  const [returning, setReturning] = useState(false);
   const [mode, setMode] = useState<'self' | 'support'>('self');
   const [myName, setMyName] = useState('');
   const [theirName, setTheirName] = useState('');
@@ -103,6 +106,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
         <p className="small" style={{ margin: 0 }}>Everything you write is encrypted on this device with a passphrase only you know. If you later connect a trust circle, entries are encrypted before they leave your device, so even our server can't read them.</p>
       </div>
       <p className="muted small">iDID is a journaling tool, not a medical device or a replacement for professional care.</p>
+      {cloudConfigured() && <button className="btn block" onClick={() => setReturning(true)} disabled={busy}><Icon name="people" size={18} /> I already use iDID</button>}
       <button className="btn ghost sm" onClick={sample} disabled={busy}>Just looking? Explore with a sample circle</button>
     </div>,
     <div key="1" className="stack">
@@ -179,6 +183,8 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     : step === 4 ? strength.ok && pass === pass2 && !busy
     : step === 5 ? savedCode
     : step === 6 ? !zip || isZip(zip) : true;
+
+  if (returning) return <Restore onDone={onDone} onBack={() => setReturning(false)} />;
 
   return (
     <div className="app">

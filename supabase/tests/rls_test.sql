@@ -161,6 +161,27 @@ insert into public.records (circle_id, rid, ct) values (:'cid', 'rid-carol-00000
 select pg_temp.expect((select count(*) = 1 from public.records where rid = 'rid-carol-0000000001'), 'after the owner allows it, carol can add');
 select pg_temp.expect_error(format($q$insert into public.invites (circle_id, wrapped_circle_key, role) values (%L, 'x', 'viewer')$q$, :'cid'), 'only the owner makes view-only invites');
 
+-- ---------- Handing the circle to someone else ----------
+-- Carol is a member of Alice's circle by now (made a member above).
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect_error(format($q$select public.transfer_ownership(%L, auth.uid())$q$, :'cid'), 'a member cannot take the circle');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+select pg_temp.expect_error(format($q$select public.transfer_ownership(%L, '00000000-0000-0000-0000-00000000000d')$q$, :'cid'), 'cannot hand it to someone outside the circle');
+select pg_temp.expect_error(format($q$select public.transfer_ownership(%L, auth.uid())$q$, :'cid'), 'cannot hand it to yourself');
+select public.transfer_ownership(:'cid', '00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect((select role = 'member' from public.circle_members where circle_id = :'cid' and user_id = auth.uid()), 'previous owner stays as a member');
+select pg_temp.expect((select count(*) = 1 from public.records where circle_id = :'cid' and rid = 'rid-0000000000000001'), 'previous owner can still read');
+select pg_temp.expect_error(format($q$select public.set_member_role(%L, '00000000-0000-0000-0000-00000000000c', 'viewer')$q$, :'cid'), 'previous owner can no longer change access');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect((select role = 'owner' from public.circle_members where circle_id = :'cid' and user_id = auth.uid()), 'new owner is the owner');
+select pg_temp.expect((select count(*) = 1 from public.circle_members where circle_id = :'cid' and role = 'owner'), 'exactly one owner');
+select pg_temp.expect((select created_by = auth.uid() from public.circles where id = :'cid'), 'the circle belongs to the new owner');
+select public.set_member_role(:'cid', '00000000-0000-0000-0000-00000000000a', 'viewer');
+select pg_temp.expect((select role = 'viewer' from public.circle_members where circle_id = :'cid' and user_id = '00000000-0000-0000-0000-00000000000a'), 'new owner manages access');
+select public.set_member_role(:'cid', '00000000-0000-0000-0000-00000000000a', 'member');
+select public.transfer_ownership(:'cid', '00000000-0000-0000-0000-00000000000a');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+
 -- ---------- Care team shares ----------
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 insert into public.care_shares (ct) values ('') returning id as cs \gset

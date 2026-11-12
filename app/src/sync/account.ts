@@ -27,9 +27,9 @@ export type Phase =
   | 'needs-circle'   // keys ready; no circle yet
   | 'connected';
 
-interface State { phase: Phase; email: string; circleId: string | null; status: SyncEngine['status']; lastSyncedAt: number; error: string; role: CircleRole | null }
+interface State { phase: Phase; email: string; circleId: string | null; status: SyncEngine['status']; lastSyncedAt: number; error: string; role: CircleRole | null; newOwner: boolean }
 
-let state: State = { phase: cloudConfigured() ? 'signed-out' : 'off', email: '', circleId: null, status: 'idle', lastSyncedAt: 0, error: '', role: null };
+let state: State = { phase: cloudConfigured() ? 'signed-out' : 'off', email: '', circleId: null, status: 'idle', lastSyncedAt: 0, error: '', role: null, newOwner: (() => { try { return localStorage.getItem('idid.newOwner') === '1'; } catch { return false; } })() };
 const listeners = new Set<() => void>();
 const set = (p: Partial<State>) => { state = { ...state, ...p }; for (const l of listeners) l(); };
 export const useAccount = () => useSyncExternalStore((f) => { listeners.add(f); return () => { listeners.delete(f); }; }, () => state);
@@ -80,11 +80,24 @@ function startEngine() {
 }
 
 /** What this account may do in the circle. View-only members download but never upload. */
-async function refreshRole() {
+/** Hide the one-time "You now manage this circle" note. */
+export function dismissNewOwner() {
+  try { localStorage.removeItem('idid.newOwner'); } catch { /* ignore */ }
+  set({ newOwner: false });
+}
+
+export async function refreshRole() {
   if (!remote || !keys?.circleId) return;
   const mine = (await remote.myMemberships()).find((m) => m.circle_id === keys!.circleId);
   const role = mine?.role ?? null;
   if (engine) engine.readOnly = role === 'viewer';
+  // Remember the last role seen, so someone who was just handed the circle gets a one-time note.
+  try {
+    const key = `idid.role.${keys.circleId}`;
+    const before = localStorage.getItem(key);
+    if (before && before !== 'owner' && role === 'owner') { localStorage.setItem('idid.newOwner', '1'); set({ newOwner: true }); }
+    if (role) localStorage.setItem(key, role);
+  } catch { /* storage unavailable */ }
   set({ role });
 }
 
@@ -241,6 +254,13 @@ export async function renewInvitation(id: string): Promise<Invitation> {
   if (!old) throw new Error('Invite not found');
   await cancelInvitation(id);
   return invitePerson({ name: old.name, memberId: old.memberId, role: old.role, contact: old.contact });
+}
+
+/** Owner only: hand the circle to someone already in it. You stay in the circle and can view and add. */
+export async function transferCircle(userId: string) {
+  if (!remote || !keys?.circleId) throw new Error('Connect a circle first.');
+  await remote.transferOwnership(keys.circleId, userId);
+  await refreshRole();
 }
 
 /** Owner only: let someone add and change things, or only view. */

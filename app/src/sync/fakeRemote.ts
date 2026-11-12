@@ -43,6 +43,14 @@ class FakeRemote implements Remote {
     return [...this.s.invites.entries()].filter(([, i]) => i.circle_id === c).map(([id, i]) => ({ id, created_at: i.created_at, expires_at: i.expires_at, used_by: i.used_by, used_at: i.used ? new Date().toISOString() : null, role: i.role }));
   }
   async revokeInvite(id: string) { const i = this.s.invites.get(id); if (i) { this.member(i.circle_id); this.s.invites.delete(id); } }
+  async transferOwnership(c: string, u: string) {
+    this.owner(c);
+    if (u === this.uid) throw new Error('you already own this circle');
+    const next = this.s.members.find((x) => x.circle_id === c && x.user_id === u);
+    if (!next) throw new Error('they need to join the circle first');
+    this.s.members.find((x) => x.circle_id === c && x.user_id === this.uid)!.role = 'member';
+    next.role = 'owner';
+  }
   async setMemberRole(c: string, u: string, role: 'member' | 'viewer') {
     this.owner(c);
     const m = this.s.members.find((x) => x.circle_id === c && x.user_id === u && x.role !== 'owner');

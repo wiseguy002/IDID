@@ -14,6 +14,14 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-11-12
+
+Let the person at the centre of the circle run it.
+
+### Added
+- **Hand the circle to someone else**: when the person whose journal it really is joins a circle a family member started, the owner can make them the circle's owner from their profile on the Circle page. They then decide who sees what, invite people, share with a care team and remove access. The previous owner stays in the circle and can still view and add. The new owner sees a one-time note with a shortcut to review who can see what.
+- A help guide, **Handing the circle to someone else**.
+
 ## [0.11.0] - 2026-11-12
 
 Share safely with your therapist and choose what each person sees.
@@ -187,7 +195,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/wiseguy002/IDID/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/wiseguy002/IDID/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/wiseguy002/IDID/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/wiseguy002/IDID/compare/v0.8.1...v0.9.0

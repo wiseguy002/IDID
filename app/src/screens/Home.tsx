@@ -12,7 +12,7 @@ import { useProgress } from './Explore';
 import { nextTip } from '../lib/progress';
 import { KindActCard, KindNoteView, useKindNotes } from './Kindness';
 import { CheckOnCards } from '../components/CheckOn';
-import { useAccount } from '../sync/account';
+import { dismissNewOwner, useAccount } from '../sync/account';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -73,13 +73,23 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
     toast('Thank you. Your reflection was added.');
   };
 
-  const { role } = useAccount();
+  const { role, newOwner } = useAccount();
   return (
     <div className="stack fade-in">
       <section style={{ padding: '.6rem 0 .2rem' }}>
         <h1 style={{ fontSize: '1.85rem' }}>{greeting(me?.name ?? '')}</h1>
         <p className="muted" style={{ fontSize: '1.05rem' }}>{back ?? welcomeLine()}</p>
       </section>
+      {role === 'owner' && newOwner && (
+        <div className="card accent" role="status">
+          <b>You now manage this circle.</b>
+          <p className="small" style={{ margin: '.3rem 0 .6rem' }}>You can invite people, choose what each person can see and do, share with your therapist, and remove access. Have a look at who can see what.</p>
+          <div className="row">
+            <button className="btn sm primary" onClick={() => { dismissNewOwner(); go({ name: 'circle' }); }}>Review who can see what</button>
+            <button className="btn sm ghost" onClick={dismissNewOwner}>Got it</button>
+          </div>
+        </div>
+      )}
       {role === 'viewer' && <div className="card blue small" role="note"><b>You have view-only access to this circle.</b> You can see what the circle shares. Anything you add stays on this device and isn't shared. Ask the circle's owner if you'd like to add notes.</div>}
 
       <CheckOnCards />

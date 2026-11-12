@@ -58,7 +58,7 @@ class FakeRemote implements Remote {
   }
   async addReminder(r: ReminderRow) {
     const shares = this.s.members.some((a) => a.user_id === this.uid && this.s.members.some((b) => b.circle_id === a.circle_id && b.user_id === r.user_id));
-    if (r.user_id !== this.uid && !(r.kind === 'observation' && shares)) throw new Error('rls');
+    if (r.user_id !== this.uid && !((r.kind === 'observation' || r.kind === 'checkon') && shares)) throw new Error('rls');
     if (!this.s.reminders.some((x) => x.user_id === r.user_id && x.tag === r.tag)) this.s.reminders.push({ ...r, created_by: this.uid });
   }
   async savePushSubscription(s: PushSub) { this.s.subs.push({ ...s, user_id: this.uid }); }

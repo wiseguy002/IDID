@@ -34,7 +34,7 @@ export default function Lock({ onUnlock }: { onUnlock: () => void }) {
       <form style={{ width: '100%', maxWidth: 400, textAlign: 'center' }} onSubmit={(e) => { e.preventDefault(); if (!busy) submit(); }}>
         <div className="brand-mark" style={{ width: 56, height: 56, margin: '0 auto' }}><Icon name="lock" size={26} /></div>
         <h2 style={{ marginTop: '1rem' }}>{mode === 'reset' ? 'Choose a new passphrase' : 'Welcome back'}</h2>
-        <p className="muted">{mode === 'pass' ? 'Your journal is locked and encrypted. Enter your passphrase to open it.' : mode === 'recover' ? 'Enter the recovery code you saved when you set up IDID.' : 'Your journal is open. Choose a passphrase you will remember.'}</p>
+        <p className="muted">{mode === 'pass' ? 'Your journal is locked and encrypted. Enter your passphrase to open it.' : mode === 'recover' ? 'Enter the recovery code you saved when you set up iDID.' : 'Your journal is open. Choose a passphrase you will remember.'}</p>
         {mode !== 'reset' ? (
           <input id="unlock-input" className="input" type={mode === 'pass' ? 'password' : 'text'} autoFocus autoComplete={mode === 'pass' ? 'current-password' : 'off'}
             value={value} onChange={(e) => setValue(e.target.value)} placeholder={mode === 'pass' ? 'Passphrase' : 'XXXXX-XXXXX-XXXXX-XXXXX-XXXXX'} aria-label={mode === 'pass' ? 'Passphrase' : 'Recovery code'} />

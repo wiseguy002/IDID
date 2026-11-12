@@ -112,6 +112,12 @@ export interface Backup {
   contacts?: KindMap['contacts'][];
   checkins?: KindMap['checkins'][];
   activity?: KindMap['activity'][];
+  safety?: KindMap['safety'][];
+  board?: KindMap['board'][];
+  body?: KindMap['body'][];
+  meds?: KindMap['meds'][];
+  comfort?: KindMap['comfort'][];
+  prep?: KindMap['prep'][];
   prefs?: Prefs;
 }
 
@@ -119,13 +125,14 @@ export function exportAll(): Backup {
   return {
     app: 'idid', version: 2, appVersion: APP_VERSION, exportedAt: new Date().toISOString(),
     members: store.all('members'), parts: store.all('parts'), entries: store.all('entries'),
-    observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), checkins: store.all('checkins'), activity: store.all('activity'), prefs: getPrefs(),
+    observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), checkins: store.all('checkins'), activity: store.all('activity'), safety: store.all('safety'), board: store.all('board'), body: store.all('body'),
+    meds: store.all('meds'), comfort: store.all('comfort'), prep: store.all('prep'), prefs: getPrefs(),
   };
 }
 
 export async function importAll(b: Partial<Backup> & { app: string }, mode: 'merge' | 'replace') {
-  if (b.app !== 'idid') throw new Error('This file is not an IDID backup.');
-  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity'] as const;
+  if (b.app !== 'idid') throw new Error('This file is not an iDID backup.');
+  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity', 'safety', 'board', 'body', 'meds', 'comfort', 'prep'] as const;
   if (mode === 'replace') {
     for (const k of kinds) for (const r of store.all(k)) await store.remove(k, r.id);
   }
@@ -173,6 +180,13 @@ export function factsFor(memberId: string, extra: { online: boolean; notificatio
     helped: checkins.filter((c) => c.helped).length,
     rituals: me?.rituals?.length ?? 0,
     supportProfile: !!me?.support?.zip,
+    safetyPlan: !!store.get('safety', `safety:${memberId}`),
+    boardNotes: store.all('board').filter((n) => n.memberId === memberId).length,
+    bodyDays: store.all('body').filter((b) => b.memberId === memberId).length,
+    meds: store.all('meds').filter((m) => m.memberId === memberId).length,
+    comfortItems: store.all('comfort').filter((c) => c.memberId === memberId).length,
+    preps: store.all('prep').filter((p) => p.memberId === memberId).length,
+    checkOnSent: store.all('alerts').filter((a) => a.fromMemberId === memberId).length,
     contacts: store.all('contacts').filter((c) => c.memberId === memberId).length,
     appointments: store.all('appointments').filter((a) => !a.memberIds.length || a.memberIds.includes(memberId)).length,
     ...extra,

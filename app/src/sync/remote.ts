@@ -9,7 +9,7 @@ export interface ProfileRow {
 }
 export interface MembershipRow { circle_id: string; user_id: string; role: 'owner' | 'member'; sealed_circle_key: string }
 export interface RecordRow { rid: string; ct: string; seq: number }
-export interface ReminderRow { user_id: string; kind: 'appointment' | 'checkin' | 'observation' | 'kindness' | 'tip'; fire_at: string; tag: string; minutes_before?: number | null }
+export interface ReminderRow { user_id: string; kind: 'appointment' | 'checkin' | 'observation' | 'kindness' | 'tip' | 'checkon' | 'med'; fire_at: string; tag: string; minutes_before?: number | null }
 export interface PushSub { endpoint: string; p256dh: string; auth: string }
 
 export interface Remote {

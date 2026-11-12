@@ -1,25 +1,47 @@
 # Changelog
 
-All notable changes to IDID are recorded here, newest first. The app's **What's new** screen is built from this file.
+All notable changes to iDID are recorded here, newest first. The app's **What's new** screen is built from this file.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and IDID uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and iDID uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
 
 - **MAJOR** (1.0.0 → 2.0.0): a change that needs people to act, such as a data format that older versions can't read.
 - **MINOR** (0.5.0 → 0.6.0): new features. Existing journals keep working.
 - **PATCH** (0.6.0 → 0.6.1): fixes and small improvements only.
 
-While the version starts with 0, IDID is in early release and still being tested with real users. Version 1.0.0 will mark the first release we recommend for everyday use.
+While the version starts with 0, iDID is in early release and still being tested with real users. Version 1.0.0 will mark the first release we recommend for everyday use.
 
-Write each entry for the people who use IDID, in plain language. Add new changes under **Unreleased**; they move into a numbered version when it's released (see `docs/RELEASING.md`).
+Write each entry for the people who use iDID, in plain language. Add new changes under **Unreleased**; they move into a numbered version when it's released (see `docs/RELEASING.md`).
 
 ## [Unreleased]
 
-## [0.7.1] - 2026-11-12
+## [0.8.0] - 2026-11-12
 
-IDID's new home at idid.care.
+Tools for hard days: a safety plan, check on me, quick hide, and more. IDID is now **iDID**.
 
 ### Added
-- **Tell a friend** in Settings, to share IDID with someone who might find it helpful.
+- **Safety plan**: seven gentle steps (warning signs, things that help, people and places, who to ask for help, professionals and crisis lines, making things safer, and what matters to you). Always one tap away on Pause, printable, and shareable with your circle if you choose.
+- **Check on me**: quietly ask chosen people to check on you, call, text or come over, without explaining. They get a notification and can tap "I'm on it". You can also text saved contacts.
+- **Quick hide**: tap the eye icon (or press Esc twice) to lock iDID at once and show a calm clock or a plain notepad.
+- **Inner board**: a private notice board where parts can leave notes for each other, with pinning and "seen by".
+- **Body basics**: sleep, meals, water, movement, daylight and medication each day; medication list with reminders; and a look at how sleep and hard moments relate.
+- **Comfort kit**: photos, songs, words, scents, places, people and letters from a part who feels safe, plus "Show me something comforting".
+- **Prepare for therapy**: what's happened since the last session, moments to bring up, an agenda, questions, wins, and notes to remember afterwards. Printable or copied as text.
+- New badges and Explore entries for all of the above.
+
+### Changed
+- The app is now called **iDID** (said "I did").
+- The header fits narrow phones better.
+
+### Security
+- The inner board, body basics, medications, comfort kit, therapy prep, check-ins and Explore progress are always encrypted with your own key, so other circle members can't read them. Safety plans are private unless you choose to share them.
+- Notifications for "Check on me" and medication reminders never say what they're about.
+
+## [0.7.1] - 2026-11-12
+
+iDID's new home at idid.care.
+
+### Added
+- **Tell a friend** in Settings, to share iDID with someone who might find it helpful.
 - Links from Settings and Find support to plain-language guides at idid.care/learn.
 - Proper home-screen icons for iPhone and Android.
 
@@ -35,20 +57,20 @@ Explore, badges, kindness and your ideas.
 - **Explore**: every feature in one place, which ones you've tried, and gentle milestone **badges**. No streaks to break and no comparisons. Badges only ever add up, and you can hide them.
 - An occasional **"Something that might help"** suggestion for a feature you haven't tried yet. At most once a week, never in your first two days, and you can turn it off or say "Don't suggest this".
 - **Pay it forward**: a small act of kindness to try each day, like smiling at someone or saying hi.
-- **Kind notes**: send an anonymous note of encouragement to a random person using IDID. You choose from caring messages and a little picture. There are no replies or direct messages, only light. Receiving is opt-in and limited to three a day.
-- **Suggest a feature**: send ideas, services and fixes to the IDID team and see their replies. Requests made while offline are sent later.
-- For the IDID team: a **Manage requests** screen to review, reply to, and track every request.
+- **Kind notes**: send an anonymous note of encouragement to a random person using iDID. You choose from caring messages and a little picture. There are no replies or direct messages, only light. Receiving is opt-in and limited to three a day.
+- **Suggest a feature**: send ideas, services and fixes to the iDID team and see their replies. Requests made while offline are sent later.
+- For the iDID team: a **Manage requests** screen to review, reply to, and track every request.
 
 ### Fixed
 - A check-in or update note could appear for a moment during first-time setup.
 
 ## [0.6.0] - 2026-11-12
 
-A clear record of how IDID changes.
+A clear record of how iDID changes.
 
 ### Added
 - A **What's new** screen (Settings → About) showing every version and what changed, built from this changelog.
-- A short "Updated to version …" note on Home the first time IDID opens after an update.
+- A short "Updated to version …" note on Home the first time iDID opens after an update.
 - The app version and build are shown in Settings and included in backups and clinician exports.
 
 ### Changed
@@ -91,7 +113,7 @@ Share a circle across devices, plus appointments and alerts.
 
 ### Fixed
 - Pop-up panels sometimes appeared inside the page instead of on top of it.
-- After locking, IDID now asks who's here again on shared devices.
+- After locking, iDID now asks who's here again on shared devices.
 
 ## [0.2.0] - 2026-11-11
 
@@ -99,14 +121,14 @@ Your journal is now encrypted.
 
 ### Security
 - Everything is encrypted on your device with your passphrase. A recovery code is the backup way back in.
-- IDID locks itself after time in the background, and there's a **Lock now** button.
+- iDID locks itself after time in the background, and there's a **Lock now** button.
 
 ### Changed
 - The 4-digit passcode is replaced by a passphrase that actually protects the data.
 
 ## [0.1.0] - 2026-11-11
 
-The first version of IDID.
+The first version of iDID.
 
 ### Added
 - Quick, optional 5-step log: when and where, triggers, mood and feelings, who was fronting or co-fronting, lost time, duration, and who noticed.
@@ -116,7 +138,8 @@ The first version of IDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/wiseguy002/IDID/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/wiseguy002/IDID/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/wiseguy002/IDID/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/wiseguy002/IDID/compare/v0.5.0...v0.6.0

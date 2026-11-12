@@ -155,7 +155,7 @@ export default function LogEntry({ entryId }: { entryId?: string }) {
         <label className="field" style={{ marginTop: '.7rem' }}><span className="small">Anyone else? <span className="muted">(not in your circle)</span></span>
           <input className="input" value={e.noticedByOthers} onChange={(ev) => set('noticedByOthers', ev.target.value)} placeholder="e.g. a teacher, coworker" /></label>
         {e.noticedByIds.some((id) => id !== me?.id) && e.visibility === 'circle' && (
-          <Switch label="Ask them to add what they noticed" hint="They'll see a gentle request next time they open IDID." checked={ask} onChange={setAsk} />
+          <Switch label="Ask them to add what they noticed" hint="They'll see a gentle request next time they open iDID." checked={ask} onChange={setAsk} />
         )}
       </div>
       <label className="field"><span>Anything else to remember?</span>

@@ -82,6 +82,42 @@ describe('end-to-end encrypted sync', () => {
     expect(a2.get('entries', 'e2')?.notes).toBe('only alex');
   }, 30000);
 
+  it('keeps personal kinds private, shares safety plans only when chosen, and wakes people asked to check on someone', async () => {
+    const server = new FakeServer();
+    const aR = server.as('u-a'), bR = server.as('u-b');
+    const aC = await createCircle(aR, await createAccount(aR, 'alpha pass phrase', ITER));
+    const bC = await joinWithInvite(bR, await createAccount(bR, 'bravo pass phrase', ITER), await makeInvite(aR, aC));
+    const a = await device();
+    await a.put('members', { id: 'ma', name: 'A', role: 'self', tracked: true, canView: true, canObserve: true, color: '', createdAt: 0, userId: 'u-a' });
+    await a.put('members', { id: 'mb', name: 'B', role: 'partner', tracked: false, canView: true, canObserve: true, color: '', createdAt: 1, userId: 'u-b' });
+    await a.put('board', { id: 'n1', memberId: 'ma', fromPartId: null, toPartIds: [], text: 'inner note', pinned: false, done: false, seenBy: {}, createdAt: 1 });
+    await a.put('body', { id: 'body:ma:2026-01-01', memberId: 'ma', date: '2026-01-01', sleepHours: 5, sleepQuality: 2, meals: [], water: 1, medsTaken: {}, movement: false, outside: false, notes: '' });
+    await a.put('meds', { id: 'med1', memberId: 'ma', name: 'Sertraline', dose: '50mg', times: ['08:00'], remind: true, notes: '', active: true, createdAt: 1 });
+    await a.put('comfort', { id: 'c1', memberId: 'ma', type: 'quote', title: 'q', text: 'be kind', url: '', image: '', fromPartId: null, createdAt: 1 });
+    await a.put('prep', { id: 'p1', memberId: 'ma', appointmentId: null, sessionAt: 1, since: 0, agenda: ['talk'], questions: [], wins: [], entryIds: [], afterNotes: '', createdAt: 1 });
+    const plan = { id: 'safety:ma', memberId: 'ma', warningSigns: ['x'], coping: [], distractions: [], helperContactIds: [], proContactIds: [], safeSteps: [], reasons: ['my cat'], visibility: 'private' as const, updatedAt: 1 };
+    await a.put('safety', plan);
+    await a.put('alerts', { id: 'al1', fromMemberId: 'ma', toMemberIds: ['mb'], ask: 'call', createdAt: Date.now(), acks: {}, resolvedAt: null });
+    const aE = new SyncEngine(a, aR, aC, mem());
+    aE.myMemberIds = () => ['ma'];
+    await aE.sync();
+    expect(JSON.stringify([...server.records.values()])).not.toMatch(/Sertraline|inner note|my cat|be kind/);
+    expect(server.reminders).toContainEqual(expect.objectContaining({ user_id: 'u-b', kind: 'checkon', tag: 'checkon-al1-mb' }));
+
+    const b = await device();
+    const bE = new SyncEngine(b, bR, bC, mem());
+    await bE.sync();
+    for (const k of ['board', 'body', 'meds', 'comfort', 'prep', 'safety'] as const) expect(b.all(k), k).toHaveLength(0);
+    expect(b.get('alerts', 'al1')?.ask).toBe('call');
+    // B responds; A sees it. A then shares the safety plan with the circle.
+    await b.patch('alerts', 'al1', { acks: { mb: 123 } });
+    await bE.sync(); await aE.sync();
+    expect(a.get('alerts', 'al1')?.acks.mb).toBe(123);
+    await a.put('safety', { ...plan, visibility: 'circle' });
+    await aE.sync(); await bE.sync();
+    expect(b.get('safety', 'safety:ma')?.reasons).toEqual(['my cat']);
+  }, 30000);
+
   it('rejects a record moved to a different id (tamper check)', async () => {
     const server = new FakeServer();
     const r = server.as('u1');

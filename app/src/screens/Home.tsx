@@ -11,6 +11,7 @@ import { patchActivity, updateDevice } from '../db';
 import { useProgress } from './Explore';
 import { nextTip } from '../lib/progress';
 import { KindActCard, KindNoteView, useKindNotes } from './Kindness';
+import { CheckOnCards } from '../components/CheckOn';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -78,6 +79,8 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         <p className="muted" style={{ fontSize: '1.05rem' }}>{back ?? welcomeLine()}</p>
       </section>
 
+      <CheckOnCards />
+
       {updated.length > 0 && (
         <div className="card blue" role="status">
           <div className="eyebrow"><Icon name="sparkle" size={14} /> Updated to version {APP_VERSION}</div>
@@ -94,7 +97,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
       {!settings.tourOffered && (
         <div className="card blue">
           <div className="eyebrow"><Icon name="sparkle" size={14} /> New here?</div>
-          <p style={{ margin: '0 0 .6rem' }}>Would you like a one-minute tour of what IDID can do?</p>
+          <p style={{ margin: '0 0 .6rem' }}>Would you like a one-minute tour of what iDID can do?</p>
           <div className="row">
             <button className="btn sm primary" onClick={() => { updateDevice({ tourOffered: true }); openTour(); }}>Show me around</button>
             <button className="btn sm ghost" onClick={() => { updateDevice({ tourOffered: true }); toast('No problem. The tour is in Explore whenever you want it.'); }}>Not now</button>
@@ -200,6 +203,17 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         <span><b>Find support{me?.support?.zip ? ` near ${me.support.zip}` : ''}</b><br />
           <span className="small muted">{me?.support?.zip ? 'Specialists, helplines and community matched to your needs.' : 'Add your ZIP code to find therapists, crisis services and community near you.'}</span></span>
       </button>
+
+      <div className="card soft" style={{ padding: '.9rem' }}>
+        <div className="eyebrow">My tools</div>
+        <div className="row" style={{ gap: '.45rem' }}>
+          <button className="btn sm" onClick={() => go({ name: 'body' })}><Icon name="body" size={16} /> Body basics</button>
+          <button className="btn sm" onClick={() => go({ name: 'safety' })}><Icon name="shield" size={16} /> Safety plan</button>
+          <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>
+          {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> Inner board</button>}
+          <button className="btn sm" onClick={() => go({ name: 'prep' })}><Icon name="clipboard" size={16} /> Prepare for therapy</button>
+        </div>
+      </div>
 
       <div className="grid2">
         <button className="card" style={{ cursor: 'pointer', textAlign: 'left', margin: 0 }} onClick={() => go({ name: 'timeline' })}>

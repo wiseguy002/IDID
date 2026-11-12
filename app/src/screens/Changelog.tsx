@@ -37,9 +37,9 @@ export default function Changelog() {
   useEffect(() => { track(me?.id, 'whats-new'); }, [me?.id]);
   return (
     <div className="fade-in">
-      <PageHead title="What's new" sub={`You're using IDID ${APP_VERSION}.`} onBack={() => go({ name: 'settings' })} />
+      <PageHead title="What's new" sub={`You're using iDID ${APP_VERSION}.`} onBack={() => go({ name: 'settings' })} />
       <div className="card soft small">
-        <b>How version numbers work.</b> Versions look like <b>1.4.2</b>. The last number goes up for fixes, the middle number for new features, and the first number for big changes that might ask something of you. While the first number is 0, IDID is in early release.
+        <b>How version numbers work.</b> Versions look like <b>1.4.2</b>. The last number goes up for fixes, the middle number for new features, and the first number for big changes that might ask something of you. While the first number is 0, iDID is in early release.
       </div>
       {RELEASES.map((r) => <ReleaseNotes key={r.version} r={r} current={r.version === APP_VERSION} />)}
       <p className="tiny muted">Build {BUILD_COMMIT}{BUILD_DATE ? ` · ${BUILD_DATE}` : ''}. The full history is in CHANGELOG.md in the project's repository.</p>

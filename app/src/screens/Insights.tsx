@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { track, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { computeStats } from '../lib/stats';
+import { sleepInsight } from '../lib/body';
 import { moodLabel, partWords } from '../lib/util';
 import { ChipSelect, Empty, PageHead, Segmented } from '../components/ui';
 import { Icon } from '../components/Icon';
@@ -52,6 +53,7 @@ export default function Insights() {
   useEffect(() => { track(me?.id, 'patterns'); }, [me?.id]);
   const all = useAll('entries');
   const allCheckins = useAll('checkins');
+  const allBody = useAll('body');
   const w = partWords(settings.partWord);
   const mName = (id: string) => members.find((m) => m.id === id)?.name ?? '';
 
@@ -97,6 +99,17 @@ export default function Insights() {
                     <div key={k} className="row between small" style={{ padding: '.25rem 0' }}><span>{k}</span><span className="muted">helped {y} of {n} time{n === 1 ? '' : 's'}</span></div>
                   ))}
                 </>}
+              </div>
+            );
+          })()}
+          {(() => {
+            const days = allBody.filter((b) => (!who.length || who.includes(b.memberId)) && (range === 'all' || new Date(b.date + 'T12:00').getTime() > Date.now() - Number(range) * 86400000));
+            const si = sleepInsight(days, entries);
+            if (!si) return null;
+            return (
+              <div className="card"><h3>Sleep and hard moments</h3>
+                <Bars data={[['Under 6 hours’ sleep', Number(si.short.toFixed(1))], ['7 hours or more', Number(si.rested.toFixed(1))]]} color="var(--accent-2)" />
+                <p className="tiny muted" style={{ margin: '.4rem 0 0' }}>Moments noted per day, after {si.shortDays} short and {si.restedDays} rested nights. A pattern, not a cause, but worth sharing with your care team.</p>
               </div>
             );
           })()}

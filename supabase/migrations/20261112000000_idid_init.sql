@@ -1,4 +1,4 @@
--- IDID schema. The server stores only ciphertext: every journal record is an
+-- iDID schema. The server stores only ciphertext: every journal record is an
 -- AES-GCM blob encrypted on the person's device. Record ids are keyed hashes,
 -- so the server cannot even tell an entry from a part or an appointment.
 -- What the server does see: account emails (for sign-in), which accounts share

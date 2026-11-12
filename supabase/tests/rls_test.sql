@@ -68,9 +68,20 @@ insert into public.reminders (user_id, kind, fire_at, tag, minutes_before) value
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
 select pg_temp.expect((select count(*) = 0 from public.reminders), 'cannot see others reminders');
 
+-- ---------- Check on me & medication reminders ----------
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+insert into public.reminders (user_id, kind, fire_at, tag) values ('00000000-0000-0000-0000-00000000000a', 'checkon', now(), 'checkon-1');
+insert into public.reminders (user_id, kind, fire_at, tag) values (auth.uid(), 'med', now() + interval '1 hour', 'med-1');
+select pg_temp.expect_error($q$insert into public.reminders (user_id, kind, fire_at, tag) values ('00000000-0000-0000-0000-00000000000a', 'med', now(), 'med-x')$q$, 'cannot set medication reminders for others');
+select pg_temp.expect_error($q$insert into public.reminders (user_id, kind, fire_at, tag) values ('00000000-0000-0000-0000-00000000000c', 'checkon', now(), 'checkon-x')$q$, 'cannot ask people outside your circles to check on you');
+select pg_temp.expect_error($q$insert into public.reminders (user_id, kind, fire_at, tag) values (auth.uid(), 'nonsense', now(), 'z')$q$, 'unknown reminder kinds rejected');
+
 -- Owner removes member; removed member loses access
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 delete from public.circle_members where user_id = '00000000-0000-0000-0000-00000000000b';
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+select pg_temp.expect_error($q$insert into public.reminders (user_id, kind, fire_at, tag) values ('00000000-0000-0000-0000-00000000000a', 'checkon', now(), 'checkon-after')$q$, 'removed member can no longer send check-on alerts');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
 select pg_temp.expect((select count(*) = 0 from public.records), 'removed member loses access');
 

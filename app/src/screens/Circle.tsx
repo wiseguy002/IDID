@@ -107,7 +107,7 @@ export default function Circle() {
             </button>
           ))}
         </div>
-        <p className="tiny muted" style={{ marginTop: '.6rem', marginBottom: 0 }}>Right now, everyone in the circle uses this device and picks who's here when IDID opens. To share with someone on another device, use <b>Share & export</b>.</p>
+        <p className="tiny muted" style={{ marginTop: '.6rem', marginBottom: 0 }}>Right now, everyone in the circle uses this device and picks who's here when iDID opens. To share with someone on another device, use <b>Share & export</b>.</p>
       </div>
 
       {tracked.map((t) => {
@@ -117,6 +117,7 @@ export default function Circle() {
           <div className="card" key={t.id}>
             <div className="row between"><h2 style={{ margin: 0 }}>{t.id === me?.id ? `My ${w.many}` : `${t.name}'s ${w.many}`}</h2>
               <button className="btn sm" onClick={() => setEditP(newPart(t.id))}><Icon name="plus" size={17} /> Add</button></div>
+            <button className="btn sm" style={{ marginTop: '.6rem' }} onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> Inner board</button>
             {active.length === 0 && <p className="small muted" style={{ marginTop: '.6rem' }}>No {w.many} added yet. Add them whenever it feels right — or never. Both are okay.</p>}
             <div className="chips" style={{ marginTop: '.7rem' }}>
               {active.map((p) => <button key={p.id} className="chip" onClick={() => setEditP(p)}><span className="dot" style={{ background: p.color }} />{p.name}{p.pronouns ? <span className="muted small">({p.pronouns})</span> : null}</button>)}

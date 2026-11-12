@@ -1,8 +1,8 @@
-# IDID — a gentle journal
+# iDID — a gentle journal
 
-**Current version: 0.7.1** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.8.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
-IDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
+iDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 
 The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App**: it works in any browser, can be installed to a phone's home screen, and works offline.
 
@@ -16,10 +16,11 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Online circle** | Each person on their own phone: sign in with an email code, invite with a one-time link, automatic end-to-end encrypted sync. |
 | **Appointments** | Therapy, counselling, support groups, psychiatry: repeating schedules, reminders, "since last session" summaries, **add to Apple, Outlook or Google Calendar**. |
 | **Alerts** | Push notifications for appointment reminders, daily check-ins, and requests from the circle. The text is always generic so nothing private shows on a lock screen. |
-| **Gentle check-ins** | At random times (never in quiet hours) IDID asks whoever is here "How are you doing right now?", answers with a kind, honest word, and offers something small: breathe together, interrupt the pattern with one of your own healthy rituals, or get some fresh air and sunshine (suited to the time of day). "Struggling" leads to grounding, your contacts and 988. Patterns shows what actually helps. |
+| **Gentle check-ins** | At random times (never in quiet hours) iDID asks whoever is here "How are you doing right now?", answers with a kind, honest word, and offers something small: breathe together, interrupt the pattern with one of your own healthy rituals, or get some fresh air and sunshine (suited to the time of day). "Struggling" leads to grounding, your contacts and 988. Patterns shows what actually helps. |
+| **Tools for hard days** | A guided **safety plan**, **Check on me** (quietly ask people to reach out), **Quick hide**, a **comfort kit**, an **inner board** for notes between parts, **body basics** with medication reminders, and **therapy prep**. |
 | **Explore & badges** | A quick tour, every feature in one place with what you've tried, gentle milestone badges (no streaks, no comparison), and at most a weekly suggestion of something that might help. |
 | **Kindness** | A daily small act of kindness to pay it forward, and anonymous **kind notes**: pick a caring message to brighten a random person's day. Opt-in, curated, no direct messages. |
-| **Suggest a feature** | Ideas and requests go to the IDID team, who can reply and track status in an in-app **Manage requests** screen. |
+| **Suggest a feature** | Ideas and requests go to the iDID team, who can reply and track status in an in-app **Manage requests** screen. |
 | **Find support** | ZIP code and needs (DID specialist, trauma, low-cost care, LGBTQ+, veterans, family…) drive matched crisis lines, nearby specialists and health centers, helplines, and learning and community resources. Personal support contacts (therapist, social worker, crisis center) are one tap away on the Pause screen. |
 | **Parts / system** | Parts with pronouns, age, role, notes and colour. Your choice of word (parts / alters / headmates / selves). |
 | **Timeline & Patterns** | Search and filters; mood trend, triggers, fronting, triggers per part, places, day × time heatmap. |
@@ -59,4 +60,4 @@ The first screen has **"Explore with a sample circle"**, which loads fictional d
 3. ⏭️ Android (Google Play) and iOS (App Store) apps via Capacitor, with on-device notifications and Face ID / fingerprint unlock
 4. Later: rotate the circle key when someone leaves; read-only clinician access
 
-> IDID is a journaling tool, not a medical device, and is not a substitute for professional care.
+> iDID is a journaling tool, not a medical device, and is not a substitute for professional care.

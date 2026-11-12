@@ -23,6 +23,13 @@ import Changelog from './screens/Changelog';
 import Explore from './screens/Explore';
 import Kindness from './screens/Kindness';
 import Feedback, { AdminRequests } from './screens/Feedback';
+import SafetyPlanScreen from './screens/SafetyPlan';
+import Board from './screens/Board';
+import Body from './screens/Body';
+import Comfort from './screens/Comfort';
+import Prep from './screens/Prep';
+import { CheckOnSheet } from './components/CheckOn';
+import { Cover, useHideShortcut } from './components/QuickHide';
 import { Tour } from './components/Tour';
 import { factsFor, getActivity, patchActivity } from './db';
 import { progress } from './lib/progress';
@@ -125,6 +132,15 @@ export default function App() {
   const snoozeNudge = () => { snoozeUntil.current = Date.now() + 30 * 60000; setNudgeOpen(false); toast("Okay, I'll ask again in a little while."); };
   const openCheckIn = useCallback(() => { setNudgeAt(null); setNudgeOpen(true); }, []);
   const [tourOpen, setTourOpen] = useState(false);
+  const [checkOnOpen, setCheckOnOpen] = useState(false);
+  // Quick hide: lock and show an ordinary-looking screen at once.
+  const [hidden, setHidden] = useState(false);
+  const hide = useCallback(() => {
+    setHidden(true); setTourOpen(false); setNudgeOpen(false); setCheckOnOpen(false);
+    store.lock();
+    document.title = settings.hideStyle === 'notes' ? 'Notes' : 'Clock';
+  }, [settings.hideStyle]);
+  useHideShortcut(hide);
 
   // Celebrate newly earned badges once (gently; can be turned off in Explore).
   useEffect(() => {
@@ -139,6 +155,7 @@ export default function App() {
 
   useReminders(unlocked ? me : null, settings, toast, onNudge);
 
+  if (hidden) return <Cover style={settings.hideStyle} onExit={() => { setHidden(false); document.title = 'iDID'; }} />;
   if (vault === null) return null;
   if (!vault || (unlocked && members.length === 0)) return <Onboarding onDone={() => { writeHandled(Date.now()); updateDevice({ lastSeenVersion: APP_VERSION }); setVault(true); setChosen(true); }} />;
   if (!unlocked) return <Lock onUnlock={() => undefined} />;
@@ -146,7 +163,7 @@ export default function App() {
     return <WhoIsHere members={members} current={me?.id ?? null} onPick={(id) => { updateDevice({ activeMemberId: id }); setRoute({ name: 'home' }); setChosen(true); }} />;
   }
 
-  const ctx = { settings, members, parts, me, route, go, toast, checkIn: openCheckIn, openTour: () => setTourOpen(true) };
+  const ctx = { settings, members, parts, me, route, go, toast, checkIn: openCheckIn, openTour: () => setTourOpen(true), checkOn: () => setCheckOnOpen(true) };
   const inWizard = route.name === 'log' || route.name === 'observe';
 
   return (
@@ -155,16 +172,17 @@ export default function App() {
         <header className="topbar no-print">
           <div className="brand">
             <span className="brand-mark"><Icon name="leaf" size={17} /></span>
-            {settings.circleName || 'IDID'}
+            <span className="brand-name">{settings.circleName || 'iDID'}</span>
           </div>
           <button className="btn sm ghost" onClick={() => go({ name: 'pause' })} aria-label="Take a pause: grounding tools">
-            <Icon name="heart" size={18} /> Pause
+            <Icon name="heart" size={18} /> <span className="pause-label">Pause</span>
           </button>
           {members.length > 1 && (
             <button className="iconbtn" onClick={() => setChosen(false)} aria-label={`Switch person (currently ${me?.name})`} title={`Using as ${me?.name}`}>
               <span className="brand-mark" style={{ background: me?.color, color: '#fff', fontSize: '.8rem', fontWeight: 700 }}>{me?.name.charAt(0)}</span>
             </button>
           )}
+          <button className="iconbtn" onClick={hide} aria-label="Quick hide" title="Quick hide (or press Esc twice)"><Icon name="hide" /></button>
           <button className="iconbtn" onClick={() => go({ name: 'settings' })} aria-label="Settings"><Icon name="gear" /></button>
         </header>
         <main>
@@ -186,6 +204,11 @@ export default function App() {
           {route.name === 'kindness' && <Kindness />}
           {route.name === 'feedback' && <Feedback />}
           {route.name === 'admin' && <AdminRequests />}
+          {route.name === 'safety' && <SafetyPlanScreen />}
+          {route.name === 'board' && <Board />}
+          {route.name === 'body' && <Body />}
+          {route.name === 'comfort' && <Comfort />}
+          {route.name === 'prep' && <Prep key={route.appointmentId ?? 'next'} appointmentId={route.appointmentId} />}
         </main>
         {!inWizard && (
           <nav className="bottomnav no-print" aria-label="Main">
@@ -202,6 +225,7 @@ export default function App() {
         )}
         {toastMsg && <div className="toast" role="status">{toastMsg}</div>}
         {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
+        {checkOnOpen && <CheckOnSheet onClose={() => setCheckOnOpen(false)} />}
         {nudgeOpen && !inWizard && !tourOpen && <NudgeSheet onClose={closeNudge} onSnooze={nudgeAt ? snoozeNudge : undefined} />}
       </div>
     </Ctx.Provider>

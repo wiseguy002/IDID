@@ -19,7 +19,7 @@
     if (!navigator.share) { el.hidden = true; return; }
     el.addEventListener('click', () => {
       const src = document.getElementById(el.getAttribute('data-share'));
-      navigator.share({ title: 'IDID', text: src ? (src.value ?? src.textContent) : '', url: 'https://idid.care' }).catch(() => {});
+      navigator.share({ title: 'iDID', text: src ? (src.value ?? src.textContent) : '', url: 'https://idid.care' }).catch(() => {});
     });
   });
   const y = document.getElementById('year'); if (y) y.textContent = String(new Date().getFullYear());

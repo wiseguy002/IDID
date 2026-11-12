@@ -5,6 +5,7 @@
 import { useSyncExternalStore } from 'react';
 import { factsFor, getActivity, getDevice, persist, store, subscribeDevice } from '../db';
 import { nextTip } from '../lib/progress';
+import { doseTimesBetween } from '../lib/body';
 import { unlockVault } from '../data/vault';
 import { checkInTimes, remindersBetween } from '../lib/schedule';
 import { nudgeTimesBetween } from '../lib/nudges';
@@ -56,7 +57,7 @@ function startEngine() {
   let t: ReturnType<typeof setTimeout> | null = null;
   const onChange = () => {
     const d = getDevice();
-    const sig = JSON.stringify([store.all('appointments').map((a) => [a.id, a.startsAt, a.recurrence, a.until, a.reminderMins, a.memberIds]), d.notifyAppointments, d.checkInTime, d.activeMemberId, d.nudges, d.nudgesPerDay, d.quietStart, d.quietEnd]);
+    const sig = JSON.stringify([store.all('appointments').map((a) => [a.id, a.startsAt, a.recurrence, a.until, a.reminderMins, a.memberIds]), d.notifyAppointments, d.checkInTime, d.activeMemberId, d.nudges, d.nudgesPerDay, d.quietStart, d.quietEnd, d.notifyMeds, store.all('meds').map((m) => [m.id, m.times, m.remind, m.active])]);
     if (sig === lastSig) return;
     lastSig = sig;
     if (t) clearTimeout(t);
@@ -207,6 +208,11 @@ export async function scheduleServerReminders() {
     if (due < until && nextTip(f, a, me.createdAt, due)) {
       const [t] = nudgeTimesBetween(`tip-${me.id}`, due, due + 86400000, 1, d.quietStart, d.quietEnd);
       if (t) rows.push({ user_id: keys.userId, kind: 'tip', fire_at: new Date(t).toISOString(), tag: `tip-${t}` });
+    }
+  }
+  if (me && d.notifyMeds) {
+    for (const r of doseTimesBetween(store.all('meds').filter((m) => m.memberId === me.id && m.remind), now, until)) {
+      rows.push({ user_id: keys.userId, kind: 'med', fire_at: new Date(r.at).toISOString(), tag: `med-${r.medId}-${r.at}` });
     }
   }
   if (me && nudgesFor(me, d)) {

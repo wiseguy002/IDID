@@ -3,7 +3,7 @@
 | Address | What | Cloudflare Pages project | Built from |
 |---|---|---|---|
 | `idid.care` and `www.idid.care` | Website | `idid-site` | `site/` |
-| `app.idid.care` | The IDID app | `idid-app` | `app/` |
+| `app.idid.care` | The iDID app | `idid-app` | `app/` |
 
 Both deploy automatically on every merge to `main` (`.github/workflows/deploy.yml`). Your domain is already on Cloudflare, so DNS and HTTPS certificates are set up for you when you attach the custom domains.
 

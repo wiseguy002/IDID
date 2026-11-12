@@ -54,7 +54,7 @@ export function KindNoteView({ n }: { n: KindNote }) {
   return (
     <div className="row" style={{ gap: '.8rem', flexWrap: 'nowrap', padding: '.45rem 0' }}>
       <span className="brand-mark" style={{ width: 40, height: 40, flexShrink: 0, background: 'var(--warm-soft)', color: 'var(--warm)' }}><Icon name={n.icon} size={20} /></span>
-      <span><span style={{ fontSize: '1.02rem' }}>{KIND_MESSAGES[n.message_id] ?? 'Someone is thinking of you.'}</span><br /><span className="tiny muted">From someone using IDID · {relTime(new Date(n.created_at).getTime())}</span></span>
+      <span><span style={{ fontSize: '1.02rem' }}>{KIND_MESSAGES[n.message_id] ?? 'Someone is thinking of you.'}</span><br /><span className="tiny muted">From someone using iDID · {relTime(new Date(n.created_at).getTime())}</span></span>
     </div>
   );
 }
@@ -97,12 +97,12 @@ export default function Kindness() {
 
       <div className="card">
         <h2>Send a kind note</h2>
-        <p className="small muted">Your note goes to a random person using IDID who has chosen to receive them. It's anonymous both ways. There are no replies or messages, just a little light.</p>
+        <p className="small muted">Your note goes to a random person using iDID who has chosen to receive them. It's anonymous both ways. There are no replies or messages, just a little light.</p>
         {!online ? (
           <p className="small">Kind notes need the online circle. <button className="btn ghost sm" onClick={() => go({ name: 'account' })}>Sign in</button></p>
         ) : sent ? (
           <div className="card accent" role="status">
-            {sent === 'yes' ? <><b>Sent.</b> Somewhere, someone will open IDID to your kind words. Thank you.</> : <>Everyone who can receive a note today has already been brightened. Try again later.</>}
+            {sent === 'yes' ? <><b>Sent.</b> Somewhere, someone will open iDID to your kind words. Thank you.</> : <>Everyone who can receive a note today has already been brightened. Try again later.</>}
             <div style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => setSent(null)}>Send another</button></div>
           </div>
         ) : (
@@ -124,7 +124,7 @@ export default function Kindness() {
 
       <div className="card">
         <h2>Notes for you</h2>
-        {online && <Switch label="Receive kind notes" hint="Up to three a day, from people using IDID. You'll never see who sent them, and they'll never see who you are." checked={!!receive} onChange={async (v) => { setReceive(v); await setReceiveKindNotes(v).catch(() => toast('Could not save that right now.')); }} />}
+        {online && <Switch label="Receive kind notes" hint="Up to three a day, from people using iDID. You'll never see who sent them, and they'll never see who you are." checked={!!receive} onChange={async (v) => { setReceive(v); await setReceiveKindNotes(v).catch(() => toast('Could not save that right now.')); }} />}
         {notes.length === 0 ? <p className="small muted" style={{ marginBottom: 0 }}>{online ? (receive ? 'No notes yet. They’ll appear here when someone sends one.' : 'Turn on "Receive kind notes" to get encouragement from others.') : 'Sign in to the online circle to send and receive kind notes.'}</p>
           : notes.map((n) => <KindNoteView key={n.id} n={n} />)}
       </div>

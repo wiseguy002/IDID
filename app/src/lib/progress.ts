@@ -27,6 +27,13 @@ export interface Facts {
   helped: number;
   rituals: number;
   supportProfile: boolean;
+  safetyPlan: boolean;
+  boardNotes: number;
+  bodyDays: number;
+  meds: number;
+  comfortItems: number;
+  preps: number;
+  checkOnSent: number;
   contacts: number;
   appointments: number;
   online: boolean;
@@ -56,19 +63,25 @@ export const FEATURES: Feature[] = [
   { id: 'pause', name: 'Pause tools', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathing, 5-4-3-2-1 grounding and "right now" orientation.', used: (_f, a) => ev(a, 'pause'), tipPriority: 2, tip: 'Pause has breathing and grounding tools for when things feel like too much.' },
   { id: 'checkins', name: 'Gentle check-ins', group: 'Calm & coping', route: { name: 'settings' }, about: 'A kind word and a small idea, a few times a day.', used: (f) => f.checkins > 0 },
   { id: 'rituals', name: 'Healthy rituals', group: 'Calm & coping', route: { name: 'settings' }, about: 'Your own small ways to interrupt a hard pattern.', used: (f) => f.rituals > 0, tipPriority: 4, tip: 'Adding a few of your own healthy rituals makes check-ins more personal.' },
+  { id: 'safety', name: 'Safety plan', group: 'Calm & coping', route: { name: 'safety' }, about: 'Your warning signs, what helps, and who to reach out to.', used: (f) => f.safetyPlan, tipPriority: 2, tip: 'A safety plan, written while things are calmer, is one of the most helpful tools for getting through a crisis.' },
+  { id: 'comfort-kit', name: 'Comfort kit', group: 'Calm & coping', route: { name: 'comfort' }, about: 'Photos, songs, words and letters that help you feel safe.', used: (f) => f.comfortItems > 0, tipPriority: 9, tip: 'Fill a comfort kit with photos, songs and kind words for hard moments.' },
+  { id: 'body', name: 'Body basics', group: 'Noticing', route: { name: 'body' }, about: 'Sleep, food, water and medication, with gentle reminders.', used: (f) => f.bodyDays > 0 || f.meds > 0, tipPriority: 10, tip: 'Sleep, food and medication can affect dissociation. Body basics helps you see the link.' },
+  { id: 'board', name: 'Inner board', group: 'Noticing', route: { name: 'board' }, about: 'Notes between parts: plans, reminders and reassurance.', used: (f) => f.boardNotes > 0 },
   { id: 'kind-acts', name: 'Small acts of kindness', group: 'Calm & coping', route: { name: 'kindness' }, about: 'A tiny way to brighten someone else’s day.', used: (_f, a) => ev(a, 'kind-act') },
   { id: 'support', name: 'Find support', group: 'Support', route: { name: 'support' }, about: 'Crisis lines, specialists and community near you.', used: (f, a) => f.supportProfile || ev(a, 'support-viewed'), tipPriority: 3, tip: 'Find support can point you to dissociation and trauma specialists, crisis lines and community near you.' },
   { id: 'contacts', name: 'Support contacts', group: 'Support', route: { name: 'support' }, about: 'Your therapist, social worker or crisis center, one tap away.', used: (f) => f.contacts > 0, tipPriority: 6, tip: 'Saving a support contact puts them one tap away on the Pause screen.' },
   { id: 'appointments', name: 'Appointments', group: 'Support', route: { name: 'appointments' }, about: 'Sessions and groups with reminders.', used: (f) => f.appointments > 0, tipPriority: 7, tip: 'Add therapy or group sessions to get reminders and a "since last session" summary.' },
   { id: 'calendar', name: 'Add to calendar', group: 'Support', route: { name: 'appointments' }, about: 'Put appointments in Apple, Outlook or Google Calendar.', used: (_f, a) => ev(a, 'calendar') },
+  { id: 'prep', name: 'Prepare for therapy', group: 'Support', route: { name: 'prep' }, about: 'Gather what’s happened and what to bring up before a session.', used: (f) => f.preps > 0 },
   { id: 'share', name: 'Share with a clinician', group: 'Support', route: { name: 'share' }, about: 'A printable summary, spreadsheet or backup.', used: (_f, a) => ev(a, 'export'), tipPriority: 8, tip: 'A clinician summary can help you bring what you’ve noticed to your next appointment.' },
   { id: 'circle', name: 'Trust circle', group: 'Together', route: { name: 'circle' }, about: 'People who can add what they noticed.', used: (f) => f.circlePeople > 0 },
   { id: 'observe', name: 'Add what you noticed', group: 'Together', route: { name: 'home' }, about: 'Answer a gentle request from someone in your circle.', used: (f) => f.observationsGiven > 0 },
+  { id: 'check-on', name: 'Check on me', group: 'Together', route: { name: 'pause' }, about: 'Quietly ask people you trust to reach out.', used: (f) => f.checkOnSent > 0 },
   { id: 'online', name: 'Online circle', group: 'Together', route: { name: 'account' }, about: 'Each person on their own phone, end-to-end encrypted.', used: (f) => f.online },
-  { id: 'kind-notes', name: 'Kind notes', group: 'Together', route: { name: 'kindness' }, about: 'Send an anonymous note of encouragement to someone using IDID.', used: (_f, a) => ev(a, 'kind-sent') },
+  { id: 'kind-notes', name: 'Kind notes', group: 'Together', route: { name: 'kindness' }, about: 'Send an anonymous note of encouragement to someone using iDID.', used: (_f, a) => ev(a, 'kind-sent') },
   { id: 'notifications', name: 'Notifications', group: 'Make it yours', route: { name: 'settings' }, about: 'Reminders that never show private details.', used: (f) => f.notifications },
   { id: 'comfort', name: 'Comfort settings', group: 'Make it yours', route: { name: 'settings' }, about: 'Colours, text size, calm motion and a readable font.', used: (_f, a) => ev(a, 'comfort') },
-  { id: 'tour', name: 'Quick tour', group: 'Make it yours', route: { name: 'explore' }, about: 'A one-minute look at what IDID can do.', used: (_f, a) => ev(a, 'tour') },
+  { id: 'tour', name: 'Quick tour', group: 'Make it yours', route: { name: 'explore' }, about: 'A one-minute look at what iDID can do.', used: (_f, a) => ev(a, 'tour') },
   { id: 'request', name: 'Suggest a feature', group: 'Make it yours', route: { name: 'feedback' }, about: 'Tell us what would help. We read every request.', used: (_f, a) => ev(a, 'request') },
 ];
 
@@ -100,6 +113,12 @@ export const BADGES: Badge[] = [
   { id: 'received', name: 'Someone’s thinking of you', icon: 'sparkle', about: 'Received a kind note.', earned: (_f, a) => c(a, 'kind-received') >= 1 },
   { id: 'pay-forward', name: 'Paid it forward', icon: 'heart', about: 'Did a small act of kindness.', earned: (_f, a) => c(a, 'kind-act') >= 1 },
   { id: 'pay-forward-7', name: 'Ripple effect', icon: 'heart', about: 'Did 7 small acts of kindness.', earned: (_f, a) => c(a, 'kind-act') >= 7 },
+  { id: 'safety-plan', name: 'A plan for hard days', icon: 'shield', about: 'Made a safety plan.', earned: (f) => f.safetyPlan },
+  { id: 'comfort', name: 'Comfort keeper', icon: 'box', about: 'Started a comfort kit.', earned: (f) => f.comfortItems >= 1 },
+  { id: 'body-week', name: 'Caring for my body', icon: 'body', about: 'Logged body basics on 7 days.', earned: (f) => f.bodyDays >= 7 },
+  { id: 'inner-voice', name: 'Inner voices heard', icon: 'board', about: 'Posted on the inner board.', earned: (f) => f.boardNotes >= 1 },
+  { id: 'prepared', name: 'Prepared', icon: 'clipboard', about: 'Prepared for a session.', earned: (f) => f.preps >= 1 },
+  { id: 'reached-out', name: 'Reached out', icon: 'bell', about: 'Asked someone to check on you. That takes courage.', earned: (f) => f.checkOnSent >= 1 },
   { id: 'explorer', name: 'Explorer', icon: 'sparkle', about: 'Took the quick tour.', earned: (_f, a) => c(a, 'tour') >= 1 },
   { id: 'your-voice', name: 'Your voice', icon: 'note', about: 'Suggested a feature.', earned: (_f, a) => c(a, 'request') >= 1 },
 ];

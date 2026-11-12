@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../state';
-import { track, useAll } from '../db';
+import { track, useAll, useOne } from '../db';
 import { ContactRow, CrisisCard } from './Support';
 import { Icon } from '../components/Icon';
 import { PageHead, Segmented } from '../components/ui';
@@ -14,7 +14,8 @@ const GROUNDING = [
 ];
 
 export default function Pause() {
-  const { go, settings, me, checkIn } = useApp();
+  const { go, settings, me, checkIn, checkOn } = useApp();
+  const plan = useOne('safety', me ? `safety:${me.id}` : undefined);
   useEffect(() => { track(me?.id, 'pause'); }, [me?.id]);
   const pinned = useAll('contacts').filter((c) => c.pinned && (c.memberId === me?.id || !me?.tracked));
   const [mode, setMode] = useState<'breathe' | 'ground' | 'orient'>('breathe');
@@ -23,6 +24,11 @@ export default function Pause() {
   return (
     <div className="fade-in">
       <PageHead title="Pause" sub="Nothing to log. Just a moment for you." onBack={() => go({ name: 'home' })} />
+      <div className="row" style={{ marginBottom: '.9rem' }}>
+        <button className="btn sm" onClick={() => go({ name: 'safety' })}><Icon name="shield" size={16} /> {plan ? 'My safety plan' : 'Make a safety plan'}</button>
+        <button className="btn sm" onClick={checkOn}><Icon name="bell" size={16} /> Check on me</button>
+        <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>
+      </div>
       <Segmented label="Tool" value={mode} onChange={setMode} options={[{ value: 'breathe', label: 'Breathe' }, { value: 'ground', label: '5-4-3-2-1' }, { value: 'orient', label: 'Right now' }]} />
       {mode === 'breathe' && (
         <div className="card soft" style={{ marginTop: '1rem', textAlign: 'center' }}>

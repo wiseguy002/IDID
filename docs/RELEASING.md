@@ -1,6 +1,6 @@
 # Versions and releases
 
-IDID uses [Semantic Versioning](https://semver.org): **MAJOR.MINOR.PATCH**.
+iDID uses [Semantic Versioning](https://semver.org): **MAJOR.MINOR.PATCH**.
 
 | Change | Bump | Example |
 |---|---|---|
@@ -8,7 +8,7 @@ IDID uses [Semantic Versioning](https://semver.org): **MAJOR.MINOR.PATCH**.
 | New features; existing journals keep working | minor | 0.6.1 → 0.7.0 |
 | A change that needs people to act (for example, a data format older versions can't read) | major | 1.4.0 → 2.0.0 |
 
-While the major number is 0, IDID is in early release, and GitHub releases are marked as pre-releases. Version **1.0.0** marks the first release recommended for everyday use.
+While the major number is 0, iDID is in early release, and GitHub releases are marked as pre-releases. Version **1.0.0** marks the first release recommended for everyday use.
 
 ## One source of truth
 
@@ -33,7 +33,7 @@ Add a plain-language line under `## [Unreleased]` in `CHANGELOG.md`, in the righ
 - `### Security`: privacy or security improvements
 - `### Removed` and `### Deprecated`: as needed
 
-Write it for the people who use IDID, not for developers.
+Write it for the people who use iDID, not for developers.
 
 ## Cutting a release
 

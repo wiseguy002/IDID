@@ -29,7 +29,7 @@ function AppointmentForm({ a, onClose }: { a: Appointment; onClose: () => void }
     <Sheet title={isNew ? 'New appointment' : 'Edit appointment'} onClose={onClose}>
       <div className="eyebrow">Type</div>
       <ChipSelect multi={false} value={[x.kind]} onChange={(v) => v[0] && set('kind', v[0] as AppointmentKind)} options={APPOINTMENT_KINDS} />
-      <label className="field" style={{ marginTop: '.8rem' }}><span>Name <span className="muted small">(only shown inside IDID)</span></span>
+      <label className="field" style={{ marginTop: '.8rem' }}><span>Name <span className="muted small">(only shown inside iDID)</span></span>
         <input id="ap-title" className="input" value={x.title} onChange={(e) => set('title', e.target.value)} placeholder={`e.g. ${kindLabel(x)} with Dr. Lee, Tuesday group`} /></label>
       <div className="grid2">
         <label className="field"><span>Starts</span><input id="ap-start" className="input" type="datetime-local" value={toLocalInput(x.startsAt)} onChange={(e) => e.target.value && set('startsAt', new Date(e.target.value).getTime())} /></label>
@@ -68,7 +68,7 @@ function CalendarSheet({ a, onClose }: { a: Appointment; onClose: () => void }) 
   const o = { neutralTitle, includeNotes };
   return (
     <Sheet title="Add to your calendar" onClose={onClose}>
-      <p className="small muted">Calendars aren't encrypted by IDID and other people or apps may see them. Choose what to share.</p>
+      <p className="small muted">Calendars aren't encrypted by iDID and other people or apps may see them. Choose what to share.</p>
       <Switch label="Use a neutral title" hint={`Shows as "${calendarTitle(a, { neutralTitle: true, includeNotes })}" instead of "${a.title || kindLabel(a)}"`} checked={neutralTitle} onChange={setNeutral} />
       <Switch label="Include my notes" checked={includeNotes} onChange={setNotes} />
       <div className="stack" style={{ marginTop: '.6rem' }}>
@@ -132,6 +132,7 @@ export default function Appointments() {
             {prep && <div className="card soft small" style={{ margin: '.7rem 0 0', padding: '.7rem .8rem' }}>{prep} <button className="btn ghost sm" onClick={() => go({ name: 'share' })}>Open summary</button></div>}
             {a.reminderMins.length > 0 && <div className="tiny muted" style={{ marginTop: '.5rem' }}><Icon name="bell" size={13} /> {a.reminderMins.map(leadLabel).join(', ')}</div>}
             <div className="row" style={{ marginTop: '.6rem' }}>
+              <button className="btn sm primary" onClick={() => go({ name: 'prep', appointmentId: a.id })}><Icon name="clipboard" size={16} /> Prepare</button>
               <button className="btn sm" onClick={() => setCal(a)}><Icon name="share" size={16} /> Add to calendar</button>
             </div>
           </div>

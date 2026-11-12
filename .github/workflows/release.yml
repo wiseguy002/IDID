@@ -36,5 +36,5 @@ jobs:
         run: |
           cd dist && zip -qr "$RUNNER_TEMP/idid-web-$GITHUB_REF_NAME.zip" . && cd ..
           gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP/idid-web-$GITHUB_REF_NAME.zip" \
-            --title "IDID $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" \
+            --title "iDID $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" \
             $( [[ "$GITHUB_REF_NAME" == v0.* ]] && echo --prerelease )

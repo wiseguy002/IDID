@@ -24,7 +24,7 @@ export default function Explore() {
 
   return (
     <div className="fade-in">
-      <PageHead title="Explore" sub="Everything IDID can do, and what you've tried so far." onBack={() => go({ name: 'home' })} />
+      <PageHead title="Explore" sub="Everything iDID can do, and what you've tried so far." onBack={() => go({ name: 'home' })} />
       <div className="card accent">
         <div className="row between"><b>You've tried {p.used.length} of {p.total} features</b><span className="small">{pct}%</span></div>
         <div className="barrow" style={{ gridTemplateColumns: '1fr', margin: '.5rem 0 .2rem' }}><span className="track" style={{ height: 14, background: 'var(--surface)' }}><span className="fill" style={{ width: `${pct}%`, display: 'block' }} /></span></div>

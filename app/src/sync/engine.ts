@@ -4,8 +4,8 @@
  * personal key for "only me" entries. The server sees opaque ids and ciphertext.
  */
 import { decryptJson, encryptJson } from '../data/crypto';
-import type { Envelope, Store } from '../data/store';
-import type { Entry, Observation } from '../types';
+import { ALWAYS_PRIVATE, type Envelope, type Store } from '../data/store';
+import type { CheckOnAlert, Observation } from '../types';
 import type { CircleSession } from './keys';
 import type { Remote, ReminderRow } from './remote';
 
@@ -45,8 +45,12 @@ export class SyncEngine {
     return [...new Uint8Array(sig).slice(0, 20)].map((b) => b.toString(16).padStart(2, '0')).join('');
   }
 
+  /** "Only me" entries, private safety plans, and personal kinds (board, body, meds, comfort, prep…) use the personal key. */
   private isPrivate(env: Envelope) {
-    return env.kind === 'entries' && !env.deleted && (env.data as Entry | null)?.visibility === 'private';
+    if (env.deleted) return false;
+    if (ALWAYS_PRIVATE.includes(env.kind)) return true;
+    const v = (env.data as { visibility?: string } | null)?.visibility;
+    return (env.kind === 'entries' || env.kind === 'safety') && v === 'private';
   }
 
   async encode(env: Envelope): Promise<{ rid: string; ct: string }> {
@@ -109,6 +113,16 @@ export class SyncEngine {
           const entry = this.store.get('entries', o.entryId);
           if (o.status === 'requested' && target?.userId && target.userId !== this.s.userId && entry && mine.has(entry.authorId)) {
             notify.push({ user_id: target.userId, kind: 'observation', fire_at: new Date().toISOString(), tag: `obs-${o.id}` });
+          }
+        }
+        // A new "Check on me": wake each chosen person who has an account.
+        if (env.kind === 'alerts' && !env.deleted) {
+          const al = env.data as CheckOnAlert;
+          if (!al.resolvedAt && mine.has(al.fromMemberId) && Date.now() - al.createdAt < 3600000) {
+            for (const mid of al.toMemberIds) {
+              const t = this.store.get('members', mid);
+              if (t?.userId && t.userId !== this.s.userId) notify.push({ user_id: t.userId, kind: 'checkon', fire_at: new Date().toISOString(), tag: `checkon-${al.id}-${mid}` });
+            }
           }
         }
       }

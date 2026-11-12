@@ -37,7 +37,7 @@ function MiniBreath({ onDone }: { onDone: () => void }) {
 }
 
 export function NudgeSheet({ onClose, onSnooze }: { onClose: () => void; onSnooze?: () => void }) {
-  const { me, go, toast } = useApp();
+  const { me, go, toast, checkOn } = useApp();
   const seed = useMemo(() => Math.random(), []);
   const [rec, setRec] = useState<CheckIn | null>(null);
   const [trying, setTrying] = useState<IdeaKind | null>(null);
@@ -92,7 +92,9 @@ export function NudgeSheet({ onClose, onSnooze }: { onClose: () => void; onSnooz
               Thank you for being honest. You don't have to handle this alone.
               <div className="row" style={{ marginTop: '.6rem' }}>
                 <button className="btn sm primary" onClick={() => leave({ name: 'pause' })}>Grounding tools</button>
-                <button className="btn sm" onClick={() => leave({ name: 'support' })}>Reach out</button>
+                <button className="btn sm" onClick={() => { onClose(); checkOn(); }}>Check on me</button>
+                <button className="btn sm" onClick={() => leave({ name: 'safety' })}>My safety plan</button>
+                <button className="btn sm" onClick={() => leave({ name: 'comfort' })}>Comfort kit</button>
                 <button className="btn sm" onClick={() => leave({ name: 'log' })}>Note what's happening</button>
               </div>
               {pinned[0]?.phone && <a className="btn sm" style={{ marginTop: '.5rem' }} href={`tel:${pinned[0].phone.replace(/[^\d+]/g, '')}`}>Call {pinned[0].name}</a>}

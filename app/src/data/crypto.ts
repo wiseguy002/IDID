@@ -1,5 +1,5 @@
 /**
- * All cryptography for IDID, built only on the browser's Web Crypto API.
+ * All cryptography for iDID, built only on the browser's Web Crypto API.
  *
  * - Data at rest and in transit is AES-GCM-256 with a random 96-bit IV per message
  *   and additional authenticated data (AAD) binding each ciphertext to its record.

@@ -21,10 +21,12 @@ const NUDGES = [
 ];
 
 function message(kind: string, minutesBefore: number | null, tag: string) {
-  if (kind === 'observation') return 'Someone in your circle wondered if you noticed something. Open IDID when you are ready.';
+  if (kind === 'observation') return 'Someone in your circle wondered if you noticed something. Open iDID when you are ready.';
   if (tag.startsWith('nudge-')) return NUDGES[(Number(tag.slice(6)) || 0) % NUDGES.length];
-  if (kind === 'kindness') return 'Someone using IDID sent you a kind note.';
-  if (kind === 'tip') return "There's something in IDID that might help. Take a look when you're ready.";
+  if (kind === 'kindness') return 'Someone using iDID sent you a kind note.';
+  if (kind === 'checkon') return 'Someone in your circle asked you to check on them. Open iDID to see who.';
+  if (kind === 'med') return 'A gentle reminder from iDID: it\'s time.';
+  if (kind === 'tip') return "There's something in iDID that might help. Take a look when you're ready.";
   if (kind === 'checkin') return 'A gentle check-in: how are you all doing?';
   const m = minutesBefore ?? 0;
   if (m === 0) return 'An appointment is starting now.';
@@ -47,7 +49,7 @@ Deno.serve(async (req) => {
   let sent = 0;
   for (const r of due ?? []) {
     const { data: subs } = await db.from('push_subscriptions').select('id, endpoint, p256dh, auth').eq('user_id', r.user_id);
-    const payload = JSON.stringify({ title: 'IDID', body: message(r.kind, r.minutes_before, r.tag), tag: r.tag, kind: r.kind });
+    const payload = JSON.stringify({ title: 'iDID', body: message(r.kind, r.minutes_before, r.tag), tag: r.tag, kind: r.kind });
     for (const s of subs ?? []) {
       try {
         await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payload, { TTL: 3600, urgency: 'normal' });

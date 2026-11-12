@@ -15,7 +15,7 @@ export interface Member {
   canObserve: boolean;
   color: string;
   createdAt: number;
-  /** Linked IDID account (when this person signs in on their own device). */
+  /** Linked iDID account (when this person signs in on their own device). */
   userId?: string;
   /** Where and what kind of support to suggest. Encrypted like everything else. */
   support?: SupportProfile;
@@ -26,7 +26,7 @@ export interface Member {
 export type CheckInFeeling = 'good' | 'okay' | 'wobbly' | 'struggling';
 export type IdeaKind = 'breathe' | 'ritual' | 'outside' | 'positive' | 'pause' | 'reach-out' | 'note';
 
-/** What a person has tried in IDID, for the Explore page and badges. One record per person. */
+/** What a person has tried in iDID, for the Explore page and badges. One record per person. */
 export interface Activity {
   /** Same as the member id. */
   id: ID;
@@ -219,6 +219,10 @@ export interface DeviceSettings {
   tourOffered: boolean;
   /** Daily small act of kindness suggestion on Home. */
   kindActs: boolean;
+  /** Medication reminders at the times set for each medication. */
+  notifyMeds: boolean;
+  /** What Quick hide shows: a calm blank screen or a plain notepad. */
+  hideStyle: 'calm' | 'notes';
 }
 
 /** Combined view used by screens. */
@@ -272,3 +276,121 @@ export const ROLE_LABELS: Record<MemberRole, string> = {
   clinician: 'Clinician / therapist',
   other: 'Other support',
 };
+
+// ---------- 0.8.0: safety, inner board, check on me, body basics, comfort kit, therapy prep ----------
+
+/** A personal safety plan for hard moments. One per person (id = `safety:<memberId>`). */
+export interface SafetyPlan {
+  id: ID;
+  memberId: ID;
+  /** Thoughts, feelings or situations that mean a crisis may be building. */
+  warningSigns: string[];
+  /** Things I can do on my own to feel a little better. */
+  coping: string[];
+  /** People and places that can take my mind off things. */
+  distractions: string[];
+  /** People I can ask for help: support contact ids. */
+  helperContactIds: ID[];
+  /** Professionals and services: support contact ids (crisis lines are always shown). */
+  proContactIds: ID[];
+  /** Making my surroundings safer. */
+  safeSteps: string[];
+  /** What matters to me and is worth staying for. */
+  reasons: string[];
+  /** Shared with the trust circle so they can help, or only me. */
+  visibility: 'circle' | 'private';
+  updatedAt: number;
+}
+
+/** A note on a system's inner message board, between parts. */
+export interface BoardNote {
+  id: ID;
+  /** The tracked person whose system this board belongs to. */
+  memberId: ID;
+  /** Part who wrote it, or null when not sure / someone else. */
+  fromPartId: ID | null;
+  /** Parts it's for; empty = everyone. */
+  toPartIds: ID[];
+  text: string;
+  pinned: boolean;
+  done: boolean;
+  /** Parts who have marked it as read: part id → ms. */
+  seenBy: Record<ID, number>;
+  createdAt: number;
+}
+
+export type CheckOnAsk = 'check' | 'call' | 'visit' | 'text';
+
+/** "Check on me": a quiet request for someone to reach out. */
+export interface CheckOnAlert {
+  id: ID;
+  fromMemberId: ID;
+  toMemberIds: ID[];
+  ask: CheckOnAsk;
+  createdAt: number;
+  /** Who's responding: member id → ms. */
+  acks: Record<ID, number>;
+  resolvedAt: number | null;
+}
+
+/** One day of body basics for one person (id = `body:<memberId>:<yyyy-mm-dd>`). */
+export interface BodyDay {
+  id: ID;
+  memberId: ID;
+  date: string;
+  sleepHours: number | null;
+  sleepQuality: number | null;
+  meals: string[];
+  water: number;
+  /** Medication id → time taken (ms), for today's doses ("medId@HH:MM"). */
+  medsTaken: Record<string, number>;
+  movement: boolean;
+  outside: boolean;
+  notes: string;
+}
+
+export interface Medication {
+  id: ID;
+  memberId: ID;
+  name: string;
+  dose: string;
+  /** Local times "HH:MM" to take it; empty = as needed. */
+  times: string[];
+  remind: boolean;
+  notes: string;
+  active: boolean;
+  createdAt: number;
+}
+
+export type ComfortType = 'photo' | 'song' | 'quote' | 'scent' | 'activity' | 'letter' | 'place' | 'person';
+
+export interface ComfortItem {
+  id: ID;
+  memberId: ID;
+  type: ComfortType;
+  title: string;
+  text: string;
+  url: string;
+  /** Small JPEG data URL for photos (resized on the device). */
+  image: string;
+  /** For letters: which part wrote it. */
+  fromPartId: ID | null;
+  createdAt: number;
+}
+
+/** Preparing for (and remembering) a therapy or support session. */
+export interface SessionPrep {
+  id: ID;
+  memberId: ID;
+  appointmentId: ID | null;
+  /** When the session is (or was). */
+  sessionAt: number;
+  /** Look back from this time (usually the previous session). */
+  since: number;
+  agenda: string[];
+  questions: string[];
+  wins: string[];
+  entryIds: ID[];
+  afterNotes: string;
+  createdAt: number;
+}

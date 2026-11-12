@@ -95,14 +95,14 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const steps = [
     <div key="0" className="stack">
       <div className="brand-mark" style={{ width: 64, height: 64 }}><Icon name="leaf" size={32} /></div>
-      {(() => { try { return sessionStorage.getItem('idid.invite'); } catch { return null; } })() && <div className="card blue small">You've been invited to a trust circle. Set up IDID on this device first, then you'll join.</div>}
+      {(() => { try { return sessionStorage.getItem('idid.invite'); } catch { return null; } })() && <div className="card blue small">You've been invited to a trust circle. Set up iDID on this device first, then you'll join.</div>}
       <h1>A quiet place to notice</h1>
-      <p>IDID helps you gently record moments that felt different — when and where they happened, what may have set them off, how you felt, and who was around — so that over time, patterns become easier to see and share.</p>
+      <p>iDID helps you gently record moments that felt different — when and where they happened, what may have set them off, how you felt, and who was around — so that over time, patterns become easier to see and share.</p>
       <div className="card accent">
         <h3>Private by design</h3>
         <p className="small" style={{ margin: 0 }}>Everything you write is encrypted on this device with a passphrase only you know. If you later connect a trust circle, entries are encrypted before they leave your device, so even our server can't read them.</p>
       </div>
-      <p className="muted small">IDID is a journaling tool, not a medical device or a replacement for professional care.</p>
+      <p className="muted small">iDID is a journaling tool, not a medical device or a replacement for professional care.</p>
       <button className="btn ghost sm" onClick={sample} disabled={busy}>Just looking? Explore with a sample circle</button>
     </div>,
     <div key="1" className="stack">
@@ -169,7 +169,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     </div>,
     <div key="6" className="stack">
       <h1>Support near {mode === 'support' && theirName.trim() ? theirName.trim() : 'you'}</h1>
-      <p>Optional. With a ZIP code, IDID can point you to crisis services, trauma and dissociation specialists, low-cost care, and community nearby, matched to what would help.</p>
+      <p>Optional. With a ZIP code, iDID can point you to crisis services, trauma and dissociation specialists, low-cost care, and community nearby, matched to what would help.</p>
       <SupportProfileEditor zip={zip} needs={needs} onZip={setZip} onNeeds={setNeeds} />
       <p className="small muted">This stays encrypted in your journal. You can skip it and add it later from <b>Find support</b>.</p>
     </div>,

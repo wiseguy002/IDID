@@ -122,7 +122,7 @@ export function calendarTitle(a: Appointment, o: CalendarOptions) {
 
 export function toIcs(a: Appointment, o: CalendarOptions, now = Date.now()): string {
   const lines = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//IDID//Gentle Journal//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//iDID//Gentle Journal//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
     'BEGIN:VEVENT',
     `UID:${a.id}@idid.app`,
     `DTSTAMP:${icsDate(now)}`,

@@ -33,7 +33,7 @@ export default function Feedback() {
     const d = { kind, title: title.trim(), details: details.trim(), app_version: APP_VERSION };
     setBusy(true);
     try {
-      if (online) { await submitRequest(d); toast('Thank you. Your request was sent to the IDID team.'); reload(); }
+      if (online) { await submitRequest(d); toast('Thank you. Your request was sent to the iDID team.'); reload(); }
       else { queueRequest(d); toast('Saved. It will be sent when you sign in to the online circle.'); }
       track(me?.id, 'request');
       setTitle(''); setDetails('');
@@ -54,7 +54,7 @@ export default function Feedback() {
           <input id="fb-title" className="input" maxLength={140} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. A sleep tracker, or a meditation timer" /></label>
         <label className="field"><span>Tell us more <span className="muted small">(optional)</span></span>
           <textarea id="fb-details" className="input" maxLength={4000} value={details} onChange={(e) => setDetails(e.target.value)} placeholder="How would it help? When would you use it?" /></label>
-        <div className="card warm small" style={{ margin: '0 0 .8rem' }}>Requests are read by the IDID team, so they're <b>not</b> end-to-end encrypted like your journal. Please don't include names, health details or anything personal.</div>
+        <div className="card warm small" style={{ margin: '0 0 .8rem' }}>Requests are read by the iDID team, so they're <b>not</b> end-to-end encrypted like your journal. Please don't include names, health details or anything personal.</div>
         <button className="btn primary" disabled={busy || title.trim().length < 3} onClick={submit}><Icon name="send" size={17} /> {online ? 'Send request' : 'Save request'}</button>
         {!online && <p className="tiny muted" style={{ margin: '.5rem 0 0' }}>You're not signed in to the online circle. Requests are saved on this device and sent once you sign in.</p>}
       </div>
@@ -67,7 +67,7 @@ export default function Feedback() {
             <div key={r.id} style={{ padding: '.6rem 0', borderBottom: '1px solid var(--line)' }}>
               <div className="row between" style={{ flexWrap: 'nowrap' }}><b className="small">{r.title}</b><StatusTag s={r.status} /></div>
               <div className="tiny muted">{REQUEST_KINDS.find((k) => k.value === r.kind)?.label} · {relTime(new Date(r.created_at).getTime())}</div>
-              {r.admin_note && <div className="small" style={{ marginTop: '.3rem' }}><b>IDID team:</b> {r.admin_note}</div>}
+              {r.admin_note && <div className="small" style={{ marginTop: '.3rem' }}><b>iDID team:</b> {r.admin_note}</div>}
             </div>
           ))}
         </div>
@@ -78,7 +78,7 @@ export default function Feedback() {
 
 const STATUSES = Object.keys(STATUS_LABELS) as RequestStatus[];
 
-/** For the people who run IDID: triage and answer requests. Only visible to app admins. */
+/** For the people who run iDID: triage and answer requests. Only visible to app admins. */
 export function AdminRequests() {
   const { go, toast } = useApp();
   const [all, setAll] = useState<FeatureRequest[] | null>(null);
@@ -108,7 +108,7 @@ export function AdminRequests() {
     download(`idid-requests-${new Date().toISOString().slice(0, 10)}.csv`, rows.map((r) => r.map((c) => (/[",\n]/.test(c) ? `"${c.replace(/"/g, '""')}"` : c)).join(',')).join('\n'), 'text/csv');
   };
 
-  if (ok === false) return <div><PageHead title="Manage requests" onBack={() => go({ name: 'feedback' })} /><p className="muted">This page is only for the IDID team.</p></div>;
+  if (ok === false) return <div><PageHead title="Manage requests" onBack={() => go({ name: 'feedback' })} /><p className="muted">This page is only for the iDID team.</p></div>;
   if (!all) return <div><PageHead title="Manage requests" onBack={() => go({ name: 'feedback' })} /><p className="muted">Loading…</p></div>;
 
   return (

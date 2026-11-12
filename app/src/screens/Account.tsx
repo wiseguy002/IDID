@@ -101,7 +101,7 @@ export default function Account() {
       {a.phase === 'off' && (
         <div className="card">
           <h3>Not set up yet</h3>
-          <p className="small">This copy of IDID works on this device only. To share a circle across devices, whoever hosts IDID connects it to a Supabase project (see the setup guide in the project README).</p>
+          <p className="small">This copy of iDID works on this device only. To share a circle across devices, whoever hosts iDID connects it to a Supabase project (see the setup guide in the project README).</p>
           <p className="small muted" style={{ margin: 0 }}>Until then, you can share by exporting files from <b>Share & export</b>.</p>
         </div>
       )}
@@ -188,7 +188,7 @@ export default function Account() {
                 <textarea id="invite-link" className="input" readOnly value={link} style={{ minHeight: 80, fontSize: '.8rem' }} onFocus={(e) => e.target.select()} aria-label="Invite link" />
                 <div className="row" style={{ marginTop: '.5rem' }}>
                   <button className="btn sm" onClick={() => navigator.clipboard?.writeText(link).then(() => toast('Link copied.'), () => toast('Select the link and copy it.'))}>Copy link</button>
-                  {typeof navigator.share === 'function' && <button className="btn sm" onClick={() => navigator.share({ title: 'Join my IDID circle', url: link }).catch(() => undefined)}>Share…</button>}
+                  {typeof navigator.share === 'function' && <button className="btn sm" onClick={() => navigator.share({ title: 'Join my iDID circle', url: link }).catch(() => undefined)}>Share…</button>}
                   <button className="btn ghost sm" onClick={() => setLink('')}>Make another</button>
                 </div>
               </>

@@ -178,7 +178,7 @@ export default function Support() {
           : contacts.map((c) => <ContactRow key={c.id} c={c} onEdit={() => setContact(c)} />)}
       </div>
 
-      <p className="tiny muted">Services listed are run by other organisations. IDID doesn't endorse specific providers, and listings can change. Contact details checked {VERIFIED_ON}. Outside the US, contact your local emergency number.</p>
+      <p className="tiny muted">Services listed are run by other organisations. iDID doesn't endorse specific providers, and listings can change. Contact details checked {VERIFIED_ON}. Outside the US, contact your local emergency number.</p>
       {contact && <ContactForm c={contact} onClose={() => setContact(null)} />}
     </div>
   );

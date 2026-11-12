@@ -20,6 +20,11 @@ export type Route =
   | { name: 'kindness' }
   | { name: 'feedback' }
   | { name: 'admin' }
+  | { name: 'safety' }
+  | { name: 'board' }
+  | { name: 'body' }
+  | { name: 'comfort' }
+  | { name: 'prep'; appointmentId?: string }
   | { name: 'join'; invite: string };
 
 export interface AppCtx {
@@ -34,6 +39,8 @@ export interface AppCtx {
   checkIn: () => void;
   /** Open the quick tour. */
   openTour: () => void;
+  /** Open "Check on me". */
+  checkOn: () => void;
 }
 
 export const Ctx = createContext<AppCtx | null>(null);

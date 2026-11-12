@@ -19,7 +19,7 @@ self.addEventListener('fetch', (e) => {
 self.addEventListener('push', (e) => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch { d = { body: e.data && e.data.text() }; }
-  e.waitUntil(self.registration.showNotification(d.title || 'IDID', {
+  e.waitUntil(self.registration.showNotification(d.title || 'iDID', {
     body: d.body || 'You have a gentle reminder.', tag: d.tag, icon: './favicon.svg', badge: './favicon.svg', silent: true, data: { kind: d.kind },
   }));
 });

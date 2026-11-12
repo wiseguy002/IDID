@@ -9,7 +9,7 @@ export function cloudConfigured() { return !!(URL_ && ANON); }
 
 let client: SupabaseClient | null = null;
 export function supabase(): SupabaseClient {
-  if (!cloudConfigured()) throw new Error('The online circle is not set up for this copy of IDID.');
+  if (!cloudConfigured()) throw new Error('The online circle is not set up for this copy of iDID.');
   return (client ??= createClient(URL_!, ANON!, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } }));
 }
 
@@ -53,7 +53,7 @@ export class SupabaseRemote implements Remote {
     return () => { this.sb.removeChannel(ch); };
   }
   async replaceOwnReminders(rows: ReminderRow[]) {
-    check(await this.sb.from('reminders').delete().eq('user_id', this.uid!).in('kind', ['appointment', 'checkin', 'tip']).is('sent_at', null));
+    check(await this.sb.from('reminders').delete().eq('user_id', this.uid!).in('kind', ['appointment', 'checkin', 'tip', 'med']).is('sent_at', null));
     if (rows.length) check(await this.sb.from('reminders').upsert(rows, { onConflict: 'user_id,tag', ignoreDuplicates: true }));
   }
   async addReminder(row: ReminderRow) {

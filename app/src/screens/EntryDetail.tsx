@@ -45,7 +45,7 @@ export default function EntryDetail({ id }: { id: string }) {
 
   const ask = async (mid: string) => {
     await store.put('observations', { id: uid(), entryId: e.id, memberId: mid, status: 'requested', requestedAt: Date.now(), noticed: [], partIds: [], duration: null, text: '', present: null });
-    toast(`${mName(mid)} will be asked next time they open IDID.`);
+    toast(`${mName(mid)} will be asked next time they open iDID.`);
     setAskOpen(false);
   };
 
@@ -116,7 +116,7 @@ export default function EntryDetail({ id }: { id: string }) {
 
       {askOpen && (
         <Sheet title="Who might have noticed?" onClose={() => setAskOpen(false)}>
-          <p className="muted small">They'll see a gentle request when they next open IDID on this device.</p>
+          <p className="muted small">They'll see a gentle request when they next open iDID on this device.</p>
           <div className="stack">{askable.map((m) => <button key={m.id} className="btn block" onClick={() => ask(m.id)}>{m.name}</button>)}</div>
         </Sheet>
       )}

@@ -53,6 +53,8 @@ export function defaultDevice(): DeviceSettings {
     featureTips: true,
     tourOffered: false,
     kindActs: true,
+    notifyMeds: true,
+    hideStyle: 'calm',
   };
 }
 

@@ -33,7 +33,7 @@ export default function Share() {
     track(me?.id, 'export');
     const file = new File([csv()], `idid-entries-${stamp}.csv`, { type: 'text/csv' });
     if (navigator.canShare?.({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: 'IDID entries' }); } catch { /* cancelled */ }
+      try { await navigator.share({ files: [file], title: 'iDID entries' }); } catch { /* cancelled */ }
     } else { download(file.name, file); toast('Downloaded — you can attach it to an email or message.'); }
   };
 
@@ -44,7 +44,7 @@ export default function Share() {
       if (!b.entries) throw new Error();
       if (b.app !== 'idid') throw new Error();
       setImportFile(b);
-    } catch { toast("That file doesn't look like an IDID backup."); }
+    } catch { toast("That file doesn't look like an iDID backup."); }
     if (fileRef.current) fileRef.current.value = '';
   };
 
@@ -76,8 +76,8 @@ export default function Share() {
 
       {/* Printable report (also shown as preview) */}
       <article className="card" style={{ background: 'var(--surface)' }}>
-        <div className="row between"><h2 style={{ margin: 0 }}>IDID summary{who.length === 1 ? ` — ${mName(who[0])}` : ''}</h2><span className="small muted">{rangeLabel}</span></div>
-        <p className="small muted">Prepared {new Date().toLocaleDateString()} with IDID {APP_VERSION} · self-reported journal entries and observations from a trust circle. Not a clinical assessment.</p>
+        <div className="row between"><h2 style={{ margin: 0 }}>iDID summary{who.length === 1 ? ` — ${mName(who[0])}` : ''}</h2><span className="small muted">{rangeLabel}</span></div>
+        <p className="small muted">Prepared {new Date().toLocaleDateString()} with iDID {APP_VERSION} · self-reported journal entries and observations from a trust circle. Not a clinical assessment.</p>
         <div className="grid2" style={{ gridTemplateColumns: 'repeat(4, 1fr)', margin: '.8rem 0' }}>
           <div className="stat"><span className="tiny muted">Entries</span><b>{s.total}</b></div>
           <div className="stat"><span className="tiny muted">Usual mood</span><b style={{ fontSize: '1rem' }}>{s.avgMood ? moodLabel(Math.round(s.avgMood)) : '—'}</b></div>

@@ -15,8 +15,8 @@ export default function Settings() {
   const { settings: s, go, toast, me, checkIn } = useApp();
   const [ritualText, setRitualText] = useState('');
   const tellAFriend = async () => {
-    const text = 'IDID is a free, private journal for dissociation and trauma responses, and for sharing what helps with people you trust.';
-    if (navigator.share) { try { await navigator.share({ title: 'IDID', text, url: 'https://idid.care' }); return; } catch { /* cancelled */ } }
+    const text = 'iDID is a free, private journal for dissociation and trauma responses, and for sharing what helps with people you trust.';
+    if (navigator.share) { try { await navigator.share({ title: 'iDID', text, url: 'https://idid.care' }); return; } catch { /* cancelled */ } }
     try { await navigator.clipboard.writeText(`${text} https://idid.care`); toast('Link copied. Paste it in a message to a friend.'); } catch { toast('Share this link: idid.care'); }
   };
   const rituals = me?.rituals ?? [];
@@ -34,8 +34,8 @@ export default function Settings() {
     if (p === 'granted') {
       if (pushAvailable()) {
         const ok = await enablePush().catch(() => false);
-        toast(ok ? 'Notifications are on, even when IDID is closed.' : 'Notifications are on while IDID is open.');
-      } else toast('Notifications are on while IDID is open.');
+        toast(ok ? 'Notifications are on, even when iDID is closed.' : 'Notifications are on while iDID is open.');
+      } else toast('Notifications are on while iDID is open.');
     } else if (p === 'denied') toast('Notifications are blocked. You can allow them in your browser or phone settings.');
   };
   const [wipe, setWipe] = useState(false);
@@ -74,11 +74,11 @@ export default function Settings() {
         <Switch label="Calm motion" hint="No animations, slides or movement" checked={s.reduceMotion} onChange={(v) => up({ reduceMotion: v })} />
         <Switch label="Extra-readable text" hint="Wider spacing and a clearer typeface" checked={s.readableFont} onChange={(v) => up({ readableFont: v })} />
         <Switch label="Rounded shapes" hint="Turn off for simpler, squarer edges" checked={s.softEdges} onChange={(v) => up({ softEdges: v })} />
-        <p className="tiny muted" style={{ margin: 0 }}>IDID never plays sounds, vibrates, or flashes.</p>
+        <p className="tiny muted" style={{ margin: 0 }}>iDID never plays sounds, vibrates, or flashes.</p>
       </div>
       <div className="card">
         <h2>Language & prompts</h2>
-        <label className="field"><span>Name of this space</span><input className="input" value={s.circleName} onChange={(e) => up({ circleName: e.target.value })} placeholder="IDID" /></label>
+        <label className="field"><span>Name of this space</span><input className="input" value={s.circleName} onChange={(e) => up({ circleName: e.target.value })} placeholder="iDID" /></label>
         <div className="eyebrow">I call them</div>
         <Segmented label="Word for parts" value={s.partWord} onChange={(v: PartWord) => up({ partWord: v })}
           options={[{ value: 'parts', label: 'Parts' }, { value: 'alters', label: 'Alters' }, { value: 'headmates', label: 'Headmates' }, { value: 'selves', label: 'Selves' }]} />
@@ -86,7 +86,7 @@ export default function Settings() {
       </div>
       <div className="card">
         <h2>Gentle check-ins</h2>
-        <p className="small muted">At random times, IDID asks whoever is here how they're doing, with a kind word and something small to try: breathing, one of your healthy rituals, or some fresh air and sunshine.</p>
+        <p className="small muted">At random times, iDID asks whoever is here how they're doing, with a kind word and something small to try: breathing, one of your healthy rituals, or some fresh air and sunshine.</p>
         {me?.tracked ? (
           <>
             <Switch label="Random check-ins" checked={s.nudges} onChange={(v) => up({ nudges: v })} />
@@ -121,13 +121,14 @@ export default function Settings() {
       </div>
       <div className="card">
         <h2>Notifications</h2>
-        <p className="small muted">Notifications never show what you wrote, only a gentle nudge to open IDID.</p>
+        <p className="small muted">Notifications never show what you wrote, only a gentle nudge to open iDID.</p>
         {perm === 'granted'
           ? <p className="small"><span className="tag"><Icon name="bell" size={14} /> Notifications allowed on this device</span></p>
           : perm === 'unsupported'
-            ? <p className="small muted">This browser can't show notifications. Reminders will appear inside IDID instead. On iPhone, add IDID to your Home Screen first.</p>
+            ? <p className="small muted">This browser can't show notifications. Reminders will appear inside iDID instead. On iPhone, add iDID to your Home Screen first.</p>
             : <button className="btn" onClick={turnOnNotifications}><Icon name="bell" size={18} /> Turn on notifications</button>}
         <Switch label="Appointment reminders" hint="Therapy, counselling, groups — at the times you choose" checked={s.notifyAppointments} onChange={(v) => up({ notifyAppointments: v })} />
+        <Switch label="Medication reminders" hint="Only says “it's time”, never the medication" checked={s.notifyMeds} onChange={(v) => up({ notifyMeds: v })} />
         <Switch label="When someone asks what I noticed" checked={s.notifyObservations} onChange={(v) => up({ notifyObservations: v })} />
         <Switch label="Daily check-in reminder" checked={!!s.checkInTime} onChange={(v) => up({ checkInTime: v ? '20:00' : null })} />
         {s.checkInTime && (
@@ -143,18 +144,22 @@ export default function Settings() {
           <button className="btn sm" onClick={() => { store.lock(); }}><Icon name="lock" size={17} /> Lock now</button>
           <button className="btn sm" onClick={() => setPassOpen(true)}>Change passphrase or recovery code</button>
         </div>
-        <div className="eyebrow" style={{ marginTop: '.9rem' }}>Lock automatically when IDID is in the background for</div>
+        <div className="eyebrow" style={{ marginTop: '.9rem' }}>Lock automatically when iDID is in the background for</div>
         <Segmented label="Auto-lock" value={String(s.autoLockMins)} onChange={(v) => up({ autoLockMins: Number(v) })}
           options={[{ value: '0', label: 'Right away' }, { value: '1', label: '1 min' }, { value: '5', label: '5 min' }, { value: '30', label: '30 min' }]} />
+        <div className="eyebrow" style={{ marginTop: '.9rem' }}>Quick hide shows</div>
+        <Segmented label="Quick hide screen" value={s.hideStyle} onChange={(v) => up({ hideStyle: v as 'calm' | 'notes' })}
+          options={[{ value: 'calm', label: 'A calm clock' }, { value: 'notes', label: 'A plain notepad' }]} />
+        <p className="tiny muted" style={{ margin: '.4rem 0 0' }}>Tap the eye icon at the top (or press Esc twice) to lock iDID instantly and show this screen. Tap it three times (or the ≡ menu) to come back to the lock screen.</p>
         <hr className="hr" />
         <button className="btn" onClick={() => go({ name: 'share' })}><Icon name="download" size={18} /> Export & backup</button>
         <button className="btn ghost danger" style={{ marginLeft: '.4rem' }} onClick={() => setWipe(true)}>Delete all data</button>
       </div>
       <div className="card soft small">
-        <div className="row between"><h3 style={{ margin: 0 }}>About IDID</h3><span className="tag">Version {APP_VERSION}</span></div>
+        <div className="row between"><h3 style={{ margin: 0 }}>About iDID</h3><span className="tag">Version {APP_VERSION}</span></div>
         <p className="small" style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => go({ name: 'changelog' })}><Icon name="sparkle" size={15} /> What's new</button> <button className="btn sm" onClick={() => go({ name: 'explore' })}>Explore & badges</button> <button className="btn sm" onClick={() => go({ name: 'feedback' })}>Suggest a feature</button> <button className="btn sm" onClick={tellAFriend}>Tell a friend</button> <span className="tiny muted">Build {BUILD_COMMIT}</span></p>
         <p>Learn more about dissociation, DID and grounding at <a href="https://idid.care/learn" target="_blank" rel="noopener noreferrer">idid.care/learn</a>.</p>
-        <p>IDID is a private journal for noticing dissociative and trauma-related experiences, and for gathering gentle observations from people you trust. It is not a diagnostic tool or a substitute for professional care.</p>
+        <p>iDID is a private journal for noticing dissociative and trauma-related experiences, and for gathering gentle observations from people you trust. It is not a diagnostic tool or a substitute for professional care.</p>
         <p style={{ margin: 0 }}>If you are in danger or thinking about harming yourself, please contact local emergency services. In the US, call or text <b>988</b>. In the UK & Ireland, Samaritans: <b>116 123</b>.</p>
       </div>
 

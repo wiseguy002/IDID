@@ -26,7 +26,10 @@ export type Route =
   | { name: 'comfort' }
   | { name: 'calm' }
   | { name: 'prep'; appointmentId?: string }
-  | { name: 'join'; invite: string };
+  | { name: 'join'; invite: string }
+  /** Care team & shared views. memberId/newName prefill a new view; fromCircle is the account to move out of the circle. */
+  | { name: 'careteam'; memberId?: string; newName?: string; fromCircle?: string }
+  | { name: 'help'; topic?: string };
 
 export interface AppCtx {
   settings: Settings;

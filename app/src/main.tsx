@@ -2,6 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
+import CareView from './screens/CareView';
+import { parseCareToken } from './lib/careShare';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { APP_VERSION } from './version';
 
@@ -14,7 +16,7 @@ if (location.hash.startsWith('#invite=')) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      <App />
+      {parseCareToken(location.hash) ? <CareView /> : <App />}
     </ErrorBoundary>
   </StrictMode>,
 );

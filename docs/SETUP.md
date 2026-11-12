@@ -15,7 +15,7 @@ At this point iDID works on-device only. People can install it from the browser 
 ## 2. Create the Supabase project
 
 1. Create a new project at supabase.com. Choose a region close to your users and keep the database password somewhere safe.
-2. Open **SQL Editor** and run each file in `supabase/migrations/` in order (`…_idid_init.sql`, `…_community.sql`, then `…_checkon_meds.sql`). Or, with the Supabase CLI linked (step 4), run `supabase db push`.
+2. Open **SQL Editor** and run each file in `supabase/migrations/` in filename order (oldest first). Or, with the Supabase CLI linked (step 4), run `supabase db push`. When you update iDID later, run any new migration files the same way before deploying the app.
 3. Under **Project Settings → API**, note the **Project URL** and the **anon public** key.
 
 ## 3. Sign-in emails

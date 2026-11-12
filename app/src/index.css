@@ -252,3 +252,30 @@ textarea.input { min-height: 96px; resize: vertical; }
 .bb-box { width: 30px; height: 30px; border-radius: 6px; border: 2px solid var(--accent); }
 .bb-box.pop { animation: bb-pop .5s ease-out backwards; }
 @keyframes bb-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---------- Invitations & access ---------- */
+.invite-row { padding: .7rem 0; border-top: 1px solid var(--line); }
+.invite-row:first-of-type { border-top: 0; }
+.tag.status-joined { background: var(--accent-soft); color: var(--focus); }
+.tag.status-waiting { background: var(--accent-2-soft); }
+.tag.status-expired, .tag.status-cancelled { background: var(--warm-soft); }
+.access-tag { margin-top: .25rem; display: inline-block; }
+.access-opt { display: grid; gap: .15rem; text-align: left; padding: .7rem .85rem; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.access-opt.on { border-color: var(--accent); background: var(--accent-soft); }
+.access-opt:disabled { opacity: .55; cursor: not-allowed; }
+.access-opt:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- Shared view (therapist link) ---------- */
+.care-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.care-table th { text-align: left; padding: .35rem .3rem; border-bottom: 1px solid var(--line); }
+.care-table td { padding: .4rem .3rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.scope-list { display: grid; gap: .35rem; }
+.consent-box { border: 1.5px solid var(--accent); border-radius: 14px; padding: .9rem 1rem; background: var(--accent-soft); }
+
+/* ---------- Help center ---------- */
+.help-row { background: none; border: 0; padding: .7rem 0; align-items: center; width: 100%; border-top: 1px solid var(--line); }
+.help-row:first-child { border-top: 0; }
+.help-body p { line-height: 1.6; }
+.help-steps, .help-list { padding-left: 1.3rem; line-height: 1.6; }
+.help-steps li, .help-list li { margin: .35rem 0; }
+.linkish { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; font: inherit; cursor: pointer; }

@@ -12,6 +12,7 @@ import { useProgress } from './Explore';
 import { nextTip } from '../lib/progress';
 import { KindActCard, KindNoteView, useKindNotes } from './Kindness';
 import { CheckOnCards } from '../components/CheckOn';
+import { useAccount } from '../sync/account';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -72,12 +73,14 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
     toast('Thank you. Your reflection was added.');
   };
 
+  const { role } = useAccount();
   return (
     <div className="stack fade-in">
       <section style={{ padding: '.6rem 0 .2rem' }}>
         <h1 style={{ fontSize: '1.85rem' }}>{greeting(me?.name ?? '')}</h1>
         <p className="muted" style={{ fontSize: '1.05rem' }}>{back ?? welcomeLine()}</p>
       </section>
+      {role === 'viewer' && <div className="card blue small" role="note"><b>You have view-only access to this circle.</b> You can see what the circle shares. Anything you add stays on this device and isn't shared. Ask the circle's owner if you'd like to add notes.</div>}
 
       <CheckOnCards />
 
@@ -213,6 +216,8 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
           <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>
           {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> Inner board</button>}
           <button className="btn sm" onClick={() => go({ name: 'prep' })}><Icon name="clipboard" size={16} /> Prepare for therapy</button>
+          <button className="btn sm" onClick={() => go({ name: 'careteam' })}><Icon name="shield" size={16} /> Share with my therapist</button>
+          <button className="btn sm" onClick={() => go({ name: 'help' })}><Icon name="help" size={16} /> Help &amp; guides</button>
         </div>
       </div>
 

@@ -394,3 +394,75 @@ export interface SessionPrep {
   afterNotes: string;
   createdAt: number;
 }
+
+/** An invitation to join the online circle. Kept in the circle; the id matches the server's invite. */
+export interface Invitation {
+  id: ID;
+  /** Who it's for, as the inviter wrote it. */
+  name: string;
+  /** The person in the circle it's for, so they're linked automatically when they join. */
+  memberId: ID | null;
+  role: 'member' | 'viewer';
+  /** The full link, so it can be sent again. Useless once used, cancelled or expired. */
+  link: string;
+  /** Optional email or phone, used only to prefill "Remind" on the inviter's own device. */
+  contact: string;
+  createdBy: ID | null;
+  createdAt: number;
+  cancelledAt: number | null;
+}
+
+export type CareRole = 'therapist' | 'counselor' | 'psychiatrist' | 'doctor' | 'case-manager' | 'family' | 'friend' | 'other';
+export const CARE_ROLES: { value: CareRole; label: string }[] = [
+  { value: 'therapist', label: 'Therapist' }, { value: 'counselor', label: 'Counselor' }, { value: 'psychiatrist', label: 'Psychiatrist' },
+  { value: 'doctor', label: 'Doctor' }, { value: 'case-manager', label: 'Case manager' }, { value: 'family', label: 'Family' },
+  { value: 'friend', label: 'Friend' }, { value: 'other', label: 'Someone else' },
+];
+
+/** What a read-only shared view includes. */
+export interface ShareScope {
+  /** Totals, patterns and trends. */
+  summary: boolean;
+  /** The list of moments (when, where, triggers, mood, duration). */
+  entries: boolean;
+  /** Written notes and possible causes on each moment. */
+  notes: boolean;
+  /** What people in the circle noticed. */
+  observations: boolean;
+  /** Parts or alters, and who was fronting. */
+  parts: boolean;
+  /** Name, support needs and about-me details. */
+  profile: boolean;
+  /** Check-in moods over time. */
+  checkins: boolean;
+  safety: boolean;
+  meds: boolean;
+  appointments: boolean;
+  /** Therapy prep notes. */
+  prep: boolean;
+  /** Include entries marked "only me". */
+  privateEntries: boolean;
+}
+
+/** A read-only view shared with a therapist or another trusted person. The id matches the server's care_shares row. */
+export interface CareShare {
+  id: ID;
+  /** The view's key (base64). It leaves the person's devices only inside the link they give. */
+  key: string;
+  name: string;
+  role: CareRole;
+  contact: string;
+  /** Whose journal this view shows. */
+  subjectId: ID;
+  /** Set when this is someone in the circle who sees only selected information. */
+  memberId: ID | null;
+  scope: ShareScope;
+  range: '30' | '90' | '365' | 'all';
+  expiresAt: number | null;
+  /** When the person explicitly agreed to share this. */
+  consentedAt: number;
+  createdAt: number;
+  updatedAt: number;
+  publishedAt: number | null;
+  publishedHash: string;
+}

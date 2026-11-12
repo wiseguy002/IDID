@@ -14,7 +14,7 @@ import type { Activity } from '../types';
 
 export type EventName =
   | 'tour' | 'pause' | 'patterns' | 'timeline' | 'export' | 'calendar' | 'support-viewed'
-  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered' | 'box-breath';
+  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered' | 'box-breath' | 'help';
 
 /** Counts the app derives from stored data for one person. */
 export interface Facts {
@@ -61,6 +61,7 @@ export const FEATURES: Feature[] = [
   { id: 'patterns', name: 'Patterns', group: 'Noticing', route: { name: 'insights' }, about: 'See common triggers, places, times and what helps.', used: (_f, a) => ev(a, 'patterns'), tipPriority: 5, tip: 'Patterns can show what tends to come before hard moments, and what helps.' },
   { id: 'parts', name: 'Parts', group: 'Noticing', route: { name: 'circle' }, about: 'Keep notes about the parts of your system.', used: (f) => f.parts > 0 },
   { id: 'pause', name: 'Pause tools', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathing, box breathing, 5-4-3-2-1 grounding and "right now" orientation.', used: (_f, a) => ev(a, 'pause'), tipPriority: 2, tip: 'Pause has breathing and grounding tools for when things feel like too much.' },
+  { id: 'help', name: 'Help & guides', group: 'Make it yours', route: { name: 'help' }, about: 'Step-by-step guides to everything in iDID.', used: (_f, a) => ev(a, 'help'), tipPriority: 6, tip: 'Help & guides walks through everything in iDID, from logging a moment to sharing with your therapist.' },
   { id: 'calm', name: 'Calm space', group: 'Calm & coping', route: { name: 'calm' }, about: 'Ripples, light trails and drifting lights to unwind for a minute.', used: (_f, a) => ev(a, 'calm'), tipPriority: 3, tip: 'The Calm space is a quiet minute of ripples or drifting lights, with nothing to do and nothing to win.' },
   { id: 'checkins', name: 'Gentle check-ins', group: 'Calm & coping', route: { name: 'settings' }, about: 'A kind word and a small idea, a few times a day.', used: (f) => f.checkins > 0 },
   { id: 'rituals', name: 'Healthy rituals', group: 'Calm & coping', route: { name: 'settings' }, about: 'Your own small ways to interrupt a hard pattern.', used: (f) => f.rituals > 0, tipPriority: 4, tip: 'Adding a few of your own healthy rituals makes check-ins more personal.' },

@@ -29,6 +29,8 @@ import Body from './screens/Body';
 import Comfort from './screens/Comfort';
 import Prep from './screens/Prep';
 import Calm from './screens/Calm';
+import CareTeam from './screens/CareTeam';
+import Help from './screens/Help';
 import { CheckOnSheet } from './components/CheckOn';
 import { Cover, useHideShortcut } from './components/QuickHide';
 import { OfflineNotice } from './components/OfflineNotice';
@@ -218,6 +220,8 @@ export default function App() {
           {route.name === 'body' && <Body />}
           {route.name === 'comfort' && <Comfort />}
           {route.name === 'calm' && <Calm />}
+          {route.name === 'careteam' && <CareTeam />}
+          {route.name === 'help' && <Help />}
           {route.name === 'prep' && <Prep key={route.appointmentId ?? 'next'} appointmentId={route.appointmentId} />}
         </main>
         {!inWizard && (

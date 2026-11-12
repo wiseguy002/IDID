@@ -14,6 +14,21 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-11-12
+
+Share safely with your therapist and choose what each person sees.
+
+### Added
+- **Therapist & care team**: share a read-only view of your journal with a therapist, counselor, psychiatrist or anyone you choose. Tick exactly what they can see (patterns, moments, your notes, parts, what your circle noticed, check-in moods, safety plan, meds, appointments, therapy prep), how far back, and for how long. Nothing is shared until you read a plain summary and agree. They open a private link in any browser, with no account needed, and it updates as you use iDID. You can see when they last looked, change what they see (you'll agree again), edit their details, or **remove access**, which stops the link working at once.
+- **Choose what each person can do**: the circle's owner can give each person **Can view and add**, **View only** (our server refuses their changes), or **Only selected information** (a private read-only view of just what you pick, instead of being in the circle). Remove someone's access any time.
+- **Invitations you can follow up on**: invite a specific person from the Circle page and see each invite as **Waiting**, **Joined** or **Expired**. **Remind** sends it again by text, email or your share sheet (handy if it went to spam), **New link** replaces an expired one, and **Cancel** stops it. When they join, they're linked to the right person automatically.
+- **Joining after starting on your own**: when you join someone's circle, iDID asks "Is one of these people you?" and folds everything you'd written into the profile they made for you. Nothing is lost, you don't appear twice, and "only me" entries stay private. If you had your own online circle, your journal moves across.
+- **Help & guides**: step-by-step guides to everything in iDID, from logging a moment to sharing with your therapist, with search and buttons that take you straight there. Find it on Home, in Settings and in Explore.
+
+### Fixed
+- Joining a second circle could miss some of its entries on the first sync. It now reads the new circle from the beginning.
+- A new device now opens the circle you joined most recently.
+
 ## [0.10.0] - 2026-11-12
 
 Breathe in a square, and pick up where you left off on a new device.
@@ -172,7 +187,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/wiseguy002/IDID/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/wiseguy002/IDID/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/wiseguy002/IDID/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/wiseguy002/IDID/compare/v0.8.0...v0.8.1

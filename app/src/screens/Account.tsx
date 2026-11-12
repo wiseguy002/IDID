@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { store, updateDevice } from '../db';
 import { useApp } from '../state';
-import { circleAccounts, currentUserId, invite, join, sendCode, signOut, startCircle, syncNow, unlockKeys, useAccount, verifyCode } from '../sync/account';
+import { circleAccounts, currentUserId, join, sendCode, signOut, startCircle, syncNow, unlockKeys, useAccount, verifyCode } from '../sync/account';
 import { enablePush, pushAvailable } from '../sync/push';
 import { relTime, roleLabel } from '../lib/util';
 import { PageHead, Sheet } from '../components/ui';
 import { Icon } from '../components/Icon';
 import { PALETTE } from '../lib/defaults';
+import { mergeMember } from '../lib/merge';
+import { InviteSheet } from '../components/Invites';
 import { uid } from '../db';
 
 export const INVITE_KEY = 'idid.invite';
@@ -29,17 +31,17 @@ function WhatServerSees() {
 }
 
 /** After joining: connect this account to a person in the circle. */
-function ClaimSelf({ onDone }: { onDone: () => void }) {
+function ClaimSelf({ onDone, suggested }: { onDone: () => void; suggested?: string | null }) {
   const { members, me, toast } = useApp();
   const myId = currentUserId();
-  const unclaimed = members.filter((m) => !m.userId || m.userId === myId);
+  const unclaimed = members.filter((m) => m.id !== me?.id && (!m.userId || m.userId === myId));
+  const [busy, setBusy] = useState(false);
   const claim = async (id: string) => {
+    setBusy(true);
+    // Fold this device's own profile into the circle's profile for them: their entries, parts,
+    // check-ins, safety plan and the rest move across, and the duplicate disappears.
+    if (me && me.id !== id) await mergeMember(store, me.id, id);
     await store.patch('members', id, { userId: myId ?? undefined });
-    // Remove the placeholder made during setup on this device if it's unused.
-    if (me && me.id !== id && !store.all('entries').some((e) => e.authorId === me.id || e.subjectId === me.id)) {
-      for (const p of store.all('parts').filter((p) => p.memberId === me.id)) await store.patch('parts', p.id, { memberId: id });
-      await store.remove('members', me.id);
-    }
     updateDevice({ activeMemberId: id });
     toast('Linked. Welcome to the circle.');
     onDone();
@@ -52,11 +54,11 @@ function ClaimSelf({ onDone }: { onDone: () => void }) {
     onDone();
   };
   return (
-    <Sheet title="Which person are you?" onClose={onDone}>
-      <p className="small muted">Choose yourself so requests and reminders reach you.</p>
+    <Sheet title="Is one of these people you?" onClose={onDone}>
+      <p className="small muted">If someone in this circle already made a profile for you, choose it. Everything you've written on this device moves onto it, nothing is lost, and you won't appear twice. Your "only me" entries stay private.</p>
       <div className="stack">
-        {unclaimed.map((m) => <button key={m.id} className="btn block" onClick={() => claim(m.id)}>{m.name} <span className="muted small">· {roleLabel(m)}</span></button>)}
-        <button className="btn block ghost" onClick={addNew}>I'm not listed{me ? ` — keep me as "${me.name}"` : ''}</button>
+        {[...unclaimed].sort((a, b) => Number(b.id === suggested) - Number(a.id === suggested)).map((m) => <button key={m.id} className={`btn block${m.id === suggested ? ' primary' : ''}`} disabled={busy} onClick={() => claim(m.id)}>{m.id === suggested ? "That's me: " : ''}{m.name} <span className="small" style={{ opacity: .8 }}>· {roleLabel(m)}</span></button>)}
+        <button className="btn block ghost" disabled={busy} onClick={addNew}>None of these{me ? ` — keep me as "${me.name}"` : ''}</button>
       </div>
     </Sheet>
   );
@@ -71,9 +73,10 @@ export default function Account() {
   const [pass, setPass] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-  const [link, setLink] = useState('');
+  const [inviting, setInviting] = useState(false);
   const [paste, setPaste] = useState('');
   const [claim, setClaim] = useState(false);
+  const [suggested, setSuggested] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<{ user_id: string; role: string }[]>([]);
   const token = pendingInvite();
 
@@ -89,8 +92,9 @@ export default function Account() {
   };
   const doJoin = (t: string) => run(async () => {
     const tk = t.includes('#invite=') ? t.split('#invite=')[1] : t.trim();
-    await join(tk);
+    const r = await join(tk);
     clearInvite();
+    setSuggested(r.suggestedMemberId);
     setClaim(true);
   });
 
@@ -182,23 +186,18 @@ export default function Account() {
           </div>
           <div className="card">
             <h3>Invite someone</h3>
-            <p className="small muted">Each link works once and expires in 7 days. Send it privately (text or in person). The part after # holds the key and is never sent to our server.</p>
-            {!link ? <button className="btn primary" disabled={busy} onClick={() => run(async () => setLink(await invite()))}><Icon name="people" size={17} /> Make an invite link</button> : (
-              <>
-                <textarea id="invite-link" className="input" readOnly value={link} style={{ minHeight: 80, fontSize: '.8rem' }} onFocus={(e) => e.target.select()} aria-label="Invite link" />
-                <div className="row" style={{ marginTop: '.5rem' }}>
-                  <button className="btn sm" onClick={() => navigator.clipboard?.writeText(link).then(() => toast('Link copied.'), () => toast('Select the link and copy it.'))}>Copy link</button>
-                  {typeof navigator.share === 'function' && <button className="btn sm" onClick={() => navigator.share({ title: 'Join my iDID circle', url: link }).catch(() => undefined)}>Share…</button>}
-                  <button className="btn ghost sm" onClick={() => setLink('')}>Make another</button>
-                </div>
-              </>
-            )}
+            <p className="small muted">Choose what they can see and do, then send the link from this device. Each link works once and expires in 7 days. The part after # holds the key and is never sent to our server. You'll see on your Circle page when they've joined.</p>
+            <div className="row">
+              <button className="btn primary" disabled={a.role === 'viewer'} onClick={() => setInviting(true)}><Icon name="people" size={17} /> Invite someone</button>
+              <button className="btn sm" onClick={() => go({ name: 'circle' })}>See invitations</button>
+            </div>
+            {a.role === 'viewer' && <p className="small muted">You have view-only access, so you can't invite people.</p>}
           </div>
           <div className="card">
             <h3>Accounts in this circle</h3>
             {accounts.map((x) => {
               const m = members.find((mm) => mm.userId === x.user_id);
-              return <div key={x.user_id} className="row between small" style={{ padding: '.3rem 0' }}><span>{m ? m.name : 'Not linked to a person yet'}{x.user_id === currentUserId() ? ' (you)' : ''}</span><span className="tag">{x.role}</span></div>;
+              return <div key={x.user_id} className="row between small" style={{ padding: '.3rem 0' }}><span>{m ? m.name : 'Not linked to a person yet'}{x.user_id === currentUserId() ? ' (you)' : ''}</span><span className="tag">{x.role === 'owner' ? 'owner' : x.role === 'viewer' ? 'view only' : 'can view and add'}</span></div>;
             })}
           </div>
           <button className="btn ghost danger sm" onClick={() => run(async () => { await signOut(); toast('Signed out. Your journal stays on this device.'); })}>Sign out on this device</button>
@@ -207,7 +206,8 @@ export default function Account() {
 
       {err && <p className="small" role="alert" style={{ color: 'var(--warm)' }}>{err}</p>}
       <div style={{ marginTop: '1rem' }}><WhatServerSees /></div>
-      {claim && <ClaimSelf onDone={() => setClaim(false)} />}
+      {claim && <ClaimSelf suggested={suggested} onDone={() => setClaim(false)} />}
+      {inviting && <InviteSheet onClose={() => setInviting(false)} />}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 // idid.care website: show a gentle offline page instead of the browser's error when the connection drops.
-const CACHE = 'idid-site-v1';
-const CORE = ['/', '/learn', '/privacy', '/assets/site.css', '/assets/site.js', '/assets/logo.svg', '/errors/offline.html'];
+// The version placeholder below is replaced at build time with a hash of site.css + site.js, so each deploy gets fresh assets.
+const CACHE = 'idid-site-__V__';
+const CORE = ['/', '/learn', '/privacy', '/assets/site.css?v=__V__', '/assets/site.js?v=__V__', '/assets/logo.svg', '/errors/offline.html'];
 self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE))); });
 self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));

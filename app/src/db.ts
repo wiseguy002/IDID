@@ -143,7 +143,7 @@ export async function importAll(b: Partial<Backup> & { app: string }, mode: 'mer
 export async function wipeAll() {
   store.lock();
   await persist.destroy();
-  try { localStorage.removeItem(DEVICE_KEY); localStorage.removeItem('idid.checkin.dismissed'); localStorage.removeItem('idid.account'); } catch { /* ignore */ }
+  try { localStorage.removeItem(DEVICE_KEY); localStorage.removeItem('idid.checkin.dismissed'); localStorage.removeItem('idid.account'); localStorage.removeItem('idid.sample'); } catch { /* ignore */ }
   location.reload();
 }
 

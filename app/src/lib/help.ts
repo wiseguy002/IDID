@@ -398,6 +398,9 @@ export const HELP: HelpTopic[] = [
     body: [
       { h: 'I didn’t get a sign-in code' },
       { p: 'Wait a minute and check your spam or promotions folder. The email comes from hello@idid.care with the subject "Your iDID sign-in code". Codes expire after 15 minutes.' },
+      { h: 'A new device won’t accept my passphrase' },
+      { p: 'If the screen says **Welcome back** and asks for a passphrase, this device already has a journal on it, often the sample circle from someone looking around. It isn’t yours, so your passphrase won’t open it. iDID now spots the sample and offers **I already use iDID: bring my journal here**. For any other journal, tap **This isn’t my journal**, type **erase**, then sign in with your email and passphrase.' },
+      { p: 'If your phone filled in the passphrase for you, try typing it yourself. Saved passwords can be out of date.' },
       { h: 'Someone didn’t get my invite' },
       { p: 'On the Circle page, tap **Remind** to send it again another way, such as a text. If it has expired, tap **New link**.' },
       { h: 'It says "Sync problem"' },
@@ -406,7 +409,7 @@ export const HELP: HelpTopic[] = [
       { p: 'Make sure they copied the whole link, including everything after the #. If you removed their access or it ended, share again.' },
     ],
     open: [{ label: 'Suggest a feature or report a problem', route: { name: 'feedback' } }],
-    keywords: 'problem error help code email spam sync broken not working',
+    keywords: 'problem error help code email spam sync broken not working passphrase wrong new device sample erase',
   },
 ];
 

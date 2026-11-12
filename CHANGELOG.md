@@ -14,6 +14,13 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.13.2] - 2026-11-12
+
+A way in on any device.
+
+### Fixed
+- **Signing in on a device that already has a journal**: if someone had explored the sample circle on a phone or computer, it showed a "Welcome back" lock screen that wouldn't accept your real passphrase, with no way to sign in instead. iDID now recognizes the sample and offers to bring your journal here, set up your own, or keep exploring. The lock screen also has **This isn't my journal**, which erases the journal on that device (after you type "erase") and goes straight to sign-in. While you explore the sample, Home shows a note with a way to leave it.
+
 ## [0.13.1] - 2026-11-12
 
 American English throughout.
@@ -221,7 +228,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.13.1...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.13.2...HEAD
+[0.13.2]: https://github.com/wiseguy002/IDID/compare/v0.13.1...v0.13.2
 [0.13.1]: https://github.com/wiseguy002/IDID/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/wiseguy002/IDID/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/wiseguy002/IDID/compare/v0.12.0...v0.12.1

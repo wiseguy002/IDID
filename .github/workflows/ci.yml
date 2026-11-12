@@ -29,6 +29,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Help, website, press and docs cover every feature (docs/COLLATERAL.md)
+        run: node scripts/check-collateral.mjs
       - name: Install Playwright, axe-core and html-validate for the site checks
         run: npm i --no-save playwright@1 axe-core@4.10.2 html-validate@9.4.1 && npx playwright install --with-deps chromium
       - name: Build and check website (links, layout, CSP, accessibility, valid HTML)

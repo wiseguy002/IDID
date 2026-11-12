@@ -14,6 +14,18 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-12
+
+Gentler moments when things go wrong.
+
+### Added
+- If something unexpected breaks, iDID now shows a calm page ("iDID tripped over its own leaves") with **Try again** and **Reload**, and a reminder that your journal is safe, instead of a blank screen.
+- A quiet note when you're offline, letting you know iDID still works and will sync when you're back.
+
+### Fixed
+- On idid.care, lists with bold text could break into one word per line.
+- On idid.care, shareable messages are now shown in full on phones, and other layout issues on phones are tidied up.
+
 ## [0.8.0] - 2026-11-12
 
 Tools for hard days: a safety plan, check on me, quick hide, and more. IDID is now **iDID**.
@@ -138,7 +150,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/wiseguy002/IDID/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/wiseguy002/IDID/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/wiseguy002/IDID/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/wiseguy002/IDID/compare/v0.6.0...v0.7.0

@@ -1,9 +1,24 @@
-<!-- title: Page not found · iDID | description: This page doesn't exist, but you're still welcome here. -->
-<section class="hero">
+<!-- title: Page not found · iDID | description: This page wandered off, but you're still welcome here. Things don't always go as planned; what matters is how we respond. -->
+<section class="hero oops">
   <div class="wrap narrow" style="text-align:center">
-    <p class="eyebrow">404</p>
-    <h1>This page isn't here.</h1>
-    <p class="lede muted" style="margin-inline:auto">But you are, and that's what matters. Take a breath, then try one of these.</p>
-    <p><a class="btn primary" href="/">Go home</a> <a class="btn" href="https://app.idid.care">Open the app</a> <a class="btn" href="/learn#help">Get help</a></p>
+    <div class="oops-leaf" aria-hidden="true">
+      <svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="58" fill="var(--accent-soft)"/><path d="M38 84c0-24 15-39 45-42-3 30-18 45-42 45M38 84c9-12 18-19.5 27-24" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <p class="eyebrow">404 · Page not found</p>
+    <h1>Well, this isn't where we planned to be.</h1>
+    <p class="lede muted" style="margin-inline:auto">The page you were looking for has wandered off. Maybe it went to get some fresh air. Things don't always go as planned. <b style="color:var(--ink)">What matters is how we respond.</b></p>
+
+    <div class="card oops-card">
+      <p class="eyebrow">Today's plan B</p>
+      <p class="plan-b" id="plan-b" aria-live="polite">Take one slow breath. The page will wait.</p>
+      <button class="btn sm" id="plan-b-next" type="button">Give me another plan B</button>
+    </div>
+
+    <div class="actions" style="display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.6rem">
+      <a class="btn primary" href="/">Take me home</a>
+      <a class="btn" href="/learn">Learn something new</a>
+      <a class="btn" href="https://app.idid.care">Open the app</a>
+    </div>
+    <p class="muted" style="margin-top:2rem;font-size:.93rem">Got here from a broken link on our site? We'd love to fix it: <a href="mailto:hello@idid.care">hello@idid.care</a>.<br>Need support right now? Call or text <a href="tel:988"><b>988</b></a>, any time.</p>
   </div>
 </section>

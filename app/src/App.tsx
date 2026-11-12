@@ -18,6 +18,7 @@ import SettingsScreen from './screens/Settings';
 import Pause from './screens/Pause';
 import Appointments from './screens/Appointments';
 import Account, { pendingInvite } from './screens/Account';
+import Support from './screens/Support';
 import { lockAccount, resume } from './sync/account';
 import { useReminders } from './lib/useReminders';
 
@@ -139,6 +140,7 @@ export default function App() {
           {route.name === 'pause' && <Pause />}
           {route.name === 'appointments' && <Appointments />}
           {route.name === 'account' && <Account />}
+          {route.name === 'support' && <Support />}
         </main>
         {!inWizard && (
           <nav className="bottomnav no-print" aria-label="Main">

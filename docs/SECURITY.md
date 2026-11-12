@@ -16,6 +16,11 @@ IDID is built so that the people running the server **cannot read your journal**
 - Every record is re-encrypted with the circle key before upload. Record ids on the server are keyed hashes (HMAC), so **the server can't tell entries from parts, people or appointments**.
 - **"Only me" entries** are encrypted with a personal key that only your own devices hold, so other circle members can't read them either.
 
+## Support profile (ZIP code)
+
+- Each person's ZIP code, support needs and saved contacts are stored encrypted like journal entries and synced end-to-end.
+- IDID never looks anything up automatically. A third-party directory (for example Psychology Today or HRSA) only sees the ZIP code when someone taps a link that includes it.
+
 ## What the server can see
 
 - Your email address (for sign-in) and which accounts share a circle.

@@ -133,6 +133,12 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         </div>
       )}
 
+      <button className="card blue" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '.9rem', alignItems: 'center' }} onClick={() => go({ name: 'support' })}>
+        <span style={{ color: 'var(--accent-2)' }}><Icon name="people" size={26} /></span>
+        <span><b>Find support{me?.support?.zip ? ` near ${me.support.zip}` : ''}</b><br />
+          <span className="small muted">{me?.support?.zip ? 'Specialists, helplines and community matched to your needs.' : 'Add your ZIP code to find therapists, crisis services and community near you.'}</span></span>
+      </button>
+
       <div className="grid2">
         <button className="card" style={{ cursor: 'pointer', textAlign: 'left', margin: 0 }} onClick={() => go({ name: 'timeline' })}>
           <div className="eyebrow">This week</div>

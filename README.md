@@ -14,6 +14,7 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Online circle** | Each person on their own phone: sign in with an email code, invite with a one-time link, automatic end-to-end encrypted sync. |
 | **Appointments** | Therapy, counselling, support groups, psychiatry: repeating schedules, reminders, "since last session" summaries, **add to Apple, Outlook or Google Calendar**. |
 | **Alerts** | Push notifications for appointment reminders, daily check-ins, and requests from the circle. The text is always generic so nothing private shows on a lock screen. |
+| **Find support** | ZIP code and needs (DID specialist, trauma, low-cost care, LGBTQ+, veterans, family…) drive matched crisis lines, nearby specialists and health centers, helplines, and learning and community resources. Personal support contacts (therapist, social worker, crisis center) are one tap away on the Pause screen. |
 | **Parts / system** | Parts with pronouns, age, role, notes and colour. Your choice of word (parts / alters / headmates / selves). |
 | **Timeline & Patterns** | Search and filters; mood trend, triggers, fronting, triggers per part, places, day × time heatmap. |
 | **Share & export** | Clinician summary (print/PDF), CSV, full backup and restore. |

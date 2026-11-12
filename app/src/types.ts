@@ -17,7 +17,49 @@ export interface Member {
   createdAt: number;
   /** Linked IDID account (when this person signs in on their own device). */
   userId?: string;
+  /** Where and what kind of support to suggest. Encrypted like everything else. */
+  support?: SupportProfile;
 }
+
+export type SupportNeed =
+  | 'did' | 'trauma' | 'low-cost' | 'medication' | 'substance' | 'dv' | 'sexual-assault'
+  | 'lgbtq' | 'veterans' | 'youth' | 'family' | 'peer' | 'learn' | 'spanish';
+
+export interface SupportProfile {
+  /** US ZIP code (5 digits). */
+  zip: string;
+  needs: SupportNeed[];
+}
+
+export type ContactRole = 'therapist' | 'psychiatrist' | 'social-worker' | 'counselor' | 'crisis' | 'group' | 'doctor' | 'other';
+
+/** A person or service someone has chosen to keep handy. */
+export interface SupportContact {
+  id: ID;
+  /** Whose contact this is (a circle member). */
+  memberId: ID;
+  name: string;
+  role: ContactRole;
+  phone: string;
+  email: string;
+  website: string;
+  address: string;
+  notes: string;
+  /** Show on the Pause screen for quick reach in hard moments. */
+  pinned: boolean;
+  createdAt: number;
+}
+
+export const CONTACT_ROLES: { value: ContactRole; label: string }[] = [
+  { value: 'therapist', label: 'Therapist' },
+  { value: 'counselor', label: 'Counsellor' },
+  { value: 'social-worker', label: 'Social worker' },
+  { value: 'psychiatrist', label: 'Psychiatrist' },
+  { value: 'doctor', label: 'Doctor' },
+  { value: 'crisis', label: 'Crisis service' },
+  { value: 'group', label: 'Support group' },
+  { value: 'other', label: 'Other' },
+];
 
 /** A part / alter / headmate within a tracked person's system. */
 export interface Part {

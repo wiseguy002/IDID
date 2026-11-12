@@ -92,6 +92,7 @@ export default function Circle() {
       <PageHead title="Trust circle" sub="The people who help, and the system within." />
       <div className="row" style={{ marginBottom: '.9rem' }}>
         <button className="btn sm" onClick={() => go({ name: 'appointments' })}><Icon name="clock" size={16} /> Appointments</button>
+        <button className="btn sm" onClick={() => go({ name: 'support' })}><Icon name="heart" size={16} /> Find support</button>
         <button className="btn sm" onClick={() => go({ name: 'account' })}><Icon name="people" size={16} /> Connect devices & invite</button>
       </div>
       <div className="card">

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../state';
+import { useAll } from '../db';
+import { ContactRow, CrisisCard } from './Support';
 import { PageHead, Segmented } from '../components/ui';
 
 const GROUNDING = [
@@ -12,6 +14,7 @@ const GROUNDING = [
 
 export default function Pause() {
   const { go, settings, me } = useApp();
+  const pinned = useAll('contacts').filter((c) => c.pinned && (c.memberId === me?.id || !me?.tracked));
   const [mode, setMode] = useState<'breathe' | 'ground' | 'orient'>('breathe');
   const [g, setG] = useState(0);
   const now = new Date();
@@ -48,7 +51,10 @@ export default function Pause() {
           <p className="muted" style={{ margin: 0 }}>Look around for one thing that tells you it's {now.getFullYear()}.</p>
         </div>
       )}
-      <p className="small muted" style={{ marginTop: '1rem' }}>If you're not safe right now, please contact emergency services or a crisis line — in the US, call or text 988.</p>
+      <h2 style={{ marginTop: '1.4rem' }}>Reach out</h2>
+      {pinned.length > 0 && <div className="card">{pinned.map((c) => <ContactRow key={c.id} c={c} />)}</div>}
+      <CrisisCard />
+      <button className="btn sm" onClick={() => go({ name: 'support' })}>More support options</button>
     </div>
   );
 }

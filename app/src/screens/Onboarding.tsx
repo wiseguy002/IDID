@@ -3,7 +3,9 @@ import { persist, store, uid, updateDevice, updatePrefs } from '../db';
 import { createVault, hasVault, passphraseStrength } from '../data/vault';
 import { PALETTE } from '../lib/defaults';
 import { partWords } from '../lib/util';
-import type { Member, PartWord, ThemeName, TextSize } from '../types';
+import type { Member, PartWord, SupportNeed, ThemeName, TextSize } from '../types';
+import { SupportProfileEditor } from './Support';
+import { isZip } from '../lib/resources';
 import { Segmented, Switch } from '../components/ui';
 import { Icon } from '../components/Icon';
 import { loadSample, SAMPLE_PASSPHRASE } from '../lib/sample';
@@ -25,6 +27,8 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const [recovery, setRecovery] = useState<string | null>(null);
   const [savedCode, setSavedCode] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [zip, setZip] = useState('');
+  const [needs, setNeeds] = useState<SupportNeed[]>([]);
   const strength = passphraseStrength(pass);
 
   /** Make sure an unlocked encrypted store exists. */
@@ -59,7 +63,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
 
   const finish = async () => {
     const now = Date.now();
-    const me = { id: uid(), name: myName.trim() || 'Me', role: 'self' as const, tracked: mode === 'self', canView: true, canObserve: true, color: PALETTE[0], createdAt: now };
+    const me: Member = { id: uid(), name: myName.trim() || 'Me', role: 'self', tracked: mode === 'self', canView: true, canObserve: true, color: PALETTE[0], createdAt: now };
     const members: Member[] = [me];
     let subjectId = me.id;
     if (mode === 'support' && theirName.trim()) {
@@ -70,6 +74,10 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     updateDevice({ theme, textSize, reduceMotion, activeMemberId: me.id, lastOpenedAt: null });
     await updatePrefs({ circleName: circleName.trim(), partWord });
     await store.putMany('parts', partNames.map((n, i) => ({ id: uid(), memberId: subjectId, name: n, color: PALETTE[(i + 2) % PALETTE.length], createdAt: now + i })));
+    if (isZip(zip) || needs.length) {
+      const target = members.find((m) => m.id === subjectId) ?? me;
+      target.support = { zip: isZip(zip) ? zip : '', needs };
+    }
     await store.putMany('members', members);
     onDone();
   };
@@ -155,11 +163,18 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       <button className="btn sm" onClick={() => { navigator.clipboard?.writeText(recovery ?? '').catch(() => undefined); }}>Copy code</button>
       <Switch label="I've saved my recovery code" checked={savedCode} onChange={setSavedCode} />
     </div>,
+    <div key="6" className="stack">
+      <h1>Support near {mode === 'support' && theirName.trim() ? theirName.trim() : 'you'}</h1>
+      <p>Optional. With a ZIP code, IDID can point you to crisis services, trauma and dissociation specialists, low-cost care, and community nearby, matched to what would help.</p>
+      <SupportProfileEditor zip={zip} needs={needs} onZip={setZip} onNeeds={setNeeds} />
+      <p className="small muted">This stays encrypted in your journal. You can skip it and add it later from <b>Find support</b>.</p>
+    </div>,
   ];
 
   const canNext = step === 1 ? !!(myName.trim() && (mode === 'self' || theirName.trim()))
     : step === 4 ? strength.ok && pass === pass2 && !busy
-    : step === 5 ? savedCode : true;
+    : step === 5 ? savedCode
+    : step === 6 ? !zip || isZip(zip) : true;
 
   return (
     <div className="app">
@@ -174,7 +189,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           : step === 4 ? <button className="btn primary" onClick={() => setStep(5)}>Continue</button>
           : step < steps.length - 1
           ? <button className="btn primary" disabled={!canNext} onClick={() => setStep(step + 1)}>{step === 0 ? 'Begin' : 'Continue'}</button>
-          : <button className="btn primary" disabled={!canNext || busy} onClick={() => { setBusy(true); finish(); }}>I'm ready</button>}
+          : <button className="btn primary" disabled={!canNext || busy} onClick={() => { setBusy(true); finish(); }}>{zip || needs.length ? "I'm ready" : "Skip for now — I'm ready"}</button>}
       </div></div>
     </div>
   );

@@ -3,6 +3,14 @@ import { PALETTE } from './defaults';
 import type { Entry, Member, Part } from '../types';
 
 export const SAMPLE_PASSPHRASE = 'sample circle';
+const SAMPLE_FLAG = 'idid.sample';
+const START_FLAG = 'idid.start';
+/** Whether this device's journal is the sample circle (set when it's created or recognized at the lock screen). */
+export const isSampleDevice = () => { try { return localStorage.getItem(SAMPLE_FLAG) === '1'; } catch { return false; } };
+export const markSampleDevice = (on: boolean) => { try { if (on) localStorage.setItem(SAMPLE_FLAG, '1'); else localStorage.removeItem(SAMPLE_FLAG); } catch { /* ignore */ } };
+/** After erasing this device, open sign-in ("I already use iDID") instead of the welcome screen. */
+export const startWithSignIn = () => { try { sessionStorage.setItem(START_FLAG, 'restore'); } catch { /* ignore */ } };
+export const takeStartWithSignIn = () => { try { const v = sessionStorage.getItem(START_FLAG) === 'restore'; sessionStorage.removeItem(START_FLAG); return v; } catch { return false; } };
 
 /** Fills the app with a fictional circle so people can explore before using it for real. */
 export async function loadSample() {

@@ -13,6 +13,9 @@ import { nextTip } from '../lib/progress';
 import { KindActCard, KindNoteView, useKindNotes } from './Kindness';
 import { CheckOnCards } from '../components/CheckOn';
 import { dismissNewOwner, useAccount } from '../sync/account';
+import { isSampleDevice, startWithSignIn } from '../lib/sample';
+import { wipeAll } from '../db';
+import { cloudConfigured } from '../sync/supabase';
 
 const DISMISS_KEY = 'idid.checkin.dismissed';
 function readDismissed(): string[] {
@@ -76,6 +79,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
   const { role, newOwner } = useAccount();
   return (
     <div className="stack fade-in">
+      {isSampleDevice() && <SampleNote />}
       <section style={{ padding: '.6rem 0 .2rem' }}>
         <h1 style={{ fontSize: '1.85rem' }}>{greeting(me?.name ?? '')}</h1>
         <p className="muted" style={{ fontSize: '1.05rem' }}>{back ?? welcomeLine()}</p>
@@ -244,6 +248,26 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
           <div className="small muted">features tried{settings.badges && prog ? ` · ${prog.earned.length} badges` : ''}</div>
         </button>
       </div>
+    </div>
+  );
+}
+
+/** Shown while exploring the sample circle, with a clear way out. */
+function SampleNote() {
+  const [leaving, setLeaving] = useState(false);
+  const leave = async (signIn: boolean) => { if (signIn) startWithSignIn(); await wipeAll(); };
+  return (
+    <div className="card warm small" role="note">
+      <b>You’re exploring a sample circle.</b> The people and entries here are made up.
+      {!leaving ? (
+        <div className="row" style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => setLeaving(true)}>Leave the sample</button></div>
+      ) : (
+        <div className="row" style={{ marginTop: '.5rem', flexWrap: 'wrap' }}>
+          {cloudConfigured() && <button className="btn sm primary" onClick={() => leave(true)}>Sign in to my journal</button>}
+          <button className="btn sm" onClick={() => leave(false)}>Set up my own</button>
+          <button className="btn ghost sm" onClick={() => setLeaving(false)}>Stay</button>
+        </div>
+      )}
     </div>
   );
 }

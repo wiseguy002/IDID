@@ -9,13 +9,13 @@ import { SupportProfileEditor } from './Support';
 import { isZip } from '../lib/resources';
 import { Segmented, Switch } from '../components/ui';
 import { Icon } from '../components/Icon';
-import { loadSample, SAMPLE_PASSPHRASE } from '../lib/sample';
+import { loadSample, markSampleDevice, SAMPLE_PASSPHRASE, takeStartWithSignIn } from '../lib/sample';
 import { cloudConfigured } from '../sync/supabase';
 import Restore from './Restore';
 
 export default function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
-  const [returning, setReturning] = useState(false);
+  const [returning, setReturning] = useState(() => takeStartWithSignIn() && cloudConfigured());
   const [mode, setMode] = useState<'self' | 'support'>('self');
   const [myName, setMyName] = useState('');
   const [theirName, setTheirName] = useState('');
@@ -50,6 +50,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const sample = async () => {
     setBusy(true);
     await ensureVault(SAMPLE_PASSPHRASE);
+    markSampleDevice(true);
     await loadSample();
     onDone();
   };

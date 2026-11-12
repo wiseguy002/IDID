@@ -31,6 +31,7 @@ export default function Explore() {
         <p className="small" style={{ margin: '.4rem 0 0' }}>There's no right amount. Use what helps and leave the rest.</p>
         <div className="row" style={{ marginTop: '.7rem' }}>
           <button className="btn sm" onClick={openTour}><Icon name="sparkle" size={16} /> Take the quick tour</button>
+          <button className="btn sm" onClick={() => go({ name: 'help' })}><Icon name="help" size={16} /> Help &amp; guides</button>
           <button className="btn sm ghost" onClick={() => go({ name: 'feedback' })}>Suggest a feature</button>
         </div>
       </div>

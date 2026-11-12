@@ -59,7 +59,9 @@ export async function createCircle(remote: Remote, acct: AccountKeys): Promise<C
 
 export async function openCircle(remote: Remote, acct: AccountKeys, circleId?: string): Promise<CircleSession | null> {
   const ms = await remote.myMemberships();
-  const m = circleId ? ms.find((x) => x.circle_id === circleId) : ms[0];
+  // Without a specific circle, open the one this account joined most recently.
+  const newest = [...ms].sort((a, b) => (b.created_at ?? '').localeCompare(a.created_at ?? ''))[0];
+  const m = circleId ? ms.find((x) => x.circle_id === circleId) : newest;
   if (!m) return null;
   for (const aad of [`circle:${m.circle_id}`, 'circle:new']) {
     try { return { ...acct, circleId: m.circle_id, circleKey: await openSealedKey(m.sealed_circle_key, acct.identity, aad) }; } catch { /* try next */ }
@@ -68,10 +70,10 @@ export async function openCircle(remote: Remote, acct: AccountKeys, circleId?: s
 }
 
 /** Returns the token to put after `#invite=` in the link. The secret never reaches the server. */
-export async function makeInvite(remote: Remote, s: CircleSession): Promise<string> {
+export async function makeInvite(remote: Remote, s: CircleSession, role: 'member' | 'viewer' = 'member'): Promise<string> {
   const secret = randomBytes(32);
   const kek = await deriveKeyFromSecret(secret, 'idid-invite');
-  const id = await remote.createInvite(s.circleId, await wrapAesKey(s.circleKey, kek, 'invite'));
+  const id = await remote.createInvite(s.circleId, await wrapAesKey(s.circleKey, kek, 'invite'), role);
   return `${id}.${toB64(secret)}`;
 }
 

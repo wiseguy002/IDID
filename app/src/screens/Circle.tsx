@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { store, uid } from '../db';
+import { store, uid, useAll } from '../db';
 import { useApp } from '../state';
 import { PALETTE } from '../lib/defaults';
 import { partWords, roleLabel } from '../lib/util';
 import { ROLE_LABELS, type Member, type MemberRole, type Part } from '../types';
 import { PageHead, Sheet, Switch } from '../components/ui';
 import { Icon } from '../components/Icon';
+import { AccessPanel, InvitationsCard, InviteSheet, personStatus, useRoster } from '../components/Invites';
 
-function MemberForm({ m, onClose }: { m: Member; onClose: () => void }) {
+function MemberForm({ m, onClose, roster }: { m: Member; onClose: () => void; roster: ReturnType<typeof useRoster> }) {
   const { members, toast } = useApp();
   const [x, setX] = useState(m);
   const isNew = !members.some((y) => y.id === m.id);
@@ -37,6 +38,7 @@ function MemberForm({ m, onClose }: { m: Member; onClose: () => void }) {
       <Switch label="Track their experiences" hint="Moments can be logged about this person, and they can have parts." checked={x.tracked} onChange={(v) => setX({ ...x, tracked: v })} />
       <Switch label="Can see shared entries" hint="Reads entries shared with the trust circle." checked={x.canView} onChange={(v) => setX({ ...x, canView: v })} />
       <Switch label="Can be asked what they noticed" checked={x.canObserve} onChange={(v) => setX({ ...x, canObserve: v })} />
+      {!isNew && <><hr className="hr" /><AccessPanel member={m} roster={roster} /><hr className="hr" /></>}
       <div className="row" style={{ marginTop: '.8rem' }}>
         <button className="btn primary" onClick={save} disabled={!x.name.trim()}>Save</button>
         {!isNew && members.length > 1 && <button className="btn ghost danger" onClick={remove}>Remove from circle</button>}
@@ -81,6 +83,10 @@ export default function Circle() {
   const { members, parts, settings, me, go } = useApp();
   const [editM, setEditM] = useState<Member | null>(null);
   const [editP, setEditP] = useState<Part | null>(null);
+  const [inviting, setInviting] = useState(false);
+  const roster = useRoster();
+  const invites = useAll('invitations');
+  const shares = useAll('careShares');
   const w = partWords(settings.partWord);
   const tracked = members.filter((m) => m.tracked);
 
@@ -94,21 +100,26 @@ export default function Circle() {
         <button className="btn sm" onClick={() => go({ name: 'appointments' })}><Icon name="clock" size={16} /> Appointments</button>
         <button className="btn sm" onClick={() => go({ name: 'support' })}><Icon name="heart" size={16} /> Find support</button>
         <button className="btn sm" onClick={() => go({ name: 'account' })}><Icon name="people" size={16} /> Connect devices & invite</button>
+        <button className="btn sm" onClick={() => go({ name: 'careteam' })}><Icon name="shield" size={16} /> Therapist &amp; care team</button>
       </div>
       <div className="card">
-        <div className="row between"><h2 style={{ margin: 0 }}>People</h2><button className="btn sm" onClick={() => setEditM(newMember())}><Icon name="plus" size={17} /> Add</button></div>
+        <div className="row between"><h2 style={{ margin: 0 }}>People</h2>
+          <div className="row">{roster.canInvite && <button className="btn sm" onClick={() => setInviting(true)}><Icon name="people" size={16} /> Invite</button>}
+            <button className="btn sm" onClick={() => setEditM(newMember())}><Icon name="plus" size={17} /> Add</button></div></div>
         <div style={{ marginTop: '.6rem' }}>
           {members.map((m) => (
             <button key={m.id} className="entry" style={{ background: 'none', border: 0, padding: '.6rem 0', alignItems: 'center' }} onClick={() => setEditM(m)}>
               <span className="brand-mark" style={{ background: m.color, color: '#fff', fontWeight: 700, width: 38, height: 38 }}>{m.name.charAt(0)}</span>
               <span style={{ flex: 1 }}><b>{m.name}</b>{m.id === me?.id && <span className="muted small"> (you)</span>}<br />
-                <span className="small muted">{roleLabel(m)}{m.tracked ? ' · tracked' : ''}{m.canView ? ' · can view' : ''}{m.canObserve ? ' · can add notes' : ''}</span></span>
+                <span className="small muted">{roleLabel(m)}{m.tracked ? ' · tracked' : ''}</span>
+                {(() => { const st = personStatus(m, roster, invites, shares); return st ? <><br /><span className={`tag access-tag`} data-status={st}>{st}</span></> : null; })()}</span>
               <Icon name="edit" size={18} />
             </button>
           ))}
         </div>
-        <p className="tiny muted" style={{ marginTop: '.6rem', marginBottom: 0 }}>Right now, everyone in the circle uses this device and picks who's here when iDID opens. To share with someone on another device, use <b>Share & export</b>.</p>
+        <p className="tiny muted" style={{ marginTop: '.6rem', marginBottom: 0 }}>{roster.connected ? 'Tap a person to invite them, see whether they’ve joined, or choose what they can see and do.' : 'Everyone here uses this device for now. Connect your circle online to invite people to use iDID on their own devices.'}</p>
       </div>
+      <InvitationsCard roster={roster} />
 
       {tracked.map((t) => {
         const ps = parts.filter((p) => p.memberId === t.id);
@@ -127,7 +138,8 @@ export default function Circle() {
           </div>
         );
       })}
-      {editM && <MemberForm m={editM} onClose={() => setEditM(null)} />}
+      {editM && <MemberForm m={editM} roster={roster} onClose={() => setEditM(null)} />}
+      {inviting && <InviteSheet onClose={() => setInviting(false)} />}
       {editP && <PartForm p={editP} onClose={() => setEditP(null)} />}
     </div>
   );

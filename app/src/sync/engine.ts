@@ -77,7 +77,7 @@ export class SyncEngine {
         this.again = false;
         this.setStatus('syncing');
         try {
-          await this.pushOnce();
+          if (!this.readOnly) await this.pushOnce();
           await this.pullOnce();
           this.lastSyncedAt = Date.now();
           this.setStatus('idle');
@@ -90,6 +90,9 @@ export class SyncEngine {
     })().finally(() => { this.running = null; });
     return this.running;
   }
+
+  /** View-only members: download, never upload (the server would refuse it anyway). */
+  readOnly = false;
 
   private setStatus(s: SyncStatus) { this.status = s; this.onStatus?.(); }
 

@@ -14,7 +14,10 @@ import { nudgesFor } from '../lib/useReminders';
 import { SyncEngine } from './engine';
 import { restoreJournal } from './restore';
 import { createAccount, createCircle, rewrapAccount, joinWithInvite, makeInvite, openAccount, openCircle, restoreSession, serialiseSession, type AccountKeys, type CircleSession } from './keys';
-import type { Remote, ReminderRow } from './remote';
+import type { CircleRole, InviteRow, Remote, ReminderRow } from './remote';
+import type { CareShare, Invitation } from '../types';
+import { buildCarePayload, careLink, newShareKey, payloadHash, sealPayload, type CareData } from '../lib/careShare';
+import { partWords } from '../lib/util';
 import { cloudConfigured, supabase, SupabaseRemote } from './supabase';
 
 export type Phase =
@@ -24,9 +27,9 @@ export type Phase =
   | 'needs-circle'   // keys ready; no circle yet
   | 'connected';
 
-interface State { phase: Phase; email: string; circleId: string | null; status: SyncEngine['status']; lastSyncedAt: number; error: string }
+interface State { phase: Phase; email: string; circleId: string | null; status: SyncEngine['status']; lastSyncedAt: number; error: string; role: CircleRole | null }
 
-let state: State = { phase: cloudConfigured() ? 'signed-out' : 'off', email: '', circleId: null, status: 'idle', lastSyncedAt: 0, error: '' };
+let state: State = { phase: cloudConfigured() ? 'signed-out' : 'off', email: '', circleId: null, status: 'idle', lastSyncedAt: 0, error: '', role: null };
 const listeners = new Set<() => void>();
 const set = (p: Partial<State>) => { state = { ...state, ...p }; for (const l of listeners) l(); };
 export const useAccount = () => useSyncExternalStore((f) => { listeners.add(f); return () => { listeners.delete(f); }; }, () => state);
@@ -65,13 +68,24 @@ function startEngine() {
     if (t) clearTimeout(t);
     t = setTimeout(() => scheduleServerReminders().catch(() => undefined), 3000);
   };
-  const unsubStore = store.subscribe(onChange);
+  const unsubStore = store.subscribe(() => { onChange(); scheduleCarePublish(); });
   const unsubDevice = subscribeDevice(onChange);
   stopEngine = () => { stopSync(); unsubStore(); unsubDevice(); if (t) clearTimeout(t); };
   import('./community').then((c) => c.flushRequests()).catch(() => undefined);
+  scheduleCarePublish(1000);
   set({ phase: 'connected', circleId: keys.circleId });
   linkMe();
+  refreshRole().catch(() => undefined);
   scheduleServerReminders().catch(() => undefined);
+}
+
+/** What this account may do in the circle. View-only members download but never upload. */
+async function refreshRole() {
+  if (!remote || !keys?.circleId) return;
+  const mine = (await remote.myMemberships()).find((m) => m.circle_id === keys!.circleId);
+  const role = mine?.role ?? null;
+  if (engine) engine.readOnly = role === 'viewer';
+  set({ role });
 }
 
 /** Make sure the person using this device is linked to their account in the circle's member list. */
@@ -167,20 +181,72 @@ export async function startCircle() {
   startEngine();
 }
 
-export async function join(token: string) {
+/**
+ * Join a circle from an invite. Everything on this device is uploaded to it. If this account had a
+ * circle of its own that nobody else is in, that old copy is deleted from the server: the same data
+ * now lives in the circle joined. Returns who the invite was made for, if the inviter said.
+ */
+export async function join(token: string): Promise<{ suggestedMemberId: string | null }> {
   if (!remote || !keys) throw new Error('Not ready');
+  const old = keys.circleId;
   const c = await joinWithInvite(remote, keys, token);
   keys = { ...keys, circleId: c.circleId, circleKey: c.circleKey };
   await persistKeys();
+  await store.dropLocal('sync'); // start reading the new circle from the beginning
   await store.queueAll();
   startEngine();
   await engine?.sync();
+  if (old && old !== c.circleId) {
+    const others = (await remote.circleMembers(old).catch(() => [])).filter((m) => m.user_id !== keys!.userId);
+    if (!others.length) await remote.deleteCircle(old).catch(() => undefined);
+    else await remote.removeMember(old, keys.userId).catch(() => undefined);
+  }
+  const inv = store.get('invitations', token.split('.')[0]);
+  return { suggestedMemberId: inv?.memberId ?? null };
 }
 
 export async function invite(): Promise<string> {
+  return (await invitePerson({ name: '', memberId: null, role: 'member', contact: '' })).link;
+}
+
+/** Make a one-time invite link for someone, and remember who it's for so its status can be shown. */
+export async function invitePerson(o: { name: string; memberId: string | null; role: 'member' | 'viewer'; contact: string }): Promise<Invitation> {
   if (!remote || !keys?.circleKey) throw new Error('Connect a circle first.');
-  const token = await makeInvite(remote, keys as CircleSession);
-  return `${location.origin}${location.pathname}#invite=${token}`;
+  const token = await makeInvite(remote, keys as CircleSession, o.role);
+  const inv: Invitation = { id: token.split('.')[0], ...o, link: `${location.origin}${location.pathname}#invite=${token}`, createdBy: getDevice().activeMemberId, createdAt: Date.now(), cancelledAt: null };
+  await store.put('invitations', inv);
+  return inv;
+}
+
+export type InviteStatus = 'waiting' | 'joined' | 'expired' | 'cancelled';
+/** The server's view of this circle's invites, by id. */
+export async function inviteStatuses(): Promise<Map<string, InviteRow>> {
+  if (!remote || !keys?.circleId) return new Map();
+  return new Map((await remote.listInvites(keys.circleId)).map((r) => [r.id, r]));
+}
+export function statusOf(inv: Invitation, row: InviteRow | undefined, now = Date.now()): InviteStatus {
+  if (row?.used_by) return 'joined';
+  if (inv.cancelledAt || !row) return 'cancelled';
+  return Date.parse(row.expires_at) < now ? 'expired' : 'waiting';
+}
+
+export async function cancelInvitation(id: string) {
+  await remote?.revokeInvite(id).catch(() => undefined);
+  if (store.get('invitations', id)) await store.patch('invitations', id, { cancelledAt: Date.now() });
+}
+
+/** Cancel an invite and make a fresh link for the same person. */
+export async function renewInvitation(id: string): Promise<Invitation> {
+  const old = store.get('invitations', id);
+  if (!old) throw new Error('Invite not found');
+  await cancelInvitation(id);
+  return invitePerson({ name: old.name, memberId: old.memberId, role: old.role, contact: old.contact });
+}
+
+/** Owner only: let someone add and change things, or only view. */
+export async function setAccess(userId: string, role: 'member' | 'viewer') {
+  if (!remote || !keys?.circleId) throw new Error('Connect a circle first.');
+  await remote.setMemberRole(keys.circleId, userId, role);
 }
 
 export async function circleAccounts() {
@@ -247,4 +313,70 @@ export async function scheduleServerReminders() {
     for (const t of nudgeTimesBetween(me.id, now, until, d.nudgesPerDay, d.quietStart, d.quietEnd)) rows.push({ user_id: keys.userId, kind: 'checkin', fire_at: new Date(t).toISOString(), tag: `nudge-${t}` });
   }
   await remote.replaceOwnReminders(rows);
+}
+
+// ---------- Care team: read-only shared views ----------
+
+function careData(): CareData {
+  const pw = partWords(store.get('prefs', 'prefs')?.partWord ?? 'parts');
+  return {
+    members: store.all('members'), parts: store.all('parts'), entries: store.all('entries'), observations: store.all('observations'),
+    checkins: store.all('checkins'), safety: store.all('safety'), meds: store.all('meds'), appointments: store.all('appointments'),
+    prep: store.all('prep'), contacts: store.all('contacts'), partWord: { one: pw.one, many: pw.many },
+  };
+}
+
+export function careSharingAvailable() { return !!remote && !!keys; }
+
+/** Re-upload one view if what it shows has changed (or always, with `force`). */
+export async function publishCareShare(id: string, force = false) {
+  const share = store.get('careShares', id);
+  if (!remote || !share) return;
+  if (share.expiresAt && share.expiresAt < Date.now()) return;
+  const payload = buildCarePayload(careData(), share);
+  const hash = payloadHash(payload);
+  if (!force && hash === share.publishedHash) return;
+  await remote.updateCareShare(id, await sealPayload(payload, share.key, id), share.expiresAt ? new Date(share.expiresAt).toISOString() : null);
+  await store.patch('careShares', id, { publishedAt: Date.now(), publishedHash: hash });
+}
+
+let careTimer: ReturnType<typeof setTimeout> | null = null;
+let publishing = false;
+/** Keep shared views current: after changes settle, refresh any whose content changed. */
+export function scheduleCarePublish(ms = 8000) {
+  if (careTimer) clearTimeout(careTimer);
+  careTimer = setTimeout(async () => {
+    if (publishing || !remote) return;
+    publishing = true;
+    try { for (const s of store.all('careShares')) await publishCareShare(s.id).catch(() => undefined); } finally { publishing = false; }
+  }, ms);
+}
+
+/** Share a read-only view after the person has explicitly agreed. Returns the link to give. */
+export async function createCareShare(o: Omit<CareShare, 'id' | 'key' | 'createdAt' | 'updatedAt' | 'publishedAt' | 'publishedHash'>): Promise<{ share: CareShare; link: string }> {
+  if (!remote) throw new Error('Sign in to your online account first.');
+  if (!o.consentedAt) throw new Error('Sharing needs your agreement first.');
+  const id = await remote.createCareShare(o.expiresAt ? new Date(o.expiresAt).toISOString() : null);
+  const now = Date.now();
+  const share: CareShare = { ...o, id, key: newShareKey(), createdAt: now, updatedAt: now, publishedAt: null, publishedHash: '' };
+  await store.put('careShares', share);
+  try { await publishCareShare(id, true); } catch (e) { await remote.deleteCareShare(id).catch(() => undefined); await store.remove('careShares', id); throw e; }
+  return { share: store.get('careShares', id)!, link: careLink(share) };
+}
+
+/** Change what a view shows (after the person agrees again) or who it's for. */
+export async function updateCareShare(id: string, changes: Partial<Pick<CareShare, 'name' | 'role' | 'contact' | 'scope' | 'range' | 'expiresAt' | 'consentedAt'>>) {
+  await store.patch('careShares', id, { ...changes, updatedAt: Date.now() });
+  await publishCareShare(id, true);
+}
+
+/** Remove someone's access: the view is deleted from the server and its link stops working. */
+export async function removeCareShare(id: string) {
+  if (remote) await remote.deleteCareShare(id);
+  await store.remove('careShares', id);
+}
+
+export async function careShareStats() {
+  if (!remote) return new Map<string, { views: number; last_viewed_at: string | null }>();
+  return new Map((await remote.listCareShares()).map((r) => [r.id, r]));
 }

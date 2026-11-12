@@ -140,11 +140,56 @@ insert into public.records (circle_id, rid, ct, updated_by) values (:'cid', 'rid
 delete from auth.users where id = '00000000-0000-0000-0000-00000000000d';
 select pg_temp.expect((select updated_by is null from public.records where rid = 'rid-dee-0000000000001'), 'deleting an account keeps records it edited');
 
+-- ---------- Per-person access: view-only members ----------
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+insert into public.invites (circle_id, wrapped_circle_key, role) values (:'cid', 'v1.wrapped', 'viewer') returning id as vinv \gset
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select public.accept_invite(:'vinv', 's1.carol-key');
+select pg_temp.expect((select role = 'viewer' from public.circle_members where user_id = auth.uid() and circle_id = :'cid'), 'view-only invite makes a viewer');
+select pg_temp.expect((select count(*) >= 1 from public.records where circle_id = :'cid'), 'viewer can read records');
+select pg_temp.expect_error(format($q$insert into public.records (circle_id, rid, ct) values (%L, 'rid-viewer-000000001', 'x')$q$, :'cid'), 'viewer cannot add records');
+update public.records set ct = 'viewer-edit' where circle_id = :'cid';
+select pg_temp.expect((select count(*) = 0 from public.records where ct = 'viewer-edit'), 'viewer cannot change records');
+select pg_temp.expect_error(format($q$insert into public.invites (circle_id, wrapped_circle_key) values (%L, 'x')$q$, :'cid'), 'viewer cannot invite');
+select pg_temp.expect_error($q$update public.circle_members set role = 'member' where user_id = auth.uid()$q$, 'viewer cannot promote themselves');
+select pg_temp.expect_error(format($q$select public.set_member_role(%L, auth.uid(), 'member')$q$, :'cid'), 'only the owner changes access');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+select public.set_member_role(:'cid', '00000000-0000-0000-0000-00000000000c', 'member');
+select pg_temp.expect_error(format($q$select public.set_member_role(%L, auth.uid(), 'viewer')$q$, :'cid'), 'owner role cannot be changed');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+insert into public.records (circle_id, rid, ct) values (:'cid', 'rid-carol-0000000001', 'v1.carol');
+select pg_temp.expect((select count(*) = 1 from public.records where rid = 'rid-carol-0000000001'), 'after the owner allows it, carol can add');
+select pg_temp.expect_error(format($q$insert into public.invites (circle_id, wrapped_circle_key, role) values (%L, 'x', 'viewer')$q$, :'cid'), 'only the owner makes view-only invites');
+
+-- ---------- Care team shares ----------
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+insert into public.care_shares (ct) values ('') returning id as cs \gset
+update public.care_shares set ct = 'v1.iv.summary' where id = :'cs';
+select pg_temp.expect((select ct = 'v1.iv.summary' and views = 0 from public.care_shares where id = :'cs'), 'owner reads and updates own share');
+select pg_temp.expect_error($q$update public.care_shares set views = 99$q$, 'owner cannot fake view counts');
+select pg_temp.expect_error($q$insert into public.care_shares (ct, owner_id) values ('x', '00000000-0000-0000-0000-00000000000b')$q$, 'cannot create a share for someone else');
+insert into public.care_shares (ct, expires_at) values ('v1.old', now() - interval '1 day') returning id as cs_old \gset
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+select pg_temp.expect((select count(*) = 0 from public.care_shares), 'others cannot see shares');
+update public.care_shares set ct = 'hijack';
+delete from public.care_shares;
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+select pg_temp.expect((select count(*) = 2 and bool_and(ct <> 'hijack') from public.care_shares), 'others cannot change or delete shares');
+
 -- Anonymous
 reset role; select set_config('request.jwt.claim.sub', '', false); set role anon;
 select pg_temp.expect_error('select * from public.records', 'anon cannot read records');
 select pg_temp.expect_error($q$select public.get_invite(gen_random_uuid())$q$, 'anon cannot call functions');
 select pg_temp.expect_error($q$select public.send_kindness(1, 'sun')$q$, 'anon cannot send kind notes');
 select pg_temp.expect_error('select * from public.feedback', 'anon cannot read requests');
+select pg_temp.expect_error('select * from public.care_shares', 'anon cannot list care shares');
+select pg_temp.expect((select ct = 'v1.iv.summary' from public.get_care_share(:'cs')), 'a care link opens its summary');
+select pg_temp.expect((select count(*) = 0 from public.get_care_share(:'cs_old')), 'expired care links show nothing');
+select pg_temp.expect((select count(*) = 0 from public.get_care_share(gen_random_uuid())), 'unknown care links show nothing');
+reset role;
+select pg_temp.expect((select views = 1 and last_viewed_at is not null from public.care_shares where id = :'cs'), 'opening a link is counted');
+delete from public.care_shares where id = :'cs';
+set role anon;
+select pg_temp.expect((select count(*) = 0 from public.get_care_share(:'cs')), 'removed care links stop working');
 reset role;
 \echo ALL RLS TESTS PASSED

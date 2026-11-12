@@ -6,7 +6,7 @@
  * Deletions are kept as tombstones so they can sync too.
  */
 import { useSyncExternalStore } from 'react';
-import type { Activity, Appointment, BoardNote, BodyDay, CheckIn, CheckOnAlert, ComfortItem, Medication, SafetyPlan, SessionPrep, Entry, Member, Observation, Part, Prefs, SupportContact } from '../types';
+import type { Activity, Appointment, BoardNote, BodyDay, CheckIn, CheckOnAlert, ComfortItem, Medication, SafetyPlan, SessionPrep, Entry, Member, Observation, Part, Prefs, SupportContact, Invitation, CareShare } from '../types';
 import { decryptJson, encryptJson } from './crypto';
 import type { Persist } from './idb';
 
@@ -27,12 +27,14 @@ export interface KindMap {
   comfort: ComfortItem;
   prep: SessionPrep;
   prefs: Prefs;
+  invitations: Invitation;
+  careShares: CareShare;
 }
 export type Kind = keyof KindMap;
-export const KINDS: Kind[] = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity', 'safety', 'board', 'alerts', 'body', 'meds', 'comfort', 'prep', 'prefs'];
+export const KINDS: Kind[] = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity', 'safety', 'board', 'alerts', 'body', 'meds', 'comfort', 'prep', 'prefs', 'invitations', 'careShares'];
 
 /** Kinds that are always encrypted with the person's own key when synced (never readable by the circle). */
-export const ALWAYS_PRIVATE: Kind[] = ['board', 'body', 'meds', 'comfort', 'prep', 'checkins', 'activity'];
+export const ALWAYS_PRIVATE: Kind[] = ['board', 'body', 'meds', 'comfort', 'prep', 'checkins', 'activity', 'careShares'];
 
 export interface Envelope<T = unknown> {
   kind: Kind;

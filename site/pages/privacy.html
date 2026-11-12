@@ -20,6 +20,7 @@
       <h2>On your device</h2>
       <p>iDID stores your journal in your browser's storage on your device. Each record is encrypted separately using AES-256-GCM. The key is protected by your passphrase and, separately, by a recovery code shown once when you set up. We never see or store either. When iDID is locked, nothing can be read without one of them. iDID locks itself after time in the background.</p>
       <p>A few comfort settings (theme, text size, reminder times) are kept unencrypted on the device so the lock screen can display correctly. They contain nothing you wrote.</p>
+      <p>iDID locks itself after a few minutes in the background. <b>Quick hide</b> (the eye icon, or Esc twice) locks it instantly and shows an ordinary-looking screen.</p>
 
       <h2>When you use the online circle</h2>
       <p>Sharing between devices is optional. If you turn it on:</p>
@@ -35,6 +36,8 @@
         <li>Your email address, and which accounts share a circle.</li>
         <li>The size of each encrypted record and when it changed.</li>
         <li>The times of reminders you turn on, so we can send a notification. Notifications only ever say something general, like "You have an appointment in 1 hour".</li>
+        <li>Each person's access in a circle (owner, can view and add, or view only), and whether each invite has been used or has expired. Who an invite is for is kept encrypted in your journal.</li>
+        <li>For a view you share with your therapist or someone else: an encrypted copy we can't read, when it was last updated, how many times it has been opened and when, and when it ends, if you set an end date.</li>
       </ul>
 
       <h2>Community features</h2>
@@ -61,6 +64,8 @@
       <ul>
         <li>If you forget your passphrase <i>and</i> lose your recovery code, nobody can recover your journal, including us.</li>
         <li>People in your circle can read what's shared with the circle. Use "Only me" for anything that must stay with you.</li>
+        <li>When you remove someone from your circle or remove a therapist's access, they stop receiving anything new straight away. Anything they already saw, saved or printed stays with them.</li>
+        <li>Anyone holding a shared-view link can open it, so send it privately.</li>
         <li>Anything shown on screen can be seen by someone looking at your device, or by malware on it.</li>
       </ul>
       <p>Security researchers and the technically curious can ask us for the full technical design at <a href="mailto:privacy@idid.care">privacy@idid.care</a>.</p>

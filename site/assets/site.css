@@ -168,3 +168,6 @@ details.faq summary::after { content: "+"; position: absolute; right: 1.2rem; to
 details.faq[open] summary::after { content: "–"; }
 details.faq .answer { padding: 0 1.2rem 1rem; }
 details.faq .answer p { margin: 0; }
+
+.list-check.two-col { columns: 2 22rem; column-gap: 2.5rem; }
+.list-check.two-col li { break-inside: avoid; margin-bottom: .7rem; }

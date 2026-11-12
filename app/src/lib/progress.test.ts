@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BADGES, FEATURES, emptyActivity, nextTip, progress, recordEvent, type Facts } from './progress';
 
-const none: Facts = { entries: 0, reflections: 0, parts: 0, circlePeople: 0, observationsGiven: 0, checkins: 0, helped: 0, rituals: 0, supportProfile: false, safetyPlan: false, boardNotes: 0, bodyDays: 0, meds: 0, comfortItems: 0, preps: 0, checkOnSent: 0, contacts: 0, appointments: 0, online: false, notifications: false };
+const none: Facts = { entries: 0, reflections: 0, parts: 0, circlePeople: 0, observationsGiven: 0, checkins: 0, helped: 0, rituals: 0, supportProfile: false, safetyPlan: false, boardNotes: 0, bodyDays: 0, meds: 0, comfortItems: 0, preps: 0, checkOnSent: 0, contacts: 0, appointments: 0, online: false, notifications: false, careShares: 0, invitesSent: 0 };
 const DAY = 86400000;
 
 describe('explore progress', () => {

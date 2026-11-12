@@ -14,6 +14,17 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-11-12
+
+Everything documented, from the tour to the help guides.
+
+### Added
+- New help guides: **Find support near you**, **Explore, badges and the quick tour**, **Kindness: pay it forward and kind notes**, and **What's new, updates and working offline**.
+- Explore now includes **Therapist & care team**, **Invite someone** and **Box breathing**, and there's a new **My care team** badge.
+
+### Changed
+- The quick tour mentions box breathing, the Calm space, sharing a read-only view with your therapist, choosing what each person in your circle can see, therapy prep, and Help & guides.
+
 ## [0.12.0] - 2026-11-12
 
 Let the person at the centre of the circle run it.
@@ -195,7 +206,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.12.1...HEAD
+[0.12.1]: https://github.com/wiseguy002/IDID/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/wiseguy002/IDID/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/wiseguy002/IDID/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/wiseguy002/IDID/compare/v0.9.0...v0.10.0

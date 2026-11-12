@@ -47,6 +47,30 @@ export const HELP: HelpTopic[] = [
     keywords: 'theme font dark mode accessibility motion animation lock hide',
   },
 
+  {
+    id: 'explore', group: 'Getting started', title: 'Explore, badges and the quick tour',
+    summary: 'See everything iDID can do, at your own pace.',
+    body: [
+      { p: '**Explore** lists every feature, grouped by what it helps with, and shows which ones you’ve tried. Tap **Try it** to open one.' },
+      { p: 'Gentle milestone **badges** mark things like your first note or your first safety plan. There are no streaks to break and no comparisons, and you can hide badges in Explore.' },
+      { p: 'Now and then (at most once a week, never in your first two days) iDID may suggest **something that might help**. Tap "Don’t suggest this" or turn suggestions off in Explore.' },
+      { p: 'The **quick tour** takes about a minute. Replay it any time from Explore or here in Help.' },
+    ],
+    open: [{ label: 'Open Explore', route: { name: 'explore' } }],
+    keywords: 'badges explore tour features suggestions tips milestones',
+  },
+  {
+    id: 'updates', group: 'Getting started', title: 'What’s new, updates and working offline',
+    summary: 'How iDID updates, and what happens without a connection.',
+    body: [
+      { p: 'iDID updates itself. The first time it opens after an update, a short note on Home lists what changed. The full history is in **Settings → What’s new**.' },
+      { p: 'Your journal lives on your device, so iDID works **offline**. A quiet note tells you when you’re offline, and anything you add syncs with your circle when you’re back.' },
+      { p: 'If something unexpected goes wrong, iDID shows a calm page with **Try again** and **Reload**. Your journal is safe.' },
+      { tip: 'If iDID ever looks out of date, close it completely and open it again.' },
+    ],
+    open: [{ label: 'What’s new', route: { name: 'changelog' } }],
+    keywords: 'update version changelog new offline no internet error crash',
+  },
   // ---------- Everyday use ----------
   {
     id: 'log', group: 'Everyday use', title: 'Logging a moment',
@@ -107,6 +131,18 @@ export const HELP: HelpTopic[] = [
     keywords: 'nudges prompts reminders rituals',
   },
   {
+    id: 'kindness', group: 'Everyday use', title: 'Kindness: pay it forward and kind notes',
+    summary: 'Small ways to brighten someone else’s day.',
+    body: [
+      { p: '**Pay it forward** suggests one small act of kindness each day, like smiling at someone or saying hi. Tick it off when you’ve done it.' },
+      { p: '**Kind notes** let you send an anonymous note of encouragement to a random person using iDID. You choose from caring messages and a little picture. There are no replies or direct messages.' },
+      { p: 'Receiving kind notes is **opt-in** and limited to three a day. You can turn it off at any time.' },
+      { p: 'Know someone iDID might help? **Settings → Tell a friend** shares a short message about it.' },
+    ],
+    open: [{ label: 'Kindness', route: { name: 'kindness' } }],
+    keywords: 'kindness kind notes pay it forward encouragement anonymous tell a friend share',
+  },
+  {
     id: 'appointments', group: 'Everyday use', title: 'Appointments and therapy prep',
     summary: 'Reminders, calendar export, and notes to bring to sessions.',
     body: [
@@ -155,6 +191,17 @@ export const HELP: HelpTopic[] = [
     keywords: 'sleep water medication reminders comfort',
   },
 
+  {
+    id: 'support', group: 'Calm and safety', title: 'Find support near you',
+    summary: 'Crisis lines, specialists, low-cost care and your own contacts.',
+    body: [
+      { p: 'Add your **ZIP code** and what would help (for example a dissociation or DID specialist, trauma therapy, low-cost care, family support, LGBTQ+ or veterans’ services). iDID suggests crisis lines, nearby specialists, community health centers, helplines and groups.' },
+      { p: 'Save the people who help you as **support contacts**, such as your therapist, social worker or a crisis center, with call, text, email and map buttons. **Pin** them to show on the Pause screen.' },
+      { tip: 'Your ZIP code and needs stay encrypted in your journal. Searches only send what’s in the link you tap.' },
+    ],
+    open: [{ label: 'Find support', route: { name: 'support' } }],
+    keywords: 'support zip specialist therapist near me crisis contacts helpline group low cost',
+  },
   // ---------- Your circle ----------
   {
     id: 'circle', group: 'Your circle', title: 'Your trust circle',

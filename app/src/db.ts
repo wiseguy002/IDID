@@ -189,6 +189,8 @@ export function factsFor(memberId: string, extra: { online: boolean; notificatio
     checkOnSent: store.all('alerts').filter((a) => a.fromMemberId === memberId).length,
     contacts: store.all('contacts').filter((c) => c.memberId === memberId).length,
     appointments: store.all('appointments').filter((a) => !a.memberIds.length || a.memberIds.includes(memberId)).length,
+    careShares: store.all('careShares').filter((c) => c.subjectId === memberId).length,
+    invitesSent: store.all('invitations').filter((i) => i.createdBy === memberId).length,
     ...extra,
   };
 }

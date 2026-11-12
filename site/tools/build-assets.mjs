@@ -83,8 +83,8 @@ await flyer.setContent(`<style>${base}
   <h1 class="serif" style="font-size:34pt;line-height:1.08;margin-top:.35in;max-width:6.3in;position:relative">A gentle journal for dissociation, trauma responses, and the people who care.</h1>
   <ul style="margin-top:.3in;padding-left:.25in;max-width:6.6in">
     <li><b>Note what happens in a few taps</b>: when, where, triggers, mood, parts present, lost time.</li>
-    <li><b>Share with your trust circle</b>: family and friends can add what they noticed.</li>
-    <li><b>See patterns</b> and bring a clear summary to your therapist.</li>
+    <li><b>Your trust circle, your rules</b>: invite family and friends, and choose what each person can see.</li>
+    <li><b>See patterns</b> and share a private, read-only view with your therapist.</li>
     <li><b>Find support near you</b>, plus calming tools for hard moments.</li>
     <li><b>Private by design</b>: encrypted on your device. No ads, no trackers.</li>
   </ul>

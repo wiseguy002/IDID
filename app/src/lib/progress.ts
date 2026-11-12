@@ -38,6 +38,10 @@ export interface Facts {
   appointments: number;
   online: boolean;
   notifications: boolean;
+  /** Read-only views shared with a therapist or someone else. */
+  careShares: number;
+  /** Invites this person has made for the online circle. */
+  invitesSent: number;
 }
 
 export interface Feature {
@@ -62,6 +66,7 @@ export const FEATURES: Feature[] = [
   { id: 'parts', name: 'Parts', group: 'Noticing', route: { name: 'circle' }, about: 'Keep notes about the parts of your system.', used: (f) => f.parts > 0 },
   { id: 'pause', name: 'Pause tools', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathing, box breathing, 5-4-3-2-1 grounding and "right now" orientation.', used: (_f, a) => ev(a, 'pause'), tipPriority: 2, tip: 'Pause has breathing and grounding tools for when things feel like too much.' },
   { id: 'help', name: 'Help & guides', group: 'Make it yours', route: { name: 'help' }, about: 'Step-by-step guides to everything in iDID.', used: (_f, a) => ev(a, 'help'), tipPriority: 6, tip: 'Help & guides walks through everything in iDID, from logging a moment to sharing with your therapist.' },
+  { id: 'box', name: 'Box breathing', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathe in a square and build a little group of boxes.', used: (_f, a) => ev(a, 'box-breath') },
   { id: 'calm', name: 'Calm space', group: 'Calm & coping', route: { name: 'calm' }, about: 'Ripples, light trails and drifting lights to unwind for a minute.', used: (_f, a) => ev(a, 'calm'), tipPriority: 3, tip: 'The Calm space is a quiet minute of ripples or drifting lights, with nothing to do and nothing to win.' },
   { id: 'checkins', name: 'Gentle check-ins', group: 'Calm & coping', route: { name: 'settings' }, about: 'A kind word and a small idea, a few times a day.', used: (f) => f.checkins > 0 },
   { id: 'rituals', name: 'Healthy rituals', group: 'Calm & coping', route: { name: 'settings' }, about: 'Your own small ways to interrupt a hard pattern.', used: (f) => f.rituals > 0, tipPriority: 4, tip: 'Adding a few of your own healthy rituals makes check-ins more personal.' },
@@ -75,10 +80,12 @@ export const FEATURES: Feature[] = [
   { id: 'appointments', name: 'Appointments', group: 'Support', route: { name: 'appointments' }, about: 'Sessions and groups with reminders.', used: (f) => f.appointments > 0, tipPriority: 7, tip: 'Add therapy or group sessions to get reminders and a "since last session" summary.' },
   { id: 'calendar', name: 'Add to calendar', group: 'Support', route: { name: 'appointments' }, about: 'Put appointments in Apple, Outlook or Google Calendar.', used: (_f, a) => ev(a, 'calendar') },
   { id: 'prep', name: 'Prepare for therapy', group: 'Support', route: { name: 'prep' }, about: 'Gather what’s happened and what to bring up before a session.', used: (f) => f.preps > 0 },
+  { id: 'careteam', name: 'Therapist & care team', group: 'Support', route: { name: 'careteam' }, about: 'A private, read-only view for your therapist, with exactly what you choose.', used: (f) => f.careShares > 0, tipPriority: 5, tip: 'You can give your therapist a private, read-only view of exactly what you choose, and remove it any time.' },
   { id: 'share', name: 'Share with a clinician', group: 'Support', route: { name: 'share' }, about: 'A printable summary, spreadsheet or backup.', used: (_f, a) => ev(a, 'export'), tipPriority: 8, tip: 'A clinician summary can help you bring what you’ve noticed to your next appointment.' },
   { id: 'circle', name: 'Trust circle', group: 'Together', route: { name: 'circle' }, about: 'People who can add what they noticed.', used: (f) => f.circlePeople > 0 },
   { id: 'observe', name: 'Add what you noticed', group: 'Together', route: { name: 'home' }, about: 'Answer a gentle request from someone in your circle.', used: (f) => f.observationsGiven > 0 },
   { id: 'check-on', name: 'Check on me', group: 'Together', route: { name: 'pause' }, about: 'Quietly ask people you trust to reach out.', used: (f) => f.checkOnSent > 0 },
+  { id: 'invite', name: 'Invite someone', group: 'Together', route: { name: 'circle' }, about: 'Invite people, see who has joined, and choose what each person can see.', used: (f) => f.invitesSent > 0 },
   { id: 'online', name: 'Online circle', group: 'Together', route: { name: 'account' }, about: 'Each person on their own phone, end-to-end encrypted.', used: (f) => f.online },
   { id: 'kind-notes', name: 'Kind notes', group: 'Together', route: { name: 'kindness' }, about: 'Send an anonymous note of encouragement to someone using iDID.', used: (_f, a) => ev(a, 'kind-sent') },
   { id: 'notifications', name: 'Notifications', group: 'Make it yours', route: { name: 'settings' }, about: 'Reminders that never show private details.', used: (f) => f.notifications },
@@ -112,6 +119,7 @@ export const BADGES: Badge[] = [
   { id: 'mapped', name: 'Mapped my support', icon: 'heart', about: 'Set up your support profile.', earned: (f) => f.supportProfile },
   { id: 'planner', name: 'Planner', icon: 'clock', about: 'Added an appointment.', earned: (f) => f.appointments >= 1 },
   { id: 'shared', name: 'Shared with care', icon: 'share', about: 'Exported a summary for someone who helps you.', earned: (_f, a) => c(a, 'export') >= 1 },
+  { id: 'care-team', name: 'My care team', icon: 'shield', about: 'Shared a read-only view with someone who helps you.', earned: (f) => f.careShares >= 1 },
   { id: 'circle', name: 'Not alone', icon: 'people', about: 'Added someone to your trust circle.', earned: (f) => f.circlePeople >= 1 },
   { id: 'good-witness', name: 'Good witness', icon: 'note', about: 'Added what you noticed for someone in your circle.', earned: (f) => f.observationsGiven >= 1 },
   { id: 'kind-word', name: 'Kind word', icon: 'heart', about: 'Sent an anonymous kind note.', earned: (_f, a) => c(a, 'kind-sent') >= 1 },

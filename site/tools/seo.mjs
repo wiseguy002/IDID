@@ -16,18 +16,18 @@ const org = {
   logo: { '@type': 'ImageObject', url: `${SITE}/assets/img/logo-1024.png`, width: 1024, height: 1024 },
   email: 'hello@idid.care',
   contactPoint: [
-    { '@type': 'ContactPoint', contactType: 'customer support', email: 'hello@idid.care', availableLanguage: 'en' },
-    { '@type': 'ContactPoint', contactType: 'press', email: 'press@idid.care', availableLanguage: 'en' },
+    { '@type': 'ContactPoint', contactType: 'customer support', email: 'hello@idid.care', availableLanguage: 'en-US' },
+    { '@type': 'ContactPoint', contactType: 'press', email: 'press@idid.care', availableLanguage: 'en-US' },
   ],
 };
-const website = { '@type': 'WebSite', '@id': `${SITE}/#website`, url: `${SITE}/`, name: 'iDID', inLanguage: 'en', publisher: { '@id': `${SITE}/#org` } };
+const website = { '@type': 'WebSite', '@id': `${SITE}/#website`, url: `${SITE}/`, name: 'iDID', inLanguage: 'en-US', publisher: { '@id': `${SITE}/#org` } };
 
 const app = (description) => ({
   '@type': 'WebApplication', '@id': `${SITE}/#app`, name: 'iDID', url: APP, description,
   applicationCategory: 'HealthApplication', applicationSubCategory: 'Mental health journal',
   operatingSystem: 'Any modern web browser; installable on iPhone, iPad, Android, Windows and Mac',
   browserRequirements: 'Requires JavaScript and a modern browser',
-  isAccessibleForFree: true, inLanguage: 'en',
+  isAccessibleForFree: true, inLanguage: 'en-US',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   image: `${SITE}/assets/img/og-image.png`,
   publisher: { '@id': `${SITE}/#org` },
@@ -64,7 +64,7 @@ export function jsonLd({ name, path, title, description, html }) {
   const url = `${SITE}${path}`;
   const page = {
     '@type': 'WebPage', '@id': `${url}#webpage`, url, name: title, description,
-    inLanguage: 'en', isPartOf: { '@id': `${SITE}/#website` }, publisher: { '@id': `${SITE}/#org` },
+    inLanguage: 'en-US', isPartOf: { '@id': `${SITE}/#website` }, publisher: { '@id': `${SITE}/#org` },
     primaryImageOfPage: { '@type': 'ImageObject', url: `${SITE}/assets/img/og-image.png` },
   };
   const graph = [org, website, page];

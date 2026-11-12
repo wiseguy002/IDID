@@ -106,7 +106,7 @@ export const GOOD_REPLIES = [
 export const DEFAULT_RITUALS = [
   'Make a warm drink and sip it slowly',
   'Wash your face or hands with cool water',
-  'Play one favourite song',
+  'Play one favorite song',
   'Stretch your arms up and roll your shoulders',
   'Hold something comforting (a soft blanket, a smooth stone)',
   'Name five things you can see around you',

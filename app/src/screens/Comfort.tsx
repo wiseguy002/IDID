@@ -11,7 +11,7 @@ const TYPES: { value: ComfortType; label: string; icon: string; hint: string }[]
   { value: 'song', label: 'Song', icon: 'sparkle', hint: 'Paste a link from your music app, or just the name' },
   { value: 'quote', label: 'Words', icon: 'note', hint: 'A quote, a mantra, a line from a book' },
   { value: 'letter', label: 'Letter', icon: 'heart', hint: 'A note from a part who feels safe, for hard moments' },
-  { value: 'scent', label: 'Scent or texture', icon: 'leaf', hint: 'Lavender, a soft jumper, a smooth stone' },
+  { value: 'scent', label: 'Scent or texture', icon: 'leaf', hint: 'Lavender, a soft sweater, a smooth stone' },
   { value: 'activity', label: 'Activity', icon: 'body', hint: 'Something soothing to do' },
   { value: 'place', label: 'Place', icon: 'flower', hint: 'Somewhere real or imagined that feels calm' },
   { value: 'person', label: 'Person', icon: 'people', hint: 'Someone whose voice or presence helps' },

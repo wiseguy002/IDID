@@ -120,7 +120,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           <input className="input" value={theirName} onChange={(e) => setTheirName(e.target.value)} placeholder="Their name or nickname" /></label>
       )}
       <label className="field"><span>Name this space <span className="muted small">(optional)</span></span>
-        <input className="input" value={circleName} onChange={(e) => setCircleName(e.target.value)} placeholder="e.g. Our circle, The Harbour" /></label>
+        <input className="input" value={circleName} onChange={(e) => setCircleName(e.target.value)} placeholder="e.g. Our circle, The Harbor" /></label>
       <p className="muted small">You can invite family, friends or a therapist into your trust circle later.</p>
     </div>,
     <div key="2" className="stack">
@@ -145,7 +145,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     <div key="3" className="stack">
       <h1>Make it comfortable</h1>
       <p>Choose what feels easiest on your eyes and mind. You can change this anytime.</p>
-      <div className="eyebrow">Colours</div>
+      <div className="eyebrow">Colors</div>
       <Segmented label="Theme" value={theme} onChange={(t) => { setTheme(t); preview(t, textSize, reduceMotion); }}
         options={[{ value: 'morning', label: 'Morning' }, { value: 'meadow', label: 'Meadow' }, { value: 'dusk', label: 'Dusk' }, { value: 'clear', label: 'High contrast' }]} />
       <div className="eyebrow">Text size</div>

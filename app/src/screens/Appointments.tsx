@@ -113,7 +113,7 @@ export default function Appointments() {
 
   return (
     <div className="fade-in">
-      <PageHead title="Appointments" sub="Therapy, counselling, groups and other support." onBack={() => go({ name: 'home' })}
+      <PageHead title="Appointments" sub="Therapy, counseling, groups and other support." onBack={() => go({ name: 'home' })}
         right={<button className="btn sm primary" onClick={() => me && setEdit(blank(me.id, [me.tracked ? me.id : members.find((m) => m.tracked)?.id ?? me.id]))}><Icon name="plus" size={17} /> Add</button>} />
       {upcoming.length === 0 && <Empty title="No appointments yet">Add sessions and groups to get gentle reminders and keep track of what to bring up.</Empty>}
       {upcoming.map(({ a, next }) => {

@@ -54,7 +54,7 @@ export function useRoster() {
   return { connected: a.phase === 'connected', isOwner: a.role === 'owner', canInvite: a.role === 'owner' || a.role === 'member', accounts, rows, refresh };
 }
 
-export const STATUS_LABEL: Record<InviteStatus, string> = { waiting: 'Invited · waiting', joined: 'Joined', expired: 'Invite expired', cancelled: 'Invite cancelled' };
+export const STATUS_LABEL: Record<InviteStatus, string> = { waiting: 'Invited · waiting', joined: 'Joined', expired: 'Invite expired', cancelled: 'Invite canceled' };
 
 /** One invitation with its status and what you can do about it. */
 function InviteRowView({ inv, row, onChange, onSend }: { inv: Invitation; row?: InviteRow; onChange: () => void; onSend: (i: Invitation, expiresAt?: string) => void }) {
@@ -74,13 +74,13 @@ function InviteRowView({ inv, row, onChange, onSend }: { inv: Invitation; row?: 
               : 'This link no longer works'}
           </span>
         </div>
-        <span className={`tag status-${st}`}>{st === 'joined' ? '✓ Joined' : st === 'waiting' ? 'Waiting' : st === 'expired' ? 'Expired' : 'Cancelled'}</span>
+        <span className={`tag status-${st}`}>{st === 'joined' ? '✓ Joined' : st === 'waiting' ? 'Waiting' : st === 'expired' ? 'Expired' : 'Canceled'}</span>
       </div>
       {st !== 'joined' && (
         <div className="row" style={{ marginTop: '.5rem', flexWrap: 'wrap' }}>
           {st === 'waiting' && <button className="btn sm" disabled={busy} onClick={() => onSend(inv, row?.expires_at)}><Icon name="bell" size={15} /> Remind</button>}
           <button className="btn sm" disabled={busy} onClick={() => act(async () => { onSend(await renewInvitation(inv.id)); toast('New link ready. The old one no longer works.'); })}>New link</button>
-          {st === 'waiting' && <button className="btn ghost sm" disabled={busy} onClick={() => act(async () => { await cancelInvitation(inv.id); toast('Invite cancelled.'); })}>Cancel invite</button>}
+          {st === 'waiting' && <button className="btn ghost sm" disabled={busy} onClick={() => act(async () => { await cancelInvitation(inv.id); toast('Invite canceled.'); })}>Cancel invite</button>}
         </div>
       )}
     </div>
@@ -113,7 +113,7 @@ export function InvitationsCard({ roster }: { roster: ReturnType<typeof useRoste
       <h2 style={{ marginTop: 0 }}>Invitations</h2>
       {!live.length && <p className="small muted">No invitations waiting.</p>}
       {live.map((i) => <InviteRowView key={i.id} inv={i} row={roster.rows.get(i.id)} onChange={roster.refresh} onSend={send.onSend} />)}
-      {done.length > 0 && <button className="btn ghost sm" onClick={() => setShowOld(!showOld)}>{showOld ? 'Hide' : 'Show'} joined and cancelled ({done.length})</button>}
+      {done.length > 0 && <button className="btn ghost sm" onClick={() => setShowOld(!showOld)}>{showOld ? 'Hide' : 'Show'} joined and canceled ({done.length})</button>}
       {showOld && done.map((i) => <InviteRowView key={i.id} inv={i} row={roster.rows.get(i.id)} onChange={roster.refresh} onSend={send.onSend} />)}
       {send.sheet}
     </div>

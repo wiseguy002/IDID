@@ -51,7 +51,7 @@ iDID is built so that the people running the server **cannot read your journal**
 - **Forgotten passphrase and lost recovery code:** the data can't be recovered by anyone. This is the cost of the server being unable to read it.
 - **Circle members can read what's shared with the circle.** The "can see shared entries" setting controls what the app shows, but anyone holding the circle key could technically decrypt circle-shared records. Use "Only me" for anything that must stay with you.
 - **Removing someone** from the circle stops them receiving new data from the server. Anything they already synced stays on their device. Rotating the circle key after a removal is planned.
-- A circle member could overwrite or delete shared records. They can't forge readable content without the key, but they could vandalise it, so only invite people you trust, or give people **view only** access.
+- A circle member could overwrite or delete shared records. They can't forge readable content without the key, but they could vandalize it, so only invite people you trust, or give people **view only** access.
 - **Anyone holding a shared-view link can open it.** Send it privately. Removing access stops it working, but anything already seen, saved or printed can't be taken back.
 - Calendar exports (.ics or Google Calendar) leave iDID's encryption. iDID defaults to a neutral title and leaves out notes.
 - Browser extensions and malware on a device can see anything shown on screen.

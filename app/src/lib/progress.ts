@@ -90,7 +90,7 @@ export const FEATURES: Feature[] = [
   { id: 'online', name: 'Online circle', group: 'Together', route: { name: 'account' }, about: 'Each person on their own phone, end-to-end encrypted.', used: (f) => f.online },
   { id: 'kind-notes', name: 'Kind notes', group: 'Together', route: { name: 'kindness' }, about: 'Send an anonymous note of encouragement to someone using iDID.', used: (_f, a) => ev(a, 'kind-sent') },
   { id: 'notifications', name: 'Notifications', group: 'Make it yours', route: { name: 'settings' }, about: 'Reminders that never show private details.', used: (f) => f.notifications },
-  { id: 'comfort', name: 'Comfort settings', group: 'Make it yours', route: { name: 'settings' }, about: 'Colours, text size, calm motion and a readable font.', used: (_f, a) => ev(a, 'comfort') },
+  { id: 'comfort', name: 'Comfort settings', group: 'Make it yours', route: { name: 'settings' }, about: 'Colors, text size, calm motion and a readable font.', used: (_f, a) => ev(a, 'comfort') },
   { id: 'tour', name: 'Quick tour', group: 'Make it yours', route: { name: 'explore' }, about: 'A one-minute look at what iDID can do.', used: (_f, a) => ev(a, 'tour') },
   { id: 'request', name: 'Suggest a feature', group: 'Make it yours', route: { name: 'feedback' }, about: 'Tell us what would help. We read every request.', used: (_f, a) => ev(a, 'request') },
 ];

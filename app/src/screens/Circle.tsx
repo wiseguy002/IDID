@@ -31,9 +31,9 @@ function MemberForm({ m, onClose, roster }: { m: Member; onClose: () => void; ro
         <select className="input" value={x.role} onChange={(e) => setX({ ...x, role: e.target.value as MemberRole })}>
           {Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select></label>
-      <div className="eyebrow">Colour</div>
+      <div className="eyebrow">Color</div>
       <div className="chips" style={{ marginBottom: '.6rem' }}>
-        {PALETTE.map((c) => <button key={c} type="button" className="chip" aria-label={`Colour ${c}`} aria-pressed={x.color === c} onClick={() => setX({ ...x, color: c })}><span className="dot" style={{ background: c, width: 18, height: 18 }} /></button>)}
+        {PALETTE.map((c) => <button key={c} type="button" className="chip" aria-label={`Color ${c}`} aria-pressed={x.color === c} onClick={() => setX({ ...x, color: c })}><span className="dot" style={{ background: c, width: 18, height: 18 }} /></button>)}
       </div>
       <Switch label="Track their experiences" hint="Moments can be logged about this person, and they can have parts." checked={x.tracked} onChange={(v) => setX({ ...x, tracked: v })} />
       <Switch label="Can see shared entries" hint="Reads entries shared with the trust circle." checked={x.canView} onChange={(v) => setX({ ...x, canView: v })} />
@@ -67,9 +67,9 @@ function PartForm({ p, onClose }: { p: Part; onClose: () => void }) {
       </div>
       <label className="field"><span>Role in the system</span><input className="input" value={x.role ?? ''} onChange={(e) => setX({ ...x, role: e.target.value })} placeholder="e.g. protector, little, caretaker" /></label>
       <label className="field"><span>Notes</span><textarea className="input" value={x.notes ?? ''} onChange={(e) => setX({ ...x, notes: e.target.value })} placeholder="What helps them feel safe? What do they like?" /></label>
-      <div className="eyebrow">Colour</div>
+      <div className="eyebrow">Color</div>
       <div className="chips" style={{ marginBottom: '.8rem' }}>
-        {PALETTE.map((c) => <button key={c} type="button" className="chip" aria-label={`Colour ${c}`} aria-pressed={x.color === c} onClick={() => setX({ ...x, color: c })}><span className="dot" style={{ background: c, width: 18, height: 18 }} /></button>)}
+        {PALETTE.map((c) => <button key={c} type="button" className="chip" aria-label={`Color ${c}`} aria-pressed={x.color === c} onClick={() => setX({ ...x, color: c })}><span className="dot" style={{ background: c, width: 18, height: 18 }} /></button>)}
       </div>
       <div className="row">
         <button className="btn primary" onClick={save} disabled={!x.name.trim()}>Save</button>

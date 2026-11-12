@@ -17,7 +17,7 @@ export async function loadSample() {
   ];
   const [robin, kai, wren] = parts;
   const T = [
-    { t: ['Loud noise', 'Crowds'], loc: 'Shop', f: [kai.id], mood: 2, fe: ['Anxious', 'Overwhelmed'], d: 'minutes', n: [sam.id] },
+    { t: ['Loud noise', 'Crowds'], loc: 'Store', f: [kai.id], mood: 2, fe: ['Anxious', 'Overwhelmed'], d: 'minutes', n: [sam.id] },
     { t: ['Conflict / raised voices'], loc: 'Home', f: [robin.id], mood: 1, fe: ['Scared', 'Young / small'], d: 'under-hour', n: [sam.id], lost: true },
     { t: ['Tiredness'], loc: 'Bedroom', f: [wren.id], mood: 3, fe: ['Foggy', 'Detached'], d: 'hours', n: [] },
     { t: ['A memory', 'Anniversary / date'], loc: 'Home', f: [robin.id], co: [wren.id], mood: 2, fe: ['Sad', 'Young / small'], d: 'hours', n: [sam.id] },
@@ -35,7 +35,7 @@ export async function loadSample() {
       timeApprox: !!x.lost, location: x.loc, triggers: x.t, mood: Math.max(1, Math.min(5, x.mood + (i > 14 ? 0 : i % 2))), feelings: x.fe,
       frontingPartIds: x.f, frontingUnknown: !!x.unk, coFronting: !!x.co, coFrontPartIds: x.co ?? [], lostTime: !!x.lost,
       possibleCause: i % 4 === 0 ? 'Felt cornered — too many people talking at once.' : '', duration: x.d as Entry['duration'],
-      noticedByIds: x.n, noticedByOthers: '', intensity: (i % 4) + 1, notes: i % 3 === 0 ? 'Grounding with a cold drink helped afterwards.' : '',
+      noticedByIds: x.n, noticedByOthers: '', intensity: (i % 4) + 1, notes: i % 3 === 0 ? 'Grounding with a cold drink helped afterward.' : '',
       visibility: 'circle', followUps: [],
     });
   }

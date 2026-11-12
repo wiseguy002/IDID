@@ -4,11 +4,11 @@ export const DEFAULT_TRIGGERS = [
   'Loud noise', 'Crowds', 'Conflict / raised voices', 'A smell', 'Touch', 'A memory',
   'Anniversary / date', 'Feeling unsafe', 'Being alone', 'Tiredness', 'Hunger',
   'Pain / illness', 'Medication change', 'Work / school stress', 'Social media / news',
-  'Someone from the past', 'Feeling criticised', 'Bright lights', 'Not sure',
+  'Someone from the past', 'Feeling criticized', 'Bright lights', 'Not sure',
 ];
 
 export const DEFAULT_LOCATIONS = [
-  'Home', 'Bedroom', 'Work', 'School', 'Car / travelling', 'Shop', 'Outdoors',
+  'Home', 'Bedroom', 'Work', 'School', 'Car / traveling', 'Store', 'Outdoors',
   "Friend's / family home", 'Appointment', 'Online',
 ];
 
@@ -18,7 +18,7 @@ export const DEFAULT_FEELINGS = [
 ];
 
 export const OBSERVED_SIGNS = [
-  'Voice changed', 'Posture / movement changed', 'Different name used', "Didn't recognise me",
+  'Voice changed', 'Posture / movement changed', 'Different name used', "Didn't recognize me",
   'Seemed younger', 'Seemed far away', 'Unusual handwriting', 'Different preferences',
   'Withdrawn / quiet', 'Upset or scared', 'Irritable', 'Confused about time or place',
 ];
@@ -67,3 +67,9 @@ export const MOODS = [
   { value: 4, label: 'Okay' },
   { value: 5, label: 'Settled' },
 ];
+
+/** Labels saved before 0.13.1 used British spelling. Read them as the US spelling everywhere they're counted or edited. */
+const US_LABEL: Record<string, string> = {
+  'Car / travelling': 'Car / traveling', Shop: 'Store', 'Feeling criticised': 'Feeling criticized', "Didn't recognise me": "Didn't recognize me",
+};
+export const usLabel = (s: string) => US_LABEL[s] ?? s;

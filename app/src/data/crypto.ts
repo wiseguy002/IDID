@@ -57,7 +57,7 @@ export async function encryptBytes(key: CryptoKey, data: Uint8Array<ArrayBuffer>
 
 export async function decryptBytes(key: CryptoKey, box: string, aad = ''): Promise<Uint8Array<ArrayBuffer>> {
   const [v, iv, ct] = box.split('.');
-  if (v !== 'v1' || !iv || !ct) throw new Error('Unrecognised ciphertext format');
+  if (v !== 'v1' || !iv || !ct) throw new Error('Unrecognized ciphertext format');
   const pt = await subtle.decrypt({ name: 'AES-GCM', iv: fromB64(iv), additionalData: enc.encode(aad) }, key, fromB64(ct));
   return new Uint8Array(pt);
 }
@@ -115,7 +115,7 @@ export async function sealKey(key: CryptoKey, recipientPublic: JsonWebKey, aad: 
 
 export async function openSealedKey(sealed: string, me: Identity, aad: string): Promise<CryptoKey> {
   const [v, epkB64, ...rest] = sealed.split('.');
-  if (v !== 's1') throw new Error('Unrecognised sealed key');
+  if (v !== 's1') throw new Error('Unrecognized sealed key');
   const { x, y } = JSON.parse(dec.decode(fromB64(epkB64)));
   const shared = await ecdhKey(me.privateKey, { kty: 'EC', crv: 'P-256', x, y, ext: true });
   return unwrapAesKey(rest.join('.'), shared, aad);
@@ -132,10 +132,10 @@ export function newRecoveryCode(): string {
   return chars.match(/.{5}/g)!.join('-');
 }
 
-export function normaliseCode(code: string): string {
+export function normalizeCode(code: string): string {
   return code.toUpperCase().replace(/[^A-Z0-9]/g, '');
 }
 
 export function codeToSecret(code: string): Uint8Array<ArrayBuffer> {
-  return enc.encode(normaliseCode(code));
+  return enc.encode(normalizeCode(code));
 }

@@ -9,7 +9,7 @@ import {
 import { partWords } from '../lib/util';
 import { PageHead, Segmented, Sheet, Switch } from '../components/ui';
 
-const SEASON_LABEL = { spring: 'Spring', summer: 'Summer', autumn: 'Autumn', winter: 'Winter' } as const;
+const SEASON_LABEL = { spring: 'Spring', summer: 'Summer', autumn: 'Fall', winter: 'Winter' } as const;
 
 function PlantSheet({ plant, isPart, onClose }: { plant: GardenPlant; isPart: boolean; onClose: () => void }) {
   const { toast, settings } = useApp();

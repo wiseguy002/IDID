@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { store } from '../db';
 import { useApp } from '../state';
-import { OBSERVED_SIGNS } from '../lib/defaults';
+import { OBSERVED_SIGNS, usLabel } from '../lib/defaults';
 import { fmtDateTime, partWords } from '../lib/util';
 import { DURATIONS, type Entry, type Observation } from '../types';
 import { ChipSelect, PageHead, Segmented } from '../components/ui';
 
 export default function Observe({ id }: { id: string }) {
   const { members, parts, settings, go, toast } = useApp();
-  const [o, setO] = useState<Observation | null>(() => store.get('observations', id) ?? null);
+  const [o, setO] = useState<Observation | null>(() => { const x = store.get('observations', id); return x ? { ...x, noticed: x.noticed.map(usLabel) } : null; });
   const e: Entry | undefined = o ? store.get('entries', o.entryId) : undefined;
   const w = partWords(settings.partWord);
   if (!o || !e) return null;
@@ -26,7 +26,7 @@ export default function Observe({ id }: { id: string }) {
   return (
     <div className="fade-in stack">
       <PageHead title="What did you notice?" sub={`About ${subj?.name ?? 'someone'} · ${fmtDateTime(e.occurredAt)}${e.location ? ` · ${e.location}` : ''}`} onBack={() => go({ name: 'home' })} />
-      <div className="card warm small">Share only what you saw or heard, without judgement. There are no wrong answers, and you can skip anything.</div>
+      <div className="card warm small">Share only what you saw or heard, without judgment. There are no wrong answers, and you can skip anything.</div>
       <div>
         <div className="eyebrow">Were you there?</div>
         <Segmented label="Present" value={o.present == null ? '' : o.present ? 'y' : 'n'} onChange={(v) => set('present', v === 'y')}

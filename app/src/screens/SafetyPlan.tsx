@@ -17,7 +17,7 @@ const STEPS: { key: keyof Plan; title: string; ask: string; suggest: string[]; k
   { key: 'warningSigns', kind: 'list', title: 'My warning signs', ask: 'What thoughts, feelings, situations or changes tell you a hard time might be building?',
     suggest: ['Not sleeping', 'Pulling away from people', 'Losing time more often', 'Feeling numb or far away', 'Harsh inner voices', 'Feeling hopeless', 'Thoughts of hurting myself', 'Anniversaries or certain dates'] },
   { key: 'coping', kind: 'list', title: 'Things I can do on my own', ask: 'What helps you feel even a little calmer or safer, without needing anyone else?',
-    suggest: ['Slow breathing', '5-4-3-2-1 grounding', 'A warm shower', 'Play a favourite song', 'Wrap up in a blanket', 'Step outside for fresh air', 'Open my comfort kit', 'Hold something cold'] },
+    suggest: ['Slow breathing', '5-4-3-2-1 grounding', 'A warm shower', 'Play a favorite song', 'Wrap up in a blanket', 'Step outside for fresh air', 'Open my comfort kit', 'Hold something cold'] },
   { key: 'distractions', kind: 'list', title: 'People and places that help me take a break', ask: "Places to go, or people to be around (not necessarily to talk about how you're feeling).",
     suggest: ['A walk in the park', 'The library', 'A café', 'Watching a show with someone', 'Calling a friend to chat about anything', 'Visiting family'] },
   { key: 'helperContactIds', kind: 'helpers', title: 'People I can ask for help', ask: 'Who can you reach out to and tell that you’re struggling?', suggest: [] },

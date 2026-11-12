@@ -7,7 +7,7 @@ import { PageHead, Segmented } from '../components/ui';
 import BoxBreath from '../components/BoxBreath';
 
 const GROUNDING = [
-  { n: 5, sense: 'things you can see', hint: 'Look slowly around. Name colours, shapes, light.' },
+  { n: 5, sense: 'things you can see', hint: 'Look slowly around. Name colors, shapes, light.' },
   { n: 4, sense: 'things you can feel', hint: 'Your feet on the floor. Fabric. The air on your skin.' },
   { n: 3, sense: 'things you can hear', hint: 'Near and far. Your own breath counts.' },
   { n: 2, sense: 'things you can smell', hint: 'Or two smells you like, remembered.' },

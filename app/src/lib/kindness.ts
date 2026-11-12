@@ -39,7 +39,7 @@ export type KindIcon = (typeof KIND_ICONS)[number]['id'];
 /** Small, doable acts of kindness, including easy ones for low-energy days. */
 export const KIND_ACTS: string[] = [
   'Smile at someone you pass today.',
-  'Say hi to a neighbour, a cashier, or a bus driver.',
+  'Say hi to a neighbor, a cashier, or a bus driver.',
   'Send a "thinking of you" text to someone you care about.',
   'Hold a door open for someone.',
   'Thank someone for something small they did.',

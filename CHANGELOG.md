@@ -14,6 +14,13 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-11-12
+
+American English throughout.
+
+### Changed
+- iDID now uses American English throughout the app, website and press materials: color, organization, counselor, neighbor, favorite and so on. "Shop" is now "Store" and the garden's autumn is "Fall". Moments you saved with the older wording are counted together with the new wording in Patterns, and update when you edit them.
+
 ## [0.13.0] - 2026-11-12
 
 A garden that grows from the care you give, and never wilts.
@@ -35,7 +42,7 @@ Everything documented, from the tour to the help guides.
 
 ## [0.12.0] - 2026-11-12
 
-Let the person at the centre of the circle run it.
+Let the person at the center of the circle run it.
 
 ### Added
 - **Hand the circle to someone else**: when the person whose journal it really is joins a circle a family member started, the owner can make them the circle's owner from their profile on the Circle page. They then decide who sees what, invite people, share with a care team and remove access. The previous owner stays in the circle and can still view and add. The new owner sees a one-time note with a shortcut to review who can see what.
@@ -101,7 +108,7 @@ Tools for hard days: a safety plan, check on me, quick hide, and more. IDID is n
 - **Inner board**: a private notice board where parts can leave notes for each other, with pinning and "seen by".
 - **Body basics**: sleep, meals, water, movement, daylight and medication each day; medication list with reminders; and a look at how sleep and hard moments relate.
 - **Comfort kit**: photos, songs, words, scents, places, people and letters from a part who feels safe, plus "Show me something comforting".
-- **Prepare for therapy**: what's happened since the last session, moments to bring up, an agenda, questions, wins, and notes to remember afterwards. Printable or copied as text.
+- **Prepare for therapy**: what's happened since the last session, moments to bring up, an agenda, questions, wins, and notes to remember afterward. Printable or copied as text.
 - New badges and Explore entries for all of the above.
 
 ### Changed
@@ -170,7 +177,7 @@ Find support near you.
 ### Added
 - A support profile for each person: ZIP code plus what would help (DID specialist, trauma therapy, low-cost care, family support, LGBTQ+, veterans, and more).
 - Matched resources: crisis lines, nearby dissociation and trauma specialists, community health centers, helplines, local groups, and trusted places to learn.
-- Saved support contacts (therapist, social worker, counsellor, crisis center) with call, text, email and map, and the option to pin them to the Pause screen.
+- Saved support contacts (therapist, social worker, counselor, crisis center) with call, text, email and map, and the option to pin them to the Pause screen.
 - An optional support step during setup.
 
 ## [0.3.0] - 2026-11-12
@@ -179,7 +186,7 @@ Share a circle across devices, plus appointments and alerts.
 
 ### Added
 - **Online circle**: sign in with an email code, invite people with a one-time link, and sync automatically between everyone's devices.
-- **Appointments** for therapy, counselling, support groups and more, with repeating schedules, reminders and a "since last session" summary.
+- **Appointments** for therapy, counseling, support groups and more, with repeating schedules, reminders and a "since last session" summary.
 - **Add to calendar** for Apple, Outlook and Google calendars, with a neutral title by default.
 - **Notifications** for appointments, a daily check-in, and requests from your circle. The wording never reveals anything private.
 - Free hosting on GitHub Pages, plus setup and security guides.
@@ -209,12 +216,13 @@ The first version of iDID.
 ### Added
 - Quick, optional 5-step log: when and where, triggers, mood and feelings, who was fronting or co-fronting, lost time, duration, and who noticed.
 - A trust circle on one device, with gentle requests for observations from people who noticed.
-- Parts with names, pronouns, roles and colours, using your choice of word (parts, alters, headmates or selves).
+- Parts with names, pronouns, roles and colors, using your choice of word (parts, alters, headmates or selves).
 - Timeline, Patterns, a clinician summary, CSV export, and backups.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.13.1...HEAD
+[0.13.1]: https://github.com/wiseguy002/IDID/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/wiseguy002/IDID/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/wiseguy002/IDID/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/wiseguy002/IDID/compare/v0.11.0...v0.12.0

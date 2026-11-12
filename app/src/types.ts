@@ -87,7 +87,7 @@ export interface SupportContact {
 
 export const CONTACT_ROLES: { value: ContactRole; label: string }[] = [
   { value: 'therapist', label: 'Therapist' },
-  { value: 'counselor', label: 'Counsellor' },
+  { value: 'counselor', label: 'Counselor' },
   { value: 'social-worker', label: 'Social worker' },
   { value: 'psychiatrist', label: 'Psychiatrist' },
   { value: 'doctor', label: 'Doctor' },
@@ -260,7 +260,7 @@ export interface Appointment {
 
 export const APPOINTMENT_KINDS: { value: AppointmentKind; label: string }[] = [
   { value: 'therapy', label: 'Therapy' },
-  { value: 'counseling', label: 'Counselling' },
+  { value: 'counseling', label: 'Counseling' },
   { value: 'support-group', label: 'Support group' },
   { value: 'psychiatry', label: 'Psychiatry / medication' },
   { value: 'medical', label: 'Medical' },

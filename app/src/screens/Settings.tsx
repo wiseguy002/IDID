@@ -14,6 +14,11 @@ import { APP_VERSION, BUILD_COMMIT } from '../version';
 export default function Settings() {
   const { settings: s, go, toast, me, checkIn } = useApp();
   const [ritualText, setRitualText] = useState('');
+  const tellAFriend = async () => {
+    const text = 'IDID is a free, private journal for dissociation and trauma responses, and for sharing what helps with people you trust.';
+    if (navigator.share) { try { await navigator.share({ title: 'IDID', text, url: 'https://idid.care' }); return; } catch { /* cancelled */ } }
+    try { await navigator.clipboard.writeText(`${text} https://idid.care`); toast('Link copied. Paste it in a message to a friend.'); } catch { toast('Share this link: idid.care'); }
+  };
   const rituals = me?.rituals ?? [];
   const setRituals = (r: string[]) => me && store.patch('members', me.id, { rituals: r });
   const [passOpen, setPassOpen] = useState(false);
@@ -147,7 +152,8 @@ export default function Settings() {
       </div>
       <div className="card soft small">
         <div className="row between"><h3 style={{ margin: 0 }}>About IDID</h3><span className="tag">Version {APP_VERSION}</span></div>
-        <p className="small" style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => go({ name: 'changelog' })}><Icon name="sparkle" size={15} /> What's new</button> <button className="btn sm" onClick={() => go({ name: 'explore' })}>Explore & badges</button> <button className="btn sm" onClick={() => go({ name: 'feedback' })}>Suggest a feature</button> <span className="tiny muted">Build {BUILD_COMMIT}</span></p>
+        <p className="small" style={{ marginTop: '.5rem' }}><button className="btn sm" onClick={() => go({ name: 'changelog' })}><Icon name="sparkle" size={15} /> What's new</button> <button className="btn sm" onClick={() => go({ name: 'explore' })}>Explore & badges</button> <button className="btn sm" onClick={() => go({ name: 'feedback' })}>Suggest a feature</button> <button className="btn sm" onClick={tellAFriend}>Tell a friend</button> <span className="tiny muted">Build {BUILD_COMMIT}</span></p>
+        <p>Learn more about dissociation, DID and grounding at <a href="https://idid.care/learn" target="_blank" rel="noopener noreferrer">idid.care/learn</a>.</p>
         <p>IDID is a private journal for noticing dissociative and trauma-related experiences, and for gathering gentle observations from people you trust. It is not a diagnostic tool or a substitute for professional care.</p>
         <p style={{ margin: 0 }}>If you are in danger or thinking about harming yourself, please contact local emergency services. In the US, call or text <b>988</b>. In the UK & Ireland, Samaritans: <b>116 123</b>.</p>
       </div>

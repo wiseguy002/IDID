@@ -22,6 +22,18 @@ jobs:
       - run: npm test
       - run: npm run build
 
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright for the site checks
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
+      - name: Build and check website (links, phone layout, no third-party requests)
+        run: node site/tools/build-site.mjs && NODE_PATH=$PWD/node_modules node site/tools/check-site.mjs
+
   database:
     runs-on: ubuntu-latest
     steps:

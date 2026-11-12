@@ -6,11 +6,9 @@ You will need: a free [Supabase](https://supabase.com) account and this GitHub r
 
 ---
 
-## 1. Host the web app (GitHub Pages, free)
+## 1. Put the website and app online (Cloudflare, free)
 
-1. In GitHub, open **Settings → Pages**. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-2. Merge to `main` (or run the **Deploy web app to GitHub Pages** workflow from the **Actions** tab).
-3. The app will be at `https://<your-username>.github.io/IDID/`.
+Follow **[DEPLOY.md](DEPLOY.md)**. When it's done, the website is at `https://idid.care` and the app at `https://app.idid.care`.
 
 At this point IDID works on-device only. People can install it from the browser menu with **Add to Home Screen** or **Install app**.
 
@@ -33,7 +31,7 @@ IDID signs people in with a 6-digit code from their email. A code is more reliab
    <p>Or <a href="{{ .ConfirmationURL }}">tap here to sign in</a> on this device.</p>
    ```
 
-3. **Authentication → URL Configuration**: set **Site URL** to your Pages address (for example `https://<your-username>.github.io/IDID/`) and add it under **Redirect URLs**.
+3. **Authentication → URL Configuration**: set **Site URL** to `https://app.idid.care` and add it under **Redirect URLs**.
 4. For real use, set up custom SMTP under **Project Settings → Auth → SMTP**. Supabase's built-in email is rate-limited and meant for testing.
 
 ## 4. Push notifications

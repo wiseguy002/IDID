@@ -14,7 +14,14 @@ const commit = (() => {
 // `npm run build:single` → one self-contained HTML file in dist-single/ (for quick sharing/previews)
 export default defineConfig(({ mode }) => ({
   base: './',
-  plugins: [react(), ...(mode === 'single' ? [viteSingleFile()] : [])],
+  plugins: [
+    react(),
+    ...(mode === 'single' ? [
+      viteSingleFile(),
+      // The single-file preview has no public/ folder, so inline the tiny theme script.
+      { name: 'inline-theme-init', transformIndexHtml: (html: string) => html.replace('<script src="./theme-init.js"></script>', `<script>${readFileSync(new URL('./public/theme-init.js', import.meta.url), 'utf8')}</script>`) },
+    ] : []),
+  ],
   build: mode === 'single' ? { outDir: 'dist-single', copyPublicDir: false } : {},
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),

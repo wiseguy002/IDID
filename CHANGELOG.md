@@ -14,6 +14,18 @@ Write each entry for the people who use IDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-12
+
+IDID's new home at idid.care.
+
+### Added
+- **Tell a friend** in Settings, to share IDID with someone who might find it helpful.
+- Links from Settings and Find support to plain-language guides at idid.care/learn.
+- Proper home-screen icons for iPhone and Android.
+
+### Security
+- Strict security headers for the app (Content Security Policy, HSTS, no referrer, no framing).
+
 ## [0.7.0] - 2026-11-12
 
 Explore, badges, kindness and your ideas.
@@ -104,7 +116,8 @@ The first version of IDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/wiseguy002/IDID/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/wiseguy002/IDID/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/wiseguy002/IDID/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/wiseguy002/IDID/compare/v0.4.0...v0.5.0

@@ -1,6 +1,6 @@
 # IDID — a gentle journal
 
-**Current version: 0.7.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.7.1** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
 IDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 
@@ -47,9 +47,10 @@ The first screen has **"Explore with a sample circle"**, which loads fictional d
 - **App:** React + TypeScript PWA in `app/` (installable, works offline).
 - **On-device data:** an in-memory store backed by per-record AES-GCM ciphertext in IndexedDB (`app/src/data/`).
 - **Online circle:** Supabase (Postgres + auth + realtime) stores only ciphertext. Schema and row-level security are in `supabase/migrations/`, the push sender in `supabase/functions/send-push/`, and the sync engine in `app/src/sync/`.
-- **Hosting:** GitHub Pages via `.github/workflows/deploy.yml` (free). CI runs type checks, unit tests, the build, and database security tests on every pull request.
+- **Website:** `site/`, a fast static site for [idid.care](https://idid.care) (about, Learn, privacy, Spread the word, press kit), with generated social images, icons, QR code and printable flyer (`site/tools/`).
+- **Hosting:** Cloudflare Pages, with the website at **idid.care** and the app at **app.idid.care**, deployed by `.github/workflows/deploy.yml` (see [docs/DEPLOY.md](docs/DEPLOY.md)). CI runs type checks, unit tests, the build, website checks, and database security tests on every pull request.
 
-**Setup guide:** [docs/SETUP.md](docs/SETUP.md) · **Security model:** [docs/SECURITY.md](docs/SECURITY.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Releasing:** [docs/RELEASING.md](docs/RELEASING.md)
+**Go live:** [docs/DEPLOY.md](docs/DEPLOY.md) · **Setup guide:** [docs/SETUP.md](docs/SETUP.md) · **Security model:** [docs/SECURITY.md](docs/SECURITY.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Releasing:** [docs/RELEASING.md](docs/RELEASING.md)
 
 ## Roadmap
 

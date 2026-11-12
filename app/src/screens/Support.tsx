@@ -165,6 +165,7 @@ export default function Support() {
           {[...CRISIS.slice(1), ...matchResources(n, 'talk')].map((r) => <ResourceCard key={r.id} r={r} zip={z} onCopy={copy} />)}
 
           <h2 style={{ marginTop: '1.3rem' }}>Learn & connect</h2>
+          <p className="small muted">Plain-language guides to dissociation, DID, grounding and supporting someone are at <a href="https://idid.care/learn" target="_blank" rel="noopener noreferrer">idid.care/learn</a>.</p>
           {matchResources(n, 'learn').map((r) => <ResourceCard key={r.id} r={r} />)}
         </>
       )}

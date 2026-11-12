@@ -1,0 +1,6 @@
+# Supabase CLI config (used by `supabase functions deploy` / `supabase db push`).
+project_id = "idid"
+
+[functions.send-push]
+# Called by pg_cron with a shared secret header, not a user JWT.
+verify_jwt = false

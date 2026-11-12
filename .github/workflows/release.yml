@@ -1,0 +1,40 @@
+name: Release
+# Push a tag like v0.7.0 (matching app/package.json) to publish a GitHub release
+# whose notes come from CHANGELOG.md.
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - name: Tag must match the app version
+        run: |
+          v=$(node -p "require('./package.json').version")
+          if [ "v$v" != "$GITHUB_REF_NAME" ]; then echo "Tag $GITHUB_REF_NAME does not match package.json version $v"; exit 1; fi
+      - run: npm test
+      - run: npm run build
+      - name: Notes from CHANGELOG.md
+        run: node scripts/release-notes.mjs > "$RUNNER_TEMP/notes.md"
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd dist && zip -qr "$RUNNER_TEMP/idid-web-$GITHUB_REF_NAME.zip" . && cd ..
+          gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP/idid-web-$GITHUB_REF_NAME.zip" \
+            --title "iDID $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" \
+            $( [[ "$GITHUB_REF_NAME" == v0.* ]] && echo --prerelease )

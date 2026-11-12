@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { persist, store, updateDevice, useAll, useSettings } from './db';
 import { hasVault } from './data/vault';
 import { Ctx, type Route } from './state';
@@ -21,6 +21,11 @@ import Account, { pendingInvite } from './screens/Account';
 import Support from './screens/Support';
 import { lockAccount, resume } from './sync/account';
 import { useReminders } from './lib/useReminders';
+import { NudgeSheet } from './components/NudgeSheet';
+
+const NUDGE_KEY = 'idid.nudge.handled';
+const readHandled = () => { try { return Number(localStorage.getItem(NUDGE_KEY)) || 0; } catch { return 0; } };
+const writeHandled = (t: number) => { try { localStorage.setItem(NUDGE_KEY, String(t)); } catch { /* ignore */ } };
 
 const NAV: { name: Route['name']; label: string; icon: string }[] = [
   { name: 'home', label: 'Home', icon: 'home' },
@@ -97,16 +102,27 @@ export default function App() {
     }
   }, [unlocked]);
 
-  useReminders(unlocked ? me : null, { appointments: settings.notifyAppointments, checkInTime: settings.checkInTime }, toast);
+  // Random gentle check-ins: show the newest due one that hasn't been answered or snoozed.
+  const [nudgeAt, setNudgeAt] = useState<number | null>(null);
+  const [nudgeOpen, setNudgeOpen] = useState(false);
+  const snoozeUntil = useRef(0);
+  const onNudge = useCallback((at: number) => {
+    if (at > readHandled() && Date.now() >= snoozeUntil.current) { setNudgeAt(at); setNudgeOpen(true); }
+  }, []);
+  const closeNudge = () => { if (nudgeAt) writeHandled(nudgeAt); setNudgeOpen(false); setNudgeAt(null); };
+  const snoozeNudge = () => { snoozeUntil.current = Date.now() + 30 * 60000; setNudgeOpen(false); toast("Okay, I'll ask again in a little while."); };
+  const openCheckIn = useCallback(() => { setNudgeAt(null); setNudgeOpen(true); }, []);
+
+  useReminders(unlocked ? me : null, settings, toast, onNudge);
 
   if (vault === null) return null;
-  if (!vault || (unlocked && members.length === 0)) return <Onboarding onDone={() => { setVault(true); setChosen(true); }} />;
+  if (!vault || (unlocked && members.length === 0)) return <Onboarding onDone={() => { writeHandled(Date.now()); setVault(true); setChosen(true); }} />;
   if (!unlocked) return <Lock onUnlock={() => undefined} />;
   if (members.length > 1 && !chosen) {
     return <WhoIsHere members={members} current={me?.id ?? null} onPick={(id) => { updateDevice({ activeMemberId: id }); setRoute({ name: 'home' }); setChosen(true); }} />;
   }
 
-  const ctx = { settings, members, parts, me, route, go, toast };
+  const ctx = { settings, members, parts, me, route, go, toast, checkIn: openCheckIn };
   const inWizard = route.name === 'log' || route.name === 'observe';
 
   return (
@@ -156,6 +172,7 @@ export default function App() {
           </nav>
         )}
         {toastMsg && <div className="toast" role="status">{toastMsg}</div>}
+        {nudgeOpen && !inWizard && <NudgeSheet onClose={closeNudge} onSnooze={nudgeAt ? snoozeNudge : undefined} />}
       </div>
     </Ctx.Provider>
   );

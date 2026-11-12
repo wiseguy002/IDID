@@ -44,6 +44,10 @@ export function defaultDevice(): DeviceSettings {
     notifyAppointments: true,
     checkInTime: null,
     autoLockMins: 5,
+    nudges: true,
+    nudgesPerDay: 2,
+    quietStart: '21:00',
+    quietEnd: '09:00',
   };
 }
 

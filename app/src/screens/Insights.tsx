@@ -50,6 +50,7 @@ export default function Insights() {
   const tracked = members.filter((m) => m.tracked);
   const [who, setWho] = useState<string[]>(me?.tracked ? [me.id] : tracked[0] ? [tracked[0].id] : []);
   const all = useAll('entries');
+  const allCheckins = useAll('checkins');
   const w = partWords(settings.partWord);
   const mName = (id: string) => members.find((m) => m.id === id)?.name ?? '';
 
@@ -73,6 +74,31 @@ export default function Insights() {
             <div className="stat"><span className="small muted">With lost time</span><b>{s.lostTimePct}%</b></div>
             <div className="stat"><span className="small muted">Co-fronting</span><b>{s.coFrontPct}%</b></div>
           </div>
+          {(() => {
+            const cs = allCheckins.filter((c) => (!who.length || who.includes(c.memberId)) && (range === 'all' || c.at > Date.now() - Number(range) * 86400000));
+            if (!cs.length) return null;
+            const LABEL: Record<string, string> = { good: 'Pretty good', okay: 'Okay', wobbly: 'A bit wobbly', struggling: 'Struggling' };
+            const IDEA: Record<string, string> = { breathe: 'Breathing', outside: 'Fresh air & sunshine' };
+            const tried = cs.filter((c) => c.tried && c.helped != null);
+            const helps = new Map<string, [number, number]>();
+            for (const c of tried) {
+              const k = c.tried === 'ritual' ? (c.ritual ?? 'A ritual') : IDEA[c.tried!] ?? c.tried!;
+              const v = helps.get(k) ?? [0, 0];
+              helps.set(k, [v[0] + (c.helped ? 1 : 0), v[1] + 1]);
+            }
+            return (
+              <div className="card"><h3>Check-ins</h3>
+                <p className="tiny muted">{cs.length} answer{cs.length === 1 ? '' : 's'} to "How are you doing?"</p>
+                <Bars data={(['good', 'okay', 'wobbly', 'struggling'] as const).map((f) => [LABEL[f], cs.filter((c) => c.feeling === f).length] as [string, number]).filter(([, n]) => n > 0)} color="var(--accent-2)" />
+                {helps.size > 0 && <>
+                  <h3 style={{ marginTop: '.9rem' }}>What helps</h3>
+                  {[...helps.entries()].sort((a, b) => b[1][0] - a[1][0]).map(([k, [y, n]]) => (
+                    <div key={k} className="row between small" style={{ padding: '.25rem 0' }}><span>{k}</span><span className="muted">helped {y} of {n} time{n === 1 ? '' : 's'}</span></div>
+                  ))}
+                </>}
+              </div>
+            );
+          })()}
           <div className="card"><h3>Mood over 12 weeks</h3><p className="tiny muted">Line: average mood · bars: number of moments</p><MoodLine weeks={s.weeks} /></div>
           <div className="card"><h3>Common triggers</h3><Bars data={s.triggers} /></div>
           <div className="card"><h3>Who was fronting</h3><Bars data={s.fronting} color="var(--accent-2)" /></div>

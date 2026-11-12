@@ -107,6 +107,7 @@ export interface Backup {
   observations: KindMap['observations'][];
   appointments: KindMap['appointments'][];
   contacts?: KindMap['contacts'][];
+  checkins?: KindMap['checkins'][];
   prefs?: Prefs;
 }
 
@@ -114,13 +115,13 @@ export function exportAll(): Backup {
   return {
     app: 'idid', version: 2, exportedAt: new Date().toISOString(),
     members: store.all('members'), parts: store.all('parts'), entries: store.all('entries'),
-    observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), prefs: getPrefs(),
+    observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), checkins: store.all('checkins'), prefs: getPrefs(),
   };
 }
 
 export async function importAll(b: Partial<Backup> & { app: string }, mode: 'merge' | 'replace') {
   if (b.app !== 'idid') throw new Error('This file is not an IDID backup.');
-  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts'] as const;
+  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins'] as const;
   if (mode === 'replace') {
     for (const k of kinds) for (const r of store.all(k)) await store.remove(k, r.id);
   }

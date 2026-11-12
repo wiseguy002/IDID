@@ -12,8 +12,17 @@ webpush.setVapidDetails(
   Deno.env.get('VAPID_PRIVATE_KEY')!,
 );
 
-function message(kind: string, minutesBefore: number | null) {
+// Random gentle check-ins ("nudge-…" tags) rotate through these. Always generic.
+const NUDGES = [
+  'How are you doing right now? Take a breath.',
+  'A gentle nudge: maybe a little fresh air?',
+  'Checking in: how is everyone doing?',
+  'Time for a small reset: stretch, sip water, look outside.',
+];
+
+function message(kind: string, minutesBefore: number | null, tag: string) {
   if (kind === 'observation') return 'Someone in your circle wondered if you noticed something. Open IDID when you are ready.';
+  if (tag.startsWith('nudge-')) return NUDGES[(Number(tag.slice(6)) || 0) % NUDGES.length];
   if (kind === 'checkin') return 'A gentle check-in: how are you all doing?';
   const m = minutesBefore ?? 0;
   if (m === 0) return 'An appointment is starting now.';
@@ -36,7 +45,7 @@ Deno.serve(async (req) => {
   let sent = 0;
   for (const r of due ?? []) {
     const { data: subs } = await db.from('push_subscriptions').select('id, endpoint, p256dh, auth').eq('user_id', r.user_id);
-    const payload = JSON.stringify({ title: 'IDID', body: message(r.kind, r.minutes_before), tag: r.tag, kind: r.kind });
+    const payload = JSON.stringify({ title: 'IDID', body: message(r.kind, r.minutes_before, r.tag), tag: r.tag, kind: r.kind });
     for (const s of subs ?? []) {
       try {
         await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payload, { TTL: 3600, urgency: 'normal' });

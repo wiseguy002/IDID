@@ -25,6 +25,8 @@ export interface AppCtx {
   route: Route;
   go: (r: Route) => void;
   toast: (msg: string) => void;
+  /** Open the "How are you doing?" check-in now. */
+  checkIn: () => void;
 }
 
 export const Ctx = createContext<AppCtx | null>(null);

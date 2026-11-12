@@ -8,9 +8,13 @@ import { Icon } from '../components/Icon';
 import { permission, requestPermission } from '../lib/notify';
 import { pushAvailable, enablePush } from '../sync/push';
 import { passphraseChanged } from '../sync/account';
+import { DEFAULT_RITUALS } from '../lib/nudges';
 
 export default function Settings() {
-  const { settings: s, go, toast } = useApp();
+  const { settings: s, go, toast, me, checkIn } = useApp();
+  const [ritualText, setRitualText] = useState('');
+  const rituals = me?.rituals ?? [];
+  const setRituals = (r: string[]) => me && store.patch('members', me.id, { rituals: r });
   const [passOpen, setPassOpen] = useState(false);
   const [oldPass, setOldPass] = useState('');
   const [pin, setPin] = useState('');
@@ -70,6 +74,41 @@ export default function Settings() {
         <Segmented label="Word for parts" value={s.partWord} onChange={(v: PartWord) => up({ partWord: v })}
           options={[{ value: 'parts', label: 'Parts' }, { value: 'alters', label: 'Alters' }, { value: 'headmates', label: 'Headmates' }, { value: 'selves', label: 'Selves' }]} />
         <Switch label="Looking-back check-ins" hint="When you return, gently ask if there's anything to add about a recent moment" checked={s.showCheckIn} onChange={(v) => up({ showCheckIn: v })} />
+      </div>
+      <div className="card">
+        <h2>Gentle check-ins</h2>
+        <p className="small muted">At random times, IDID asks whoever is here how they're doing, with a kind word and something small to try: breathing, one of your healthy rituals, or some fresh air and sunshine.</p>
+        {me?.tracked ? (
+          <>
+            <Switch label="Random check-ins" checked={s.nudges} onChange={(v) => up({ nudges: v })} />
+            {s.nudges && (
+              <>
+                <div className="eyebrow">How often</div>
+                <Segmented label="Check-ins per day" value={String(s.nudgesPerDay)} onChange={(v) => up({ nudgesPerDay: Number(v) })}
+                  options={[{ value: '1', label: 'Once a day' }, { value: '2', label: 'Twice' }, { value: '3', label: '3 times' }, { value: '4', label: '4 times' }]} />
+                <div className="grid2" style={{ marginTop: '.8rem' }}>
+                  <label className="field"><span className="small">Quiet from</span><input id="quiet-start" className="input" type="time" value={s.quietStart} onChange={(e) => e.target.value && up({ quietStart: e.target.value })} /></label>
+                  <label className="field"><span className="small">until</span><input id="quiet-end" className="input" type="time" value={s.quietEnd} onChange={(e) => e.target.value && up({ quietEnd: e.target.value })} /></label>
+                </div>
+              </>
+            )}
+          </>
+        ) : <p className="small">Random check-ins are for the person whose experiences are tracked. Switch to them on this device to turn them on.</p>}
+        <div className="eyebrow" style={{ marginTop: '.4rem' }}>My healthy rituals</div>
+        <p className="tiny muted" style={{ marginTop: 0 }}>Small things that help interrupt a hard pattern. Check-ins will suggest these first.</p>
+        <div className="chips">
+          {rituals.map((r) => <button key={r} className="chip" aria-pressed="true" aria-label={`Remove ${r}`} onClick={() => setRituals(rituals.filter((x) => x !== r))}>{r} <Icon name="close" size={14} /></button>)}
+        </div>
+        <form className="row" style={{ marginTop: '.5rem' }} onSubmit={(e) => { e.preventDefault(); const t = ritualText.trim(); if (t && !rituals.includes(t)) setRituals([...rituals, t]); setRitualText(''); }}>
+          <input id="ritual-input" className="input" style={{ flex: 1 }} value={ritualText} onChange={(e) => setRitualText(e.target.value)} placeholder="e.g. Walk around the block with the dog" />
+          <button className="btn sm" type="submit" disabled={!ritualText.trim()}>Add</button>
+        </form>
+        {rituals.length === 0 && (
+          <div className="chips" style={{ marginTop: '.5rem' }}>
+            {DEFAULT_RITUALS.slice(0, 5).map((r) => <button key={r} className="chip add" onClick={() => setRituals([...rituals, r])}><Icon name="plus" size={14} /> {r}</button>)}
+          </div>
+        )}
+        <button className="btn sm" style={{ marginTop: '.8rem' }} onClick={checkIn}><Icon name="sparkle" size={16} /> Try a check-in now</button>
       </div>
       <div className="card">
         <h2>Notifications</h2>

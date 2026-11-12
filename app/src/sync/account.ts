@@ -6,6 +6,8 @@ import { useSyncExternalStore } from 'react';
 import { getDevice, persist, store, subscribeDevice } from '../db';
 import { unlockVault } from '../data/vault';
 import { checkInTimes, remindersBetween } from '../lib/schedule';
+import { nudgeTimesBetween } from '../lib/nudges';
+import { nudgesFor } from '../lib/useReminders';
 import { SyncEngine } from './engine';
 import { createAccount, createCircle, rewrapAccount, joinWithInvite, makeInvite, openAccount, openCircle, restoreSession, serialiseSession, type AccountKeys, type CircleSession } from './keys';
 import type { Remote, ReminderRow } from './remote';
@@ -53,7 +55,7 @@ function startEngine() {
   let t: ReturnType<typeof setTimeout> | null = null;
   const onChange = () => {
     const d = getDevice();
-    const sig = JSON.stringify([store.all('appointments').map((a) => [a.id, a.startsAt, a.recurrence, a.until, a.reminderMins, a.memberIds]), d.notifyAppointments, d.checkInTime, d.activeMemberId]);
+    const sig = JSON.stringify([store.all('appointments').map((a) => [a.id, a.startsAt, a.recurrence, a.until, a.reminderMins, a.memberIds]), d.notifyAppointments, d.checkInTime, d.activeMemberId, d.nudges, d.nudgesPerDay, d.quietStart, d.quietEnd]);
     if (sig === lastSig) return;
     lastSig = sig;
     if (t) clearTimeout(t);
@@ -194,5 +196,8 @@ export async function scheduleServerReminders() {
     }
   }
   for (const t of checkInTimes(d.checkInTime, now, until)) rows.push({ user_id: keys.userId, kind: 'checkin', fire_at: new Date(t).toISOString(), tag: `checkin-${t}` });
+  if (me && nudgesFor(me, d)) {
+    for (const t of nudgeTimesBetween(me.id, now, until, d.nudgesPerDay, d.quietStart, d.quietEnd)) rows.push({ user_id: keys.userId, kind: 'checkin', fire_at: new Date(t).toISOString(), tag: `nudge-${t}` });
+  }
   await remote.replaceOwnReminders(rows);
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useApp } from '../state';
 import { useAll } from '../db';
 import { ContactRow, CrisisCard } from './Support';
+import { Icon } from '../components/Icon';
 import { PageHead, Segmented } from '../components/ui';
 
 const GROUNDING = [
@@ -13,7 +14,7 @@ const GROUNDING = [
 ];
 
 export default function Pause() {
-  const { go, settings, me } = useApp();
+  const { go, settings, me, checkIn } = useApp();
   const pinned = useAll('contacts').filter((c) => c.pinned && (c.memberId === me?.id || !me?.tracked));
   const [mode, setMode] = useState<'breathe' | 'ground' | 'orient'>('breathe');
   const [g, setG] = useState(0);
@@ -51,6 +52,7 @@ export default function Pause() {
           <p className="muted" style={{ margin: 0 }}>Look around for one thing that tells you it's {now.getFullYear()}.</p>
         </div>
       )}
+      <button className="btn block" style={{ marginTop: '1rem' }} onClick={checkIn}><Icon name="sparkle" size={18} /> Check in with yourself</button>
       <h2 style={{ marginTop: '1.4rem' }}>Reach out</h2>
       {pinned.length > 0 && <div className="card">{pinned.map((c) => <ContactRow key={c.id} c={c} />)}</div>}
       <CrisisCard />

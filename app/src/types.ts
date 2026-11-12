@@ -19,6 +19,24 @@ export interface Member {
   userId?: string;
   /** Where and what kind of support to suggest. Encrypted like everything else. */
   support?: SupportProfile;
+  /** This person's own healthy rituals for interrupting a hard pattern. */
+  rituals?: string[];
+}
+
+export type CheckInFeeling = 'good' | 'okay' | 'wobbly' | 'struggling';
+export type IdeaKind = 'breathe' | 'ritual' | 'outside' | 'positive' | 'pause' | 'reach-out' | 'note';
+
+/** A quick answer to a gentle nudge ("How are you doing right now?"). */
+export interface CheckIn {
+  id: ID;
+  memberId: ID;
+  at: number;
+  feeling: CheckInFeeling;
+  /** What they chose to try, if anything. */
+  tried: IdeaKind | null;
+  /** The ritual's text, when they tried one. */
+  ritual?: string;
+  helped: boolean | null;
 }
 
 export type SupportNeed =
@@ -170,6 +188,12 @@ export interface DeviceSettings {
   checkInTime: string | null;
   /** Lock the journal after the app has been hidden this many minutes (0 = immediately). */
   autoLockMins: number;
+  /** Random gentle check-ins ("How are you doing?") through the day. */
+  nudges: boolean;
+  nudgesPerDay: number;
+  /** No nudges between quietStart and quietEnd ("HH:MM", local time). */
+  quietStart: string;
+  quietEnd: string;
 }
 
 /** Combined view used by screens. */

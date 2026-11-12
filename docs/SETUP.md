@@ -57,15 +57,15 @@ iDID signs people in with a 6-digit code from their email. A code is more reliab
 
 ## 5. Connect the web app to Supabase
 
-In GitHub, open **Settings → Secrets and variables → Actions → Variables** and add these repository variables:
+Put the three public values in `app/.env.production` and commit it:
 
 | Name | Value |
 |---|---|
-| `SUPABASE_URL` | Project URL from step 2 |
-| `SUPABASE_ANON_KEY` | anon public key from step 2 |
-| `VAPID_PUBLIC_KEY` | public key from step 4 |
+| `VITE_SUPABASE_URL` | Project URL from step 2 |
+| `VITE_SUPABASE_ANON_KEY` | anon public key from step 2 |
+| `VITE_VAPID_PUBLIC_KEY` | public key from step 4 |
 
-All three are public values; access is enforced by the database's row-level security. Re-run the deploy workflow.
+All three are safe to publish: access is enforced by the database's row-level security, and journal data is encrypted on the device before it is sent. Never put the service-role key, the VAPID private key or `CRON_SECRET` in this file. The deploy workflow builds with these values on the next push to `main`.
 
 For local development, copy `app/.env.example` to `app/.env.local` and fill in the same values.
 

@@ -28,13 +28,9 @@ jobs:
           cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm test
+      # Online-circle settings (public values) come from app/.env.production.
       - name: Build
         run: npm run build
-        env:
-          # Public values, set under Settings → Secrets and variables → Actions → Variables.
-          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
-          VITE_VAPID_PUBLIC_KEY: ${{ vars.VAPID_PUBLIC_KEY }}
       - name: Deploy app
         uses: cloudflare/wrangler-action@v3
         with:

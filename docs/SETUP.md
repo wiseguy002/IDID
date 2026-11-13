@@ -36,7 +36,7 @@ iDID signs people in with a 6-digit code from their email. A code is more reliab
 
    | Setting | Value |
    |---|---|
-   | Sender email | the address part of `EMAIL_FROM`, e.g. `idid@beepboopmail.com` (its domain must be verified in Resend) |
+   | Sender email | the address part of `EMAIL_FROM`, `hello@idid.care` (idid.care is verified in Resend) |
    | Sender name | `iDID` |
    | Host | `smtp.resend.com` |
    | Port | `465` |
@@ -51,7 +51,7 @@ iDID signs people in with a 6-digit code from their email. A code is more reliab
    supabase secrets set --env-file supabase/functions/.env --project-ref nnyoiljgxnpyuiersruz
    ```
 
-   To check it, send yourself a test: `RESEND_API_KEY=… EMAIL_FROM="iDID <idid@beepboopmail.com>" node --experimental-strip-types scripts/send-test-email.mts you@example.com`.
+   To check it, send yourself a test: `RESEND_API_KEY=… EMAIL_FROM="iDID <hello@idid.care>" node --experimental-strip-types scripts/send-test-email.mts you@example.com`.
 
    Invite links and care-team links are never emailed by the server: they carry decryption keys, so they're shared from the person's own device.
 

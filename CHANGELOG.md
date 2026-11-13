@@ -14,6 +14,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-11-13
+
+Optional anonymous counts, and a page for clinicians.
+
 ### Added
 - **Anonymous counts** (off unless you turn them on in Settings → Privacy): share how often each screen is opened, once a week and without your account, so we can learn which tools help. Never anything you write. Turning it off deletes counts not yet sent.
 - A page for therapists and other clinicians at idid.care/clinicians: what clients can bring to sessions, how sharing works, and what iDID isn't.
@@ -256,7 +260,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/wiseguy002/IDID/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/wiseguy002/IDID/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/wiseguy002/IDID/compare/v0.13.2...v0.14.0
 [0.13.2]: https://github.com/wiseguy002/IDID/compare/v0.13.1...v0.13.2

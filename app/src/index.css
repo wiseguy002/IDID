@@ -1,37 +1,39 @@
 /* ---------- Theme tokens ---------- */
 :root, [data-theme='morning'] {
+  /* --accent-text and --warm-text are darker, text-only versions of the brand colors (links, labels, warnings),
+     so text reads at 4.5:1 or more on every background; --accent and --warm stay for fills, icons and charts. */
   --bg: #f5efe6; --bg-2: #efe6d9; --surface: #fffaf2; --surface-2: #f8f1e6;
-  --ink: #3b3833; --muted: #786f64; --line: #e3d8c8;
-  --accent: #6d8d7d; --accent-ink: #fdfaf4; --accent-soft: #dfe8e0;
+  --ink: #3b3833; --muted: #6e665c; --line: #e3d8c8;
+  --accent: #5e7a6c; --accent-ink: #fdfaf4; --accent-soft: #dfe8e0; --accent-text: #546c60;
   --accent-2: #8796b3; --accent-2-soft: #e3e7f0;
-  --warm: #b4875e; --warm-soft: #f3e4d4;
+  --warm: #b4875e; --warm-soft: #f3e4d4; --warm-text: #845f3d;
   --focus: #4f7565; --shadow: 0 1px 2px rgba(80,60,30,.06), 0 6px 18px rgba(80,60,30,.06);
   color-scheme: light;
 }
 [data-theme='meadow'] {
   --bg: #ecf1ed; --bg-2: #e2eae4; --surface: #f8fbf8; --surface-2: #eff5f0;
-  --ink: #2f3a35; --muted: #66746d; --line: #d3ddd6;
-  --accent: #5d8777; --accent-ink: #f8fbf8; --accent-soft: #d8e6de;
+  --ink: #2f3a35; --muted: #5c6862; --line: #d3ddd6;
+  --accent: #557b6c; --accent-ink: #f8fbf8; --accent-soft: #d8e6de; --accent-text: #4b6c60;
   --accent-2: #7d91ad; --accent-2-soft: #dfe5ee;
-  --warm: #a98a5e; --warm-soft: #efe6d6;
+  --warm: #a98a5e; --warm-soft: #efe6d6; --warm-text: #786140;
   --focus: #3f6b5b; --shadow: 0 1px 2px rgba(30,60,40,.06), 0 6px 18px rgba(30,60,40,.06);
   color-scheme: light;
 }
 [data-theme='dusk'] {
   --bg: #1d2024; --bg-2: #23272c; --surface: #282c32; --surface-2: #2f343a;
-  --ink: #e4ded4; --muted: #a39b8f; --line: #3b4148;
-  --accent: #93b2a2; --accent-ink: #1d2024; --accent-soft: #33433c;
+  --ink: #e4ded4; --muted: #b0aa9f; --line: #3b4148;
+  --accent: #93b2a2; --accent-ink: #1d2024; --accent-soft: #33433c; --accent-text: #93b2a2;
   --accent-2: #9eaccb; --accent-2-soft: #343b4a;
-  --warm: #c9a27c; --warm-soft: #40372e;
+  --warm: #c9a27c; --warm-soft: #40372e; --warm-text: #c9a27c;
   --focus: #b5d0c2; --shadow: 0 1px 2px rgba(0,0,0,.25), 0 6px 18px rgba(0,0,0,.18);
   color-scheme: dark;
 }
 [data-theme='clear'] {
   --bg: #ffffff; --bg-2: #f2f2f2; --surface: #ffffff; --surface-2: #f4f4f4;
   --ink: #111111; --muted: #3d3d3d; --line: #6b6b6b;
-  --accent: #1e5a46; --accent-ink: #ffffff; --accent-soft: #d6ebe2;
+  --accent: #1e5a46; --accent-ink: #ffffff; --accent-soft: #d6ebe2; --accent-text: #1e5a46;
   --accent-2: #2c4a86; --accent-2-soft: #dbe4f5;
-  --warm: #7a4a17; --warm-soft: #f5e6d3;
+  --warm: #7a4a17; --warm-soft: #f5e6d3; --warm-text: #7a4a17;
   --focus: #000000; --shadow: none;
   color-scheme: light;
 }
@@ -58,7 +60,7 @@ html[data-motion='reduce'] *, html[data-motion='reduce'] *::before, html[data-mo
 h1, h2, h3 { font-weight: 600; line-height: 1.25; margin: 0 0 .4em; letter-spacing: -.005em; }
 h1 { font-size: 1.6rem; } h2 { font-size: 1.22rem; } h3 { font-size: 1.05rem; }
 p { margin: 0 0 .8em; }
-a { color: var(--accent); }
+a { color: var(--accent-text); }
 button, input, textarea, select { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 10px; }
 ::selection { background: var(--accent-soft); }
@@ -88,7 +90,7 @@ main { flex: 1; padding: .5rem 1rem 7rem; }
   background: none; border: 0; padding: .55rem .2rem .6rem; display: flex; flex-direction: column; align-items: center;
   gap: .15rem; font-size: .74rem; color: var(--muted); cursor: pointer; min-height: 60px;
 }
-.navbtn[aria-current='page'] { color: var(--accent); font-weight: 600; }
+.navbtn[aria-current='page'] { color: var(--accent-text); font-weight: 600; }
 .navbtn.log .navicon {
   background: var(--accent); color: var(--accent-ink); width: 46px; height: 46px; border-radius: 50%;
   display: grid; place-items: center; margin-top: -18px; box-shadow: var(--shadow);
@@ -128,7 +130,7 @@ html[data-soft='false'] .card, html[data-soft='false'] .btn, html[data-soft='fal
 .btn.ghost { background: transparent; border-color: transparent; }
 .btn.block { width: 100%; }
 .btn.sm { min-height: 38px; padding: .35rem .8rem; font-size: .9rem; border-radius: 12px; }
-.btn.danger { color: var(--warm); }
+.btn.danger { color: var(--warm-text); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .iconbtn { background: none; border: 0; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--muted); }
 .iconbtn:hover { background: var(--surface-2); }
@@ -256,7 +258,7 @@ textarea.input { min-height: 96px; resize: vertical; }
 /* ---------- Invitations & access ---------- */
 .invite-row { padding: .7rem 0; border-top: 1px solid var(--line); }
 .invite-row:first-of-type { border-top: 0; }
-.tag.status-joined { background: var(--accent-soft); color: var(--focus); }
+.tag.status-joined { background: var(--accent-soft); color: var(--accent-text); }
 .tag.status-waiting { background: var(--accent-2-soft); }
 .tag.status-expired, .tag.status-cancelled { background: var(--warm-soft); }
 .access-tag { margin-top: .25rem; display: inline-block; }
@@ -278,7 +280,7 @@ textarea.input { min-height: 96px; resize: vertical; }
 .help-body p { line-height: 1.6; }
 .help-steps, .help-list { padding-left: 1.3rem; line-height: 1.6; }
 .help-steps li, .help-list li { margin: .35rem 0; }
-.linkish { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; font: inherit; cursor: pointer; }
+.linkish { background: none; border: 0; padding: 0; color: var(--accent-text); text-decoration: underline; font: inherit; cursor: pointer; }
 
 /* ---------- Mood Garden ---------- */
 :root {

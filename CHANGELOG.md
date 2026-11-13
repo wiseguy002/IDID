@@ -14,6 +14,9 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Changed
+- Easier-to-read colors in the Morning, Meadow and Dusk themes: links, buttons, warnings, the current tab and softer gray text now stand out more clearly against their backgrounds. The look stays the same.
+
 ## [0.16.0] - 2026-11-13
 
 Optional anonymous counts, and a page for clinicians.

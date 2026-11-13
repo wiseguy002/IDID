@@ -183,7 +183,7 @@ export default function Account() {
               <span className="tag">{a.status === 'syncing' ? 'Syncing…' : a.status === 'offline' ? 'Offline: will sync later' : a.status === 'error' ? 'Sync problem' : a.lastSyncedAt ? `Synced ${relTime(a.lastSyncedAt)}` : 'Ready'}</span>
             </div>
             <p className="small muted">Signed in as {a.email}. Changes sync automatically and are end-to-end encrypted.</p>
-            {a.error && <p className="small" style={{ color: 'var(--warm)' }}>{a.error}</p>}
+            {a.error && <p className="small" style={{ color: 'var(--warm-text)' }}>{a.error}</p>}
             <div className="row">
               <button className="btn sm" onClick={() => syncNow()}>Sync now</button>
               {pushAvailable() && <button className="btn sm" onClick={() => run(async () => { if (Notification.permission !== 'granted' && (await Notification.requestPermission()) !== 'granted') throw new Error('Notifications are blocked in this browser.'); toast((await enablePush()) ? 'Notifications on for this device.' : "Couldn't turn on notifications."); })}><Icon name="bell" size={16} /> Notify this device</button>}
@@ -210,7 +210,7 @@ export default function Account() {
         </>
       )}
 
-      {err && <p className="small" role="alert" style={{ color: 'var(--warm)' }}>{err}</p>}
+      {err && <p className="small" role="alert" style={{ color: 'var(--warm-text)' }}>{err}</p>}
       <div style={{ marginTop: '1rem' }}><WhatServerSees /></div>
       {claim && <ClaimSelf suggested={suggested} onDone={() => setClaim(false)} />}
       {inviting && <InviteSheet onClose={() => setInviting(false)} />}

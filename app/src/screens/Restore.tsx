@@ -108,7 +108,7 @@ export default function Restore({ onDone, onBack }: { onDone: () => void; onBack
             </div>
           </>}
 
-          {error && <p role="alert" className="small" style={{ color: 'var(--warm)' }}>{error}</p>}
+          {error && <p role="alert" className="small" style={{ color: 'var(--warm-text)' }}>{error}</p>}
         </div>
       </main>
       <div className="wizard-foot"><div>

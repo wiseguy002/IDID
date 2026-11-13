@@ -84,7 +84,7 @@ export default function Lock({ onUnlock }: { onUnlock: () => void }) {
             <p className="small muted" style={{ textAlign: 'left', marginTop: '.4rem' }}>{newPass && strength.hint}</p>
           </>
         )}
-        {msg && <p className="small" style={{ color: 'var(--warm)', marginTop: '.6rem' }} role="alert">{msg}</p>}
+        {msg && <p className="small" style={{ color: 'var(--warm-text)', marginTop: '.6rem' }} role="alert">{msg}</p>}
         <button className="btn primary block" style={{ marginTop: '.9rem' }} type="submit" disabled={busy || (mode === 'reset' ? !strength.ok : !value)}>
           {busy ? 'Opening…' : mode === 'pass' ? 'Unlock' : mode === 'recover' ? 'Use recovery code' : 'Save and open'}
         </button>

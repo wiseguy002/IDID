@@ -74,6 +74,14 @@ export async function isAdmin(): Promise<boolean> {
   const r = await supabase().rpc('is_app_admin');
   return !r.error && r.data === true;
 }
+export interface CountWeek { week: string; reports: number; features: { feature: string; uses: number; people: number }[] }
+/** Admins only: the anonymous feature totals for the most recent weeks. */
+export async function featureCounts(weeks = 6): Promise<CountWeek[]> {
+  const reps = check(await supabase().from('feature_count_reports').select('week, reports').order('week', { ascending: false }).limit(weeks)) as { week: string; reports: number }[];
+  if (!reps.length) return [];
+  const rows = check(await supabase().from('feature_counts').select('week, feature, uses, people').in('week', reps.map((r) => r.week))) as { week: string; feature: string; uses: number; people: number }[];
+  return reps.map((r) => ({ ...r, features: rows.filter((x) => x.week === r.week).sort((a, b) => b.people - a.people || b.uses - a.uses) }));
+}
 export async function allRequests(): Promise<FeatureRequest[]> {
   return check(await supabase().from('feedback').select('*').order('created_at', { ascending: false }).limit(1000)) as FeatureRequest[];
 }

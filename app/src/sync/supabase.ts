@@ -13,6 +13,20 @@ export function supabase(): SupabaseClient {
   return (client ??= createClient(URL_!, ANON!, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } }));
 }
 
+/**
+ * Call a database function as an anonymous visitor, never with the signed-in person's session,
+ * so the request carries nothing that identifies them (used for opt-in anonymous counts).
+ */
+export async function anonRpc(name: string, args: Record<string, unknown>, fetcher: typeof fetch = fetch, url = URL_, key = ANON): Promise<void> {
+  if (!url || !key) throw new Error('not configured');
+  const r = await fetcher(`${url}/rest/v1/rpc/${name}`, {
+    method: 'POST', credentials: 'omit', referrerPolicy: 'no-referrer', keepalive: true,
+    headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(args),
+  });
+  if (!r.ok) throw new Error(`counts not sent (${r.status})`);
+}
+
 const check = <T>(r: { data: T; error: { message: string } | null }) => { if (r.error) throw new Error(r.error.message); return r.data; };
 
 export class SupabaseRemote implements Remote {

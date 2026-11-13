@@ -1,6 +1,6 @@
 # iDID — a gentle journal
 
-**Current version: 0.15.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.16.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
 iDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 

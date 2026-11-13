@@ -50,6 +50,13 @@ iDID is built so that the people running the server **cannot read your journal**
 - Each person's role in a circle, and whether each invite has been used or has expired.
 - For each shared view: its ciphertext, when it was last updated, how many times it was opened and when, and its end date if one is set.
 
+## Opt-in anonymous counts
+
+- Off by default (Settings → Privacy → Share anonymous counts; `app/src/lib/counts.ts`). While on, the device tallies screen opens by route name from a fixed list (capped at 200 per screen per week) in `localStorage` under `idid.counts`. The tally holds no content, names, parts or times.
+- Once a week the previous week's tally is sent to `add_feature_counts(p_week, p_counts)` with the **anon key only** (`anonRpc`: no user session, `credentials: 'omit'`), so the request carries no account.
+- The function only increments `feature_counts(week, feature, uses, people)` and `feature_count_reports(week, reports)`. There is no user, device, IP or timestamp column (enforced by an RLS test). Only app admins can select. Nobody can write directly. Input is validated: week format, feature-name pattern, numeric values, at most 60 keys.
+- Limits: anyone could call the function to inflate totals. They are rough guidance, not billing data. Turning the setting off deletes unsent tallies.
+
 ## Limits to be aware of
 
 - **Forgotten passphrase and lost recovery code:** the data can't be recovered by anyone. This is the cost of the server being unable to read it.

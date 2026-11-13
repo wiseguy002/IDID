@@ -48,6 +48,8 @@ import { APP_VERSION } from './version';
 import { lockAccount, resume } from './sync/account';
 import { useReminders } from './lib/useReminders';
 import { NudgeSheet } from './components/NudgeSheet';
+import { countUse, sendDue } from './lib/counts';
+import { anonRpc, cloudConfigured } from './sync/supabase';
 
 const NUDGE_KEY = 'idid.nudge.handled';
 const readHandled = () => { try { return Number(localStorage.getItem(NUDGE_KEY)) || 0; } catch { return 0; } };
@@ -112,6 +114,7 @@ export default function App() {
   }, [unlocked, settings.lastOpenedAt, prevOpened]);
 
   const go = useCallback((r: Route) => {
+    if (getDevice().shareCounts) countUse(r.name);
     setRoute(r);
     window.scrollTo({ top: 0 });
   }, []);
@@ -128,6 +131,7 @@ export default function App() {
       // Journals created before version tracking (0.6.0) count as having seen 0.5.0.
       if (!getDevice().lastSeenVersion) updateDevice({ lastSeenVersion: '0.5.0' });
       resume().catch(() => undefined);
+      if (getDevice().shareCounts && cloudConfigured()) sendDue((t) => anonRpc('add_feature_counts', { p_week: t.week, p_counts: t.counts }));
       if (pendingInvite()) setRoute({ name: 'account' });
     } else {
       lockAccount();

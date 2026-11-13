@@ -213,4 +213,23 @@ delete from public.care_shares where id = :'cs';
 set role anon;
 select pg_temp.expect((select count(*) = 0 from public.get_care_share(:'cs')), 'removed care links stop working');
 reset role;
+
+-- ---------- Anonymous feature counts ----------
+set role anon;
+select pg_temp.expect((select public.add_feature_counts('2026-W46', '{"front": 3, "missed": 1}')), 'anyone can add a weekly tally, signed in or not');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+select pg_temp.expect((select public.add_feature_counts('2026-W46', '{"front": 900, "voice": 0}')), 'signed-in people can add a tally too');
+select pg_temp.expect_error($q$select public.add_feature_counts('2026-W46', '{"Bad Name!": 1}')$q$, 'feature names are limited to a safe pattern');
+select pg_temp.expect_error($q$select public.add_feature_counts('2026-W46', '{"front": "hello"}')$q$, 'values must be numbers');
+select pg_temp.expect_error($q$select public.add_feature_counts('last week', '{"front": 1}')$q$, 'week must look like 2026-W46');
+select pg_temp.expect_error($q$select public.add_feature_counts('2026-W46', '["front"]')$q$, 'counts must be an object');
+select pg_temp.expect((select count(*) = 0 from public.feature_counts), 'ordinary people cannot read the totals');
+select pg_temp.expect_error($q$insert into public.feature_counts values ('2026-W46', 'front', 5, 5)$q$, 'nobody can write totals directly');
+select pg_temp.expect_error($q$update public.feature_count_reports set reports = 99$q$, 'nobody can change report counts');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect((select uses = 203 and people = 2 from public.feature_counts where week = '2026-W46' and feature = 'front'), 'admins see totals; each person capped at 200');
+select pg_temp.expect((select count(*) = 0 from public.feature_counts where feature = 'voice'), 'zero counts are not stored');
+select pg_temp.expect((select reports = 2 from public.feature_count_reports where week = '2026-W46'), 'admins see how many people shared');
+reset role;
+select pg_temp.expect((select count(*) = 0 from information_schema.columns where table_schema = 'public' and table_name in ('feature_counts', 'feature_count_reports') and column_name ~ 'user|device|ip|created|at$'), 'no column could identify a person or a moment');
 \echo ALL RLS TESTS PASSED

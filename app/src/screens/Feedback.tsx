@@ -4,7 +4,7 @@ import { useApp } from '../state';
 import { APP_VERSION } from '../version';
 import {
   REQUEST_KINDS, STATUS_LABELS, allRequests, communityAvailable, flushRequests, isAdmin, myRequests, queueRequest, queuedRequests,
-  submitRequest, updateRequest, type FeatureRequest, type RequestKind, type RequestStatus,
+  submitRequest, updateRequest, featureCounts, type CountWeek, type FeatureRequest, type RequestKind, type RequestStatus,
 } from '../sync/community';
 import { download, relTime } from '../lib/util';
 import { ChipSelect, PageHead, Segmented } from '../components/ui';
@@ -118,6 +118,7 @@ export function AdminRequests() {
       <div className="grid2" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '.8rem' }}>
         {(['new', 'planned', 'in-progress'] as RequestStatus[]).map((s) => <div key={s} className="stat"><span className="tiny muted">{STATUS_LABELS[s]}</span><b>{counts[s]}</b></div>)}
       </div>
+      <UsageCard />
       <Segmented label="Show" value={filter} onChange={setFilter} options={[{ value: 'open', label: 'Open' }, { value: 'new', label: 'New' }, { value: 'planned', label: 'Planned' }, { value: 'all', label: 'All' }]} />
       <div style={{ margin: '.6rem 0' }}><ChipSelect value={kind} onChange={setKind} options={REQUEST_KINDS} /></div>
       <input id="admin-search" className="input" type="search" placeholder="Search requests" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search requests" />
@@ -136,6 +137,26 @@ export function AdminRequests() {
         </div>
       ))}
       {list.length === 0 && <p className="muted small" style={{ marginTop: '1rem' }}>Nothing matches.</p>}
+    </div>
+  );
+}
+
+/** Admins: anonymous weekly feature totals from people who opted in. */
+function UsageCard() {
+  const [weeks, setWeeks] = useState<CountWeek[] | null>(null);
+  const [i, setI] = useState(0);
+  useEffect(() => { featureCounts().then(setWeeks).catch(() => setWeeks([])); }, []);
+  if (!weeks) return null;
+  const w = weeks[i];
+  return (
+    <div className="card soft">
+      <div className="row between"><h3 style={{ margin: 0 }}>Anonymous usage</h3>
+        {weeks.length > 1 && <select className="input" style={{ width: 'auto' }} aria-label="Week" value={i} onChange={(e) => setI(Number(e.target.value))}>{weeks.map((x, n) => <option key={x.week} value={n}>{x.week}</option>)}</select>}</div>
+      {!w ? <p className="small muted" style={{ margin: '.4rem 0 0' }}>No counts yet. They arrive weekly from people who turn on "Share anonymous counts".</p> : <>
+        <p className="small muted" style={{ margin: '.3rem 0 .5rem' }}>{w.reports} {w.reports === 1 ? 'person' : 'people'} shared counts for {w.week}. "People" is how many used each screen at least once.</p>
+        <table className="small" style={{ width: '100%' }}><thead><tr><th style={{ textAlign: 'left' }}>Screen</th><th>People</th><th>Uses</th></tr></thead>
+          <tbody>{w.features.map((f) => <tr key={f.feature}><td>{f.feature}</td><td style={{ textAlign: 'center' }}>{f.people}</td><td style={{ textAlign: 'center' }}>{f.uses}</td></tr>)}</tbody></table>
+      </>}
     </div>
   );
 }

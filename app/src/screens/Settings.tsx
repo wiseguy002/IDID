@@ -10,6 +10,8 @@ import { pushAvailable, enablePush } from '../sync/push';
 import { passphraseChanged } from '../sync/account';
 import { DEFAULT_RITUALS } from '../lib/nudges';
 import { APP_VERSION, BUILD_COMMIT } from '../version';
+import { clearTally } from '../lib/counts';
+import { cloudConfigured } from '../sync/supabase';
 
 export default function Settings() {
   const { settings: s, go, toast, me, checkIn } = useApp();
@@ -153,6 +155,11 @@ export default function Settings() {
           options={[{ value: 'calm', label: 'A calm clock' }, { value: 'notes', label: 'A plain notepad' }]} />
         <p className="tiny muted" style={{ margin: '.4rem 0 0' }}>Tap the eye icon at the top (or press Esc twice) to lock iDID instantly and show this screen. Tap it three times (or the ≡ menu) to come back to the lock screen.</p>
         <hr className="hr" />
+        {cloudConfigured() && <>
+          <Switch label="Share anonymous counts" hint="Once a week, how many times each screen was opened. Never what you write, never who you are. Off unless you turn it on" checked={!!s.shareCounts} onChange={(v) => { up({ shareCounts: v }); if (!v) clearTally(); }} />
+          <p className="tiny muted" style={{ margin: '0 0 .6rem' }}>It helps us see which tools are useful. The counts are sent without your account, and our server only keeps totals for everyone together. <a href="https://idid.care/privacy#counts" target="_blank" rel="noopener noreferrer">How it works</a></p>
+          <hr className="hr" />
+        </>}
         <button className="btn" onClick={() => go({ name: 'share' })}><Icon name="download" size={18} /> Export & backup</button>
         <button className="btn ghost danger" style={{ marginLeft: '.4rem' }} onClick={() => setWipe(true)}>Delete all data</button>
       </div>

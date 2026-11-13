@@ -72,7 +72,7 @@ Never: ads, selling or "sharing" data, paid features that gate safety tools, or 
 
 ## 4. Opt-in anonymous feature counts
 
-**Status: designed, not built.** It needs your go-ahead and a database migration.
+**Status: built** (migration `20261116000000_feature_counts.sql`, `app/src/lib/counts.ts`). The server keeps only weekly totals per feature, not individual submissions. Admins see them on the Manage requests screen.
 
 **Goal:** learn which features help (for example "how many people used What did I miss? this week") without learning anything about anyone.
 

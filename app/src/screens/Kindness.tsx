@@ -53,7 +53,7 @@ export function useKindNotes() {
 export function KindNoteView({ n }: { n: KindNote }) {
   return (
     <div className="row" style={{ gap: '.8rem', flexWrap: 'nowrap', padding: '.45rem 0' }}>
-      <span className="brand-mark" style={{ width: 40, height: 40, flexShrink: 0, background: 'var(--warm-soft)', color: 'var(--warm)' }}><Icon name={n.icon} size={20} /></span>
+      <span className="brand-mark" style={{ width: 40, height: 40, flexShrink: 0, background: 'var(--warm-soft)', color: 'var(--warm-text)' }}><Icon name={n.icon} size={20} /></span>
       <span><span style={{ fontSize: '1.02rem' }}>{KIND_MESSAGES[n.message_id] ?? 'Someone is thinking of you.'}</span><br /><span className="tiny muted">From someone using iDID · {relTime(new Date(n.created_at).getTime())}</span></span>
     </div>
   );

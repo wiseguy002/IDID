@@ -98,7 +98,7 @@ export function SupportProfileEditor({ zip, needs, onZip, onNeeds }: { zip: stri
       <label className="field"><span>ZIP code</span>
         <input id="sp-zip" className="input" inputMode="numeric" autoComplete="postal-code" maxLength={5} style={{ maxWidth: 160 }} value={zip}
           onChange={(e) => onZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 43215" /></label>
-      {zip && !isZip(zip) && <p className="small" style={{ color: 'var(--warm)', marginTop: '-.5rem' }}>Enter all 5 digits.</p>}
+      {zip && !isZip(zip) && <p className="small" style={{ color: 'var(--warm-text)', marginTop: '-.5rem' }}>Enter all 5 digits.</p>}
       <div className="eyebrow">What would help? <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 400 }}>Choose any.</span></div>
       <ChipSelect value={needs} onChange={(v) => onNeeds(v as SupportNeed[])} options={NEEDS} />
     </>

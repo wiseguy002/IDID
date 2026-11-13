@@ -10,7 +10,7 @@ interface Orb { x: number; y: number; r: number; vx: number; vy: number; phase: 
 function palette() {
   const s = getComputedStyle(document.documentElement);
   const v = (n: string, f: string) => s.getPropertyValue(n).trim() || f;
-  return { bg: v('--bg', '#f5efe6'), a: v('--accent', '#6d8d7d'), b: v('--accent-2', '#8796b3'), c: v('--warm', '#b4875e') };
+  return { bg: v('--bg', '#f5efe6'), a: v('--accent', '#5e7a6c'), b: v('--accent-2', '#8796b3'), c: v('--warm', '#b4875e') };
 }
 
 function rgba(hex: string, alpha: number) {

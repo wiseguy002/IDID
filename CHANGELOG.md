@@ -17,6 +17,9 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 ### Added
 - **Español** (beta): choose Spanish on the first screen or in Settings, or iDID starts in Spanish if your device is set to it. Setup, the lock screen, sign-in, Home, Pause, the safety plan, What did I miss? and the crisis information are translated, including the 988 Lifeline's Spanish options (call 988 and press 2, or text AYUDA to 988). Other screens are still in English for now.
 
+### Changed
+- Easier-to-read colors in the Morning, Meadow and Dusk themes: links, buttons, warnings, the current tab and softer gray text now stand out more clearly against their backgrounds. The look stays the same.
+
 ## [0.16.0] - 2026-11-13
 
 Optional anonymous counts, and a page for clinicians.

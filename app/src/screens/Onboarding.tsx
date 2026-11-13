@@ -169,7 +169,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       <p className="small muted" style={{ marginTop: '-.5rem' }}>{pass && t(strength.hint)}</p>
       <label className="field"><span>{t('Type it again')}</span>
         <input id="ob-pass2" className="input" type="password" autoComplete="new-password" value={pass2} onChange={(e) => setPass2(e.target.value)} disabled={!!recovery} /></label>
-      {pass2 && pass !== pass2 && <p className="small" style={{ color: 'var(--warm)' }}>{t("These don't match yet.")}</p>}
+      {pass2 && pass !== pass2 && <p className="small" style={{ color: 'var(--warm-text)' }}>{t("These don't match yet.")}</p>}
       <div className="card warm small">{t("No one, including us, can reset this passphrase. On the next screen you'll get a recovery code as a backup.")}</div>
     </div>,
     <div key="5" className="stack">

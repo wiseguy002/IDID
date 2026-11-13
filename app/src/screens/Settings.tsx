@@ -178,7 +178,7 @@ export default function Settings() {
       {passOpen && (
         <Sheet title="Passphrase & recovery" onClose={() => { setPassOpen(false); setNewCode(null); }}>
           <label className="field"><span>Current passphrase</span><input id="old-pass" className="input" type="password" autoComplete="current-password" value={oldPass} onChange={(e) => setOldPass(e.target.value)} autoFocus /></label>
-          {passErr && <p className="small" role="alert" style={{ color: 'var(--warm)' }}>{passErr}</p>}
+          {passErr && <p className="small" role="alert" style={{ color: 'var(--warm-text)' }}>{passErr}</p>}
           <label className="field"><span>New passphrase</span><input id="new-pass1" className="input" type="password" autoComplete="new-password" value={pin} onChange={(e) => setPin(e.target.value)} /></label>
           {pin && <p className="small muted" style={{ marginTop: '-.5rem' }}>{passphraseStrength(pin).hint}</p>}
           <label className="field"><span>New passphrase again</span><input id="new-pass2" className="input" type="password" autoComplete="new-password" value={pin2} onChange={(e) => setPin2(e.target.value)} /></label>

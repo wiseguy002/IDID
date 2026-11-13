@@ -41,6 +41,7 @@ iDID is built so that the people running the server **cannot read your journal**
 ## What the server can see
 
 - Your email address (for sign-in) and which accounts share a circle.
+- Email delivery: sign-in codes are sent by Supabase Auth through Resend, which sees the recipient's address and the code. Any server email (`supabase/functions/_shared/email.ts`) carries no journal content, names, or invite or shared-view links, since those links hold decryption keys.
 - The size of each encrypted record and when it changed.
 - The times of reminders you turn on, so push notifications can be sent. Notification text is always generic (for example, "You have an appointment in 1 hour") and never includes titles, names or places.
 - Each person's role in a circle, and whether each invite has been used or has expired.

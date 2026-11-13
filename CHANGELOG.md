@@ -14,6 +14,9 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Changed
+- The website home page now shows the Mood Garden, on a sunny day and in a storm.
+
 ## [0.13.2] - 2026-11-12
 
 A way in on any device.

@@ -32,7 +32,28 @@ iDID signs people in with a 6-digit code from their email. A code is more reliab
    ```
 
 3. **Authentication → URL Configuration**: set **Site URL** to `https://app.idid.care` and add it under **Redirect URLs**.
-4. For real use, set up custom SMTP under **Project Settings → Auth → SMTP**. Supabase's built-in email sends only a couple of emails an hour and is meant for testing. A free sender such as Resend works; send from a subdomain like `send.idid.care` so it doesn't clash with email forwarding on `idid.care`. Also set **Authentication → Providers → Email → Email OTP length** to 6, the length iDID asks for.
+4. **Send sign-in emails through Resend.** Supabase Auth sends iDID's only automatic emails (the 6-digit sign-in codes), and its built-in sender allows just a couple an hour. Under **Project Settings → Authentication → SMTP Settings**, turn on **Enable Custom SMTP** and enter:
+
+   | Setting | Value |
+   |---|---|
+   | Sender email | the address part of `EMAIL_FROM`, e.g. `idid@beepboopmail.com` (its domain must be verified in Resend) |
+   | Sender name | `iDID` |
+   | Host | `smtp.resend.com` |
+   | Port | `465` |
+   | Username | `resend` |
+   | Password | your Resend API key |
+
+   Also set **Authentication → Providers → Email → Email OTP length** to 6, the length iDID asks for.
+
+5. **Server-side email (optional).** Edge functions send email with `supabase/functions/_shared/email.ts`, which reads `RESEND_API_KEY` and `EMAIL_FROM`. Copy `supabase/functions/.env.example` to `supabase/functions/.env` (git-ignored), fill in the real values, then from the repository root:
+
+   ```bash
+   supabase secrets set --env-file supabase/functions/.env --project-ref nnyoiljgxnpyuiersruz
+   ```
+
+   To check it, send yourself a test: `RESEND_API_KEY=… EMAIL_FROM="iDID <idid@beepboopmail.com>" node --experimental-strip-types scripts/send-test-email.mts you@example.com`.
+
+   Invite links and care-team links are never emailed by the server: they carry decryption keys, so they're shared from the person's own device.
 
 ## 4. Push notifications
 

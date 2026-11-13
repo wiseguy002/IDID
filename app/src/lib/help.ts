@@ -431,6 +431,17 @@ export const HELP: HelpTopic[] = [
     keywords: 'encryption security private data safe rights delete copy terms hipaa analytics anonymous counts usage',
   },
   {
+    id: 'language', group: 'Getting started', title: 'Language: English and Español',
+    summary: 'Use iDID in Spanish (beta).',
+    body: [
+      { p: 'Choose **English** or **Español** on the first setup screen, or later in **Settings → Language & prompts → Language**. If your phone or computer is set to Spanish, iDID starts in Spanish.' },
+      { p: 'Spanish is new. Setup, the lock screen, sign-in, Home, Pause, the safety plan, What did I miss? and the crisis information are in Spanish. Other screens are still in English while we finish translating them.' },
+      { tip: 'In Spanish, the crisis card shows the 988 Lifeline’s Spanish options: call 988 and press 2, or text AYUDA to 988.' },
+    ],
+    open: [{ label: 'Open Settings', route: { name: 'settings' } }],
+    keywords: 'language spanish español idioma translate',
+  },
+  {
     id: 'passphrase', group: 'Privacy and your data', title: 'Passphrase and recovery code',
     summary: 'What to do if you forget your passphrase.',
     body: [

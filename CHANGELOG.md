@@ -14,6 +14,13 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-13
+
+iDID in Español (beta), and easier-to-read colors.
+
+### Added
+- **Español** (beta): choose Spanish on the first screen or in Settings, or iDID starts in Spanish if your device is set to it. Setup, the lock screen, sign-in, Home, Pause, the safety plan, What did I miss? and the crisis information are translated, including the 988 Lifeline's Spanish options (call 988 and press 2, or text AYUDA to 988). Other screens are still in English for now.
+
 ### Changed
 - Easier-to-read colors in the Morning, Meadow and Dusk themes: links, buttons, warnings, the current tab and softer gray text now stand out more clearly against their backgrounds. The look stays the same.
 
@@ -263,7 +270,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/wiseguy002/IDID/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/wiseguy002/IDID/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/wiseguy002/IDID/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/wiseguy002/IDID/compare/v0.13.2...v0.14.0

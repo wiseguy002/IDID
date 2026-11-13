@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getLang, LANGS, setLang, t, type Lang } from '../i18n';
 import { persist, store, track, updateSettings, wipeAll } from '../db';
 import { changePassphrase, passphraseStrength, rotateRecoveryCode, unlockVault } from '../data/vault';
 import { useApp } from '../state';
@@ -79,7 +80,10 @@ export default function Settings() {
         <p className="tiny muted" style={{ margin: 0 }}>iDID never plays sounds, vibrates, or flashes.</p>
       </div>
       <div className="card">
-        <h2>Language & prompts</h2>
+        <h2>{t('Language & prompts')}</h2>
+        <div className="eyebrow">{t('Language')}</div>
+        <Segmented label={t('Language')} value={s.lang ?? getLang()} onChange={(v: Lang) => { setLang(v); up({ lang: v }); }} options={LANGS} />
+        {getLang() === 'es' && <p className="tiny muted" style={{ margin: '.3rem 0 .6rem' }}>{t('Spanish is new. Some screens are still in English while we finish translating them.')}</p>}
         <label className="field"><span>Name of this space</span><input className="input" value={s.circleName} onChange={(e) => up({ circleName: e.target.value })} placeholder="iDID" /></label>
         <div className="eyebrow">I call them</div>
         <Segmented label="Word for parts" value={s.partWord} onChange={(v: PartWord) => up({ partWord: v })}

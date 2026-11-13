@@ -221,6 +221,8 @@ export interface DeviceSettings {
   weeklyReflection?: boolean;
   /** Opt-in: send anonymous weekly counts of which screens were opened (lib/counts.ts). Off by default. */
   shareCounts?: boolean;
+  /** App language. Unset = follow the browser (English or Spanish). */
+  lang?: 'en' | 'es';
   /** Show badges and celebrate milestones. */
   badges: boolean;
   /** Mood Garden: show check-ins as weather. */

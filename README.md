@@ -1,6 +1,6 @@
 # iDID — a gentle journal
 
-**Current version: 0.16.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.17.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
 iDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 
@@ -34,6 +34,7 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Voice notes** | Up to 2 minutes, recorded in the browser and stored inside an encrypted record. Always private. |
 | **Weekly reflection** | Optional weekend look-back: a gentle summary and three questions. Never scored; skippable. |
 | **Supporting someone** | Guide for partners, family and friends with words to try, things to do and to avoid. |
+| **Languages** | English, and **Español** (beta): setup, lock and sign-in, Home, Pause, safety plan, What did I miss? and Spanish crisis options. Other screens fall back to English. See `docs/I18N.md`. |
 | **Pause** | Breathing, **box breathing** (build a group of boxes), 5-4-3-2-1 grounding, "right now" orientation, crisis lines. |
 | **Sensory comfort** | Morning, Meadow, Dusk (dark) and High contrast themes; 4 text sizes; calm motion; readable font. No sounds, vibration or flashing. |
 | **Privacy** | Encrypted on the device with your passphrase (AES-256-GCM) and a recovery code; auto-lock; end-to-end encrypted sync. See [docs/SECURITY.md](docs/SECURITY.md). |

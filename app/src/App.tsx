@@ -48,6 +48,7 @@ import { APP_VERSION } from './version';
 import { lockAccount, resume } from './sync/account';
 import { useReminders } from './lib/useReminders';
 import { NudgeSheet } from './components/NudgeSheet';
+import { detectLang, setLang, t, tx } from './i18n';
 import { countUse, sendDue } from './lib/counts';
 import { anonRpc, cloudConfigured } from './sync/supabase';
 
@@ -56,11 +57,11 @@ const readHandled = () => { try { return Number(localStorage.getItem(NUDGE_KEY))
 const writeHandled = (t: number) => { try { localStorage.setItem(NUDGE_KEY, String(t)); } catch { /* ignore */ } };
 
 const NAV: { name: Route['name']; label: string; icon: string }[] = [
-  { name: 'home', label: 'Home', icon: 'home' },
-  { name: 'timeline', label: 'Timeline', icon: 'list' },
-  { name: 'log', label: 'Log', icon: 'plus' },
-  { name: 'insights', label: 'Patterns', icon: 'chart' },
-  { name: 'circle', label: 'Circle', icon: 'people' },
+  { name: 'home', label: tx('Home'), icon: 'home' },
+  { name: 'timeline', label: tx('Timeline'), icon: 'list' },
+  { name: 'log', label: tx('Log'), icon: 'plus' },
+  { name: 'insights', label: tx('Patterns'), icon: 'chart' },
+  { name: 'circle', label: tx('Circle'), icon: 'people' },
 ];
 
 function CrashTest(): null {
@@ -97,6 +98,7 @@ export default function App() {
 
   useEffect(() => {
     const h = document.documentElement;
+    setLang(settings.lang ?? detectLang());
     h.dataset.theme = settings.theme;
     h.dataset.text = settings.textSize;
     h.dataset.motion = settings.reduceMotion ? 'reduce' : 'full';
@@ -194,16 +196,16 @@ export default function App() {
             <span className="brand-mark"><Icon name="leaf" size={17} /></span>
             <span className="brand-name">{settings.circleName || 'iDID'}</span>
           </div>
-          <button className="btn sm ghost" onClick={() => go({ name: 'pause' })} aria-label="Take a pause: grounding tools">
-            <Icon name="heart" size={18} /> <span className="pause-label">Pause</span>
+          <button className="btn sm ghost" onClick={() => go({ name: 'pause' })} aria-label={t('Take a pause: grounding tools')}>
+            <Icon name="heart" size={18} /> <span className="pause-label">{t('Pause')}</span>
           </button>
           {members.length > 1 && (
-            <button className="iconbtn" onClick={() => setChosen(false)} aria-label={`Switch person (currently ${me?.name})`} title={`Using as ${me?.name}`}>
+            <button className="iconbtn" onClick={() => setChosen(false)} aria-label={t('Switch person (currently {name})', { name: me?.name ?? '' })} title={t('Using as {name}', { name: me?.name ?? '' })}>
               <span className="brand-mark" style={{ background: me?.color, color: '#fff', fontSize: '.8rem', fontWeight: 700 }}>{me?.name.charAt(0)}</span>
             </button>
           )}
-          <button className="iconbtn" onClick={hide} aria-label="Quick hide" title="Quick hide (or press Esc twice)"><Icon name="hide" /></button>
-          <button className="iconbtn" onClick={() => go({ name: 'settings' })} aria-label="Settings"><Icon name="gear" /></button>
+          <button className="iconbtn" onClick={hide} aria-label={t('Quick hide')} title={t('Quick hide (or press Esc twice)')}><Icon name="hide" /></button>
+          <button className="iconbtn" onClick={() => go({ name: 'settings' })} aria-label={t('Settings')}><Icon name="gear" /></button>
         </header>
         <main>
           {route.name === 'home' && <Home prevOpened={prevOpened ?? null} />}
@@ -239,13 +241,13 @@ export default function App() {
           {route.name === 'prep' && <Prep key={route.appointmentId ?? 'next'} appointmentId={route.appointmentId} />}
         </main>
         {!inWizard && (
-          <nav className="bottomnav no-print" aria-label="Main">
+          <nav className="bottomnav no-print" aria-label={t('Main')}>
             <div className="bottomnav-inner">
               {NAV.map((n) => (
                 <button key={n.name} className={`navbtn ${n.name === 'log' ? 'log' : ''}`} aria-current={route.name === n.name ? 'page' : undefined}
                   onClick={() => go({ name: n.name } as Route)}>
                   <span className="navicon"><Icon name={n.icon} size={n.name === 'log' ? 24 : 22} /></span>
-                  {n.label}
+                  {t(n.label)}
                 </button>
               ))}
             </div>

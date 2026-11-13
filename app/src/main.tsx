@@ -6,6 +6,10 @@ import CareView from './screens/CareView';
 import { parseCareToken } from './lib/careShare';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { APP_VERSION } from './version';
+import { detectLang, setLang } from './i18n';
+import { getDevice } from './db';
+
+setLang(getDevice().lang ?? detectLang());
 
 // Keep an invite token for this tab, then clear it from the address bar.
 if (location.hash.startsWith('#invite=')) {

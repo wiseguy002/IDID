@@ -364,10 +364,11 @@ export const HELP: HelpTopic[] = [
         'Invite links and therapist links carry their keys after the #, which browsers never send to servers.',
         'Notifications never include details, only a gentle nudge to open iDID.',
         'No ads, no trackers, and we never sell data.',
+        'You can ask us for a copy of what our servers hold, or to delete it, at privacy@idid.care. The full privacy policy and terms are at idid.care/privacy and idid.care/terms.',
       ] },
     ],
     open: [{ label: 'What the server sees', route: { name: 'account' } }],
-    keywords: 'encryption security private data safe',
+    keywords: 'encryption security private data safe rights delete copy terms hipaa',
   },
   {
     id: 'passphrase', group: 'Privacy and your data', title: 'Passphrase and recovery code',
@@ -398,6 +399,8 @@ export const HELP: HelpTopic[] = [
     body: [
       { h: 'I didn’t get a sign-in code' },
       { p: 'Wait a minute and check your spam or promotions folder. The email comes from hello@idid.care with the subject "Your iDID sign-in code". Codes expire after 15 minutes.' },
+      { h: 'The "Email me a code" button says "One moment"' },
+      { p: 'iDID is quickly checking that you’re a person, not a bot. It usually takes a second. If a box appears, tick it. If it doesn’t finish, check your connection, turn off any content blocker for app.idid.care, and reload.' },
       { h: 'A new device won’t accept my passphrase' },
       { p: 'If the screen says **Welcome back** and asks for a passphrase, this device already has a journal on it, often the sample circle from someone looking around. It isn’t yours, so your passphrase won’t open it. iDID now spots the sample and offers **I already use iDID: bring my journal here**. For any other journal, tap **This isn’t my journal**, type **erase**, then sign in with your email and passphrase.' },
       { p: 'If your phone filled in the passphrase for you, try typing it yourself. Saved passwords can be out of date.' },

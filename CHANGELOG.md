@@ -14,7 +14,12 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Added
+- Terms of use at idid.care/terms. Setup now asks you to confirm you're 13 or older and agree to the terms.
+- The privacy policy now explains your rights over health information under US state laws (Washington, Nevada, Connecticut and California), lists the companies that help run iDID, and says what we'd do if something went wrong.
+
 ### Changed
+- Signing in now includes a quick check that you're a person, not a bot. Most people never see it. It keeps sign-in emails flowing for everyone.
 - The website home page now shows the Mood Garden, on a sunny day and in a storm.
 
 ## [0.13.2] - 2026-11-12

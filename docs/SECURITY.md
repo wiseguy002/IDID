@@ -41,6 +41,7 @@ iDID is built so that the people running the server **cannot read your journal**
 ## What the server can see
 
 - Your email address (for sign-in) and which accounts share a circle.
+- Sign-in protection: the "email me a code" form runs a Cloudflare Turnstile check (`app/src/components/Captcha.tsx`), which Supabase Auth verifies before sending any email. Turnstile sees ordinary page traffic only. Supabase also limits each IP address to 10 code requests and 15 code checks per 5 minutes, and the project to 60 emails per hour, so a bot can't drain the shared email allowance or guess codes.
 - Email delivery: sign-in codes are sent by Supabase Auth through Resend, which sees the recipient's address and the code. Any server email (`supabase/functions/_shared/email.ts`) carries no journal content, names, or invite or shared-view links, since those links hold decryption keys.
 - The size of each encrypted record and when it changed.
 - The times of reminders you turn on, so push notifications can be sent. Notification text is always generic (for example, "You have an appointment in 1 hour") and never includes titles, names or places.
@@ -56,3 +57,11 @@ iDID is built so that the people running the server **cannot read your journal**
 - **Anyone holding a shared-view link can open it.** Send it privately. Removing access stops it working, but anything already seen, saved or printed can't be taken back.
 - Calendar exports (.ics or Google Calendar) leave iDID's encryption. iDID defaults to a neutral title and leaves out notes.
 - Browser extensions and malware on a device can see anything shown on screen.
+
+## Infrastructure hardening
+
+- **Domain:** idid.care is registered with Cloudflare and signed with DNSSEC. CAA records allow only the certificate authorities Cloudflare uses (Let's Encrypt, Google Trust Services, SSL.com, DigiCert, Sectigo). SSL mode is Full (strict), TLS 1.2 is the minimum, and every page sends HSTS with preload.
+- **Email authentication:** SPF and Resend's DKIM key are published, and DMARC is set to `p=quarantine`, so mail pretending to come from idid.care lands in spam. Aggregate reports go to hello@idid.care. Sending as an idid.care address from anywhere other than Resend (for example Gmail's "send mail as") will fail DMARC unless it goes through Resend's SMTP.
+- **Headers:** both sites send a strict Content-Security-Policy (the app allows only itself, Supabase and Cloudflare's Turnstile), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer` and a Permissions-Policy that turns off camera, microphone and location.
+- **Dependencies:** CI fails if anything that ships to people has a known high-severity vulnerability (`npm audit --omit=dev`), and Dependabot opens weekly update PRs, each checked by the full CI.
+- **Incidents:** see `docs/INCIDENT_RESPONSE.md`. Compliance status and owner to-dos are in `docs/COMPLIANCE.md`.

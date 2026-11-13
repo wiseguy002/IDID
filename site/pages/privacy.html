@@ -3,7 +3,7 @@
   <div class="wrap narrow">
     <p class="eyebrow">Privacy</p>
     <h1>Your story stays yours</h1>
-    <p class="lede muted">iDID was built so that the people who run it can't read your journal. Here's how, in plain language. <span class="small">Last updated 12 November 2026.</span></p>
+    <p class="lede muted">iDID was built so that the people who run it can't read your journal. Here's how, in plain language. <span class="small">Last updated 13 November 2026.</span></p>
   </div>
 </section>
 <section style="padding-top:1rem">
@@ -25,7 +25,7 @@
       <h2>When you use the online circle</h2>
       <p>Sharing between devices is optional. If you turn it on:</p>
       <ul>
-        <li>You sign in with your email address and a one-time code.</li>
+        <li>You sign in with your email address and a one-time code. A quick check from Cloudflare Turnstile makes sure a person, not a bot, is asking for the code. It sees that someone is using the sign-in page, never anything from your journal.</li>
         <li>Your account has its own encryption keys. The private key is stored only after being encrypted with your passphrase, so you can use iDID on a new device; we can't decrypt it.</li>
         <li>Each circle has its own key, shared only with members. Invite links carry a one-time secret in the part of the link browsers never send to servers.</li>
         <li>Records are re-encrypted before upload. Even what kind of record something is (an entry, a part or an appointment) is hidden from us.</li>
@@ -60,6 +60,46 @@
         <li><b>Leave</b> the online circle or sign out at any time.</li>
       </ul>
 
+      <h2 id="health-data">Consumer health data</h2>
+      <p>Some US states, including Washington (My Health My Data Act), Nevada and Connecticut, give you extra rights over "consumer health data". Because iDID is about mental health, we treat everything connected with your use of it as health data, even the fact that you have an account.</p>
+      <ul>
+        <li><b>What we collect:</b> what you write in iDID (journal entries, moods, parts, safety plans, appointments and the rest), which stays encrypted so we can't read it; your email address if you use the online circle; and the service details listed under "What our servers can see" above.</li>
+        <li><b>Where it comes from:</b> only from you and the people you invite into your circle.</li>
+        <li><b>Why:</b> only to run iDID for you: to store, sync and share what you choose, send sign-in codes and reminders you turn on, and keep the service safe from misuse. Never for advertising, profiling or research.</li>
+        <li><b>Who we share it with:</b> only the people you choose (your circle, or someone you send a shared view to), and the service providers below, who process it for us under contract and can't use it for anything else. We never sell it, and we never share it for advertising.</li>
+        <li><b>Consent:</b> we ask for it when you set up iDID and when you turn on the online circle. You can withdraw it at any time by leaving the circle or deleting your data.</li>
+      </ul>
+
+      <h2 id="rights">Your privacy rights</h2>
+      <p>Wherever you live, you can ask us to:</p>
+      <ul>
+        <li><b>Confirm</b> whether we hold data about you, and <b>get a copy</b> of it. (Most of it you can export yourself from Share &amp; export.)</li>
+        <li><b>Delete</b> your account and everything our servers hold for it. Signing out and deleting your data in the app removes it from that device.</li>
+        <li><b>Correct</b> your email address or other account details.</li>
+        <li><b>Withdraw consent</b>, and get a list of the service providers that have handled your data.</li>
+      </ul>
+      <p>Email <a href="mailto:privacy@idid.care">privacy@idid.care</a> from the address you sign in with. We'll answer within 45 days, usually much sooner, and won't charge you or treat you differently for asking. If we say no, you can appeal by replying to our answer, and we'll explain our decision. If you're still unhappy, you can contact your state attorney general.</p>
+      <p><b>California residents:</b> we don't sell or "share" personal information, and we don't use sensitive personal information to infer anything about you. So there's nothing to opt out of, though we honor Global Privacy Control signals anyway. You have the rights to know, delete, correct and limit described above.</p>
+
+      <h2 id="providers">Service providers we use</h2>
+      <p>These companies help run iDID. They only ever handle encrypted journal data, or the limited details listed here.</p>
+      <ul>
+        <li><b>Supabase</b> (database and sign-in, hosted in the United States): stores your email address and the encrypted copies of what you sync.</li>
+        <li><b>Cloudflare</b> (website and app hosting, security, the Turnstile sign-in check, and forwarding mail sent to idid.care addresses): sees ordinary web traffic, such as IP addresses.</li>
+        <li><b>Resend</b> (email delivery): sends sign-in codes, so it sees your email address and the code.</li>
+        <li><b>Your browser's push service</b> (Google, Apple or Mozilla, depending on your device): delivers reminders you turn on. The text is always general, like "You have an appointment in 1 hour".</li>
+      </ul>
+      <p>If we add or change a provider, we'll update this list first.</p>
+
+      <h2 id="age">Age</h2>
+      <p>iDID is for people aged 13 and older. We don't knowingly collect information from children under 13. If you think a child under 13 has set up the online circle, email us and we'll delete the account.</p>
+
+      <h2 id="breach">If something goes wrong</h2>
+      <p>Because your journal is encrypted with keys we never hold, a break-in at our servers wouldn't reveal what you wrote. If there's ever unauthorized access to your information, we'll tell you without unreasonable delay, and within 60 days at the latest, and notify regulators such as the Federal Trade Commission as the law requires.</p>
+
+      <h2 id="changes">Changes to this policy</h2>
+      <p>If we change how we handle your information, we'll update this page and its date, and tell you in the app's What's new before the change applies. We'll never start selling data or using it for advertising.</p>
+
       <h2>The honest limits</h2>
       <ul>
         <li>If you forget your passphrase <i>and</i> lose your recovery code, nobody can recover your journal, including us.</li>
@@ -72,6 +112,7 @@
 
       <h2>Not medical care</h2>
       <p>iDID is a journaling and support tool, not a medical device. It doesn't diagnose or treat any condition and is no substitute for professional care. In an emergency, call 911. For crisis support in the US, call or text 988.</p>
+      <p>iDID isn't a healthcare provider or a health plan, so HIPAA doesn't apply to it. Instead, iDID is built so that we simply can't read your journal, and the state health-data laws above apply. See also our <a href="/terms">terms of use</a>.</p>
 
       <h2>Contact</h2>
       <p>Questions about privacy: <a href="mailto:privacy@idid.care">privacy@idid.care</a>.</p>

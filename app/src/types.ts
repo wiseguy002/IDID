@@ -215,6 +215,8 @@ export interface DeviceSettings {
   quietEnd: string;
   /** Last app version this device has shown "What's new" for. */
   lastSeenVersion: string | null;
+  /** When this device's user confirmed they're 13+ and agreed to the terms and privacy policy (ms). */
+  termsAcceptedAt?: number;
   /** Show badges and celebrate milestones. */
   badges: boolean;
   /** Mood Garden: show check-ins as weather. */

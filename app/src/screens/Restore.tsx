@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { restoreOnNewDevice, sendCode, verifyCode } from '../sync/account';
 import { Switch } from '../components/ui';
 import { Icon } from '../components/Icon';
+import Captcha from '../components/Captcha';
+import { captchaEnabled } from '../lib/captcha';
 
 type Step = 'email' | 'code' | 'passphrase' | 'working' | 'recovery' | 'no-circle';
 
@@ -14,6 +16,8 @@ export default function Restore({ onDone, onBack }: { onDone: () => void; onBack
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [recovery, setRecovery] = useState('');
+  const [ctoken, setCtoken] = useState('');
+  const [ckey, setCkey] = useState(0);
   const [entries, setEntries] = useState(0);
   const [saved, setSaved] = useState(false);
 
@@ -44,10 +48,12 @@ export default function Restore({ onDone, onBack }: { onDone: () => void; onBack
           {step === 'email' && <>
             <h1>Welcome back</h1>
             <p>Sign in to bring your journal to this device. You'll need the email you use with your circle and your journal passphrase.</p>
-            <form className="stack" onSubmit={(e) => { e.preventDefault(); run(async () => { await sendCode(email.trim(), true); setStep('code'); }); }}>
+            <form className="stack" onSubmit={(e) => { e.preventDefault(); run(async () => { try { await sendCode(email.trim(), true, ctoken); setStep('code'); } finally { setCtoken(''); setCkey((k) => k + 1); } }); }}>
               <label className="field"><span>Email</span>
                 <input id="rs-email" className="input" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" /></label>
-              <button className="btn primary" disabled={busy || !email.includes('@')}>{busy ? 'Sending…' : 'Email me a code'}</button>
+              <Captcha onToken={setCtoken} resetKey={ckey} />
+              <p className="small muted">By signing in you confirm you're 13 or older and agree to the <a href="https://idid.care/terms" target="_blank" rel="noopener noreferrer">terms</a> and <a href="https://idid.care/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a>.</p>
+              <button className="btn primary" disabled={busy || !email.includes('@') || (captchaEnabled() && !ctoken)}>{busy ? 'Sending…' : captchaEnabled() && !ctoken ? 'One moment…' : 'Email me a code'}</button>
             </form>
           </>}
 

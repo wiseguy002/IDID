@@ -6,6 +6,8 @@ import { enablePush, pushAvailable } from '../sync/push';
 import { relTime, roleLabel } from '../lib/util';
 import { PageHead, Sheet } from '../components/ui';
 import { Icon } from '../components/Icon';
+import Captcha from '../components/Captcha';
+import { captchaEnabled } from '../lib/captcha';
 import { PALETTE } from '../lib/defaults';
 import { mergeMember } from '../lib/merge';
 import { InviteSheet } from '../components/Invites';
@@ -68,6 +70,8 @@ export default function Account() {
   const { go, toast, members } = useApp();
   const a = useAccount();
   const [email, setEmail] = useState(a.email);
+  const [ctoken, setCtoken] = useState('');
+  const [ckey, setCkey] = useState(0);
   const [code, setCode] = useState('');
   const [sent, setSent] = useState(false);
   const [pass, setPass] = useState('');
@@ -116,9 +120,11 @@ export default function Account() {
           <h3>Sign in with your email</h3>
           <p className="small muted">We'll email you a 6-digit code. No password to remember for this step. Your journal passphrase still protects your data.</p>
           {!sent ? (
-            <form onSubmit={(e) => { e.preventDefault(); run(async () => { await sendCode(email.trim()); setSent(true); }); }}>
+            <form onSubmit={(e) => { e.preventDefault(); run(async () => { try { await sendCode(email.trim(), false, ctoken); setSent(true); } finally { setCtoken(''); setCkey((k) => k + 1); } }); }}>
               <input id="acct-email" className="input" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" aria-label="Email" />
-              <button className="btn primary" style={{ marginTop: '.6rem' }} disabled={busy || !email.includes('@')}>Email me a code</button>
+              <Captcha onToken={setCtoken} resetKey={ckey} />
+              <p className="small muted">By signing in you confirm you're 13 or older and agree to the <a href="https://idid.care/terms" target="_blank" rel="noopener noreferrer">terms</a> and <a href="https://idid.care/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a>.</p>
+              <button className="btn primary" style={{ marginTop: '.6rem' }} disabled={busy || !email.includes('@') || (captchaEnabled() && !ctoken)}>{captchaEnabled() && !ctoken ? 'One moment…' : 'Email me a code'}</button>
             </form>
           ) : (
             <form onSubmit={(e) => { e.preventDefault(); run(() => verifyCode(email.trim(), code)); }}>

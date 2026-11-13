@@ -35,8 +35,11 @@ Lived experience:
 
 ## Commitment and thanks
 
-- **Clinical advisors:** a 60-minute call each quarter, plus reviewing a short document or a feature preview about once a month (1–2 hours). Usual honoraria are around $100–200 per hour or a flat amount per meeting. If funds are tight, be upfront, and offer credit on `/clinicians` (with permission) and a letter they can use for their CV.
-- **Lived-experience council:** a 45-minute call every two months, or written feedback, whichever each person prefers. Pay people for their time: gift cards or payment for each session. It's respectful and expected in lived-experience work. Let people take part without cameras, under a first name or pseudonym, and drop in or out without explanation.
+**Decision (November 2026): both groups start as volunteers.** Payment is planned for later, once there's funding (see `docs/STRATEGY.md`, section 3). Be upfront about this when inviting people, and keep the commitment light so volunteering stays fair.
+
+
+- **Clinical advisors:** a 60-minute call each quarter, plus reviewing a short document or a feature preview about once a month (1–2 hours). As thanks, offer credit on `/clinicians` (with permission), a letter they can use for their CV, and early say in what iDID builds. (When there's funding, typical honoraria are about $100–200 per hour.)
+- **Lived-experience council:** a 45-minute call every two months, or written feedback, whichever each person prefers. While it's volunteer, keep asks small, never require attendance, and say clearly that paying people for lived-experience work is the plan as soon as funding allows. Let people take part without cameras, under a first name or pseudonym, and drop in or out without explanation.
 - Everyone signs a short agreement covering confidentiality of unreleased features, no conflicts (for example, building a competing product), and that advice isn't a clinical relationship with any user.
 
 ## Agreement (one page)
@@ -66,7 +69,7 @@ Send screenshots and the `/clinicians` page a week ahead.
 >
 > I'm building iDID (idid.care), a free, end-to-end encrypted journal for people living with dissociation, DID and trauma responses, and the people who support them. It helps people notice what happens and what helps, prepare for therapy, and share a read-only view with their therapist only if they choose. We can't read anyone's journal, and there are no ads or data sales.
 >
-> I'm forming a small clinical advisory group to review safety and crisis wording, and to tell us what not to build. It's about one hour a quarter plus occasional short reviews. [I can offer an honorarium of $___ / I can't offer payment yet, but would gladly credit you and write a letter for your CV.]
+> I'm forming a small clinical advisory group to review safety and crisis wording, and to tell us what not to build. It's about one hour a quarter plus occasional short reviews. It's a volunteer role for now: iDID is free and unfunded. I'd gladly credit you (if you'd like) and write a letter for your CV, and I plan to offer honoraria once there's funding.
 >
 > Would you be open to a 20-minute call? There's an overview for clinicians at idid.care/clinicians.
 >
@@ -75,13 +78,13 @@ Send screenshots and the `/clinicians` page a week ahead.
 
 ## Message you can send (lived-experience council)
 
-> **Subject:** Help shape iDID: paid, flexible, private
+> **Subject:** Help shape iDID: flexible, private, volunteer
 >
 > Hi [name],
 >
 > iDID is a free, private journal for people living with dissociation and DID, and the people close to them. We'd like a few people with lived experience to try new features early and tell us honestly what helps and what doesn't.
 >
-> It's a short call every couple of months, or written feedback if you prefer. You can use a first name or a pseudonym, keep your camera off, and stop any time. We pay [$___] for each session. We'll never ask about your own journal, and we couldn't read it anyway.
+> It's a short call every couple of months, or written feedback if you prefer. You can use a first name or a pseudonym, keep your camera off, and stop any time. It's volunteer for now, since iDID is free and unfunded, but we plan to pay people for this as soon as we can. We'll never ask about your own journal, and we couldn't read it anyway.
 >
 > If you're interested, just reply and I'll send more details.
 
@@ -94,7 +97,7 @@ Send screenshots and the `/clinicians` page a week ahead.
 
 ## Owner to-dos
 
-1. Decide on honoraria (even a small amount helps) and fill it into the messages above.
+1. Volunteer for now (decided). Revisit payment when funding arrives.
 2. Pick 3 clinicians and 2–3 peer organizations to contact first.
 3. Set up a private shared folder for agendas and the agreement.
 4. When someone says yes, ask Claude to add the opt-in "help shape iDID" link and, with permission, a "reviewed by" note on the clinicians page.

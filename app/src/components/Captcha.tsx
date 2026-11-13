@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { t } from '../i18n';
 import { TURNSTILE_SITE_KEY, captchaEnabled, loadTurnstile } from '../lib/captcha';
 
 /**
@@ -13,18 +14,18 @@ export default function Captcha({ onToken, resetKey = 0 }: { onToken: (token: st
   useEffect(() => {
     if (!captchaEnabled() || !box.current) return;
     let gone = false;
-    loadTurnstile().then((t) => {
+    loadTurnstile().then((ts) => {
       if (gone || !box.current) return;
-      if (id.current) { t.reset(id.current); return; }
-      id.current = t.render(box.current, {
+      if (id.current) { ts.reset(id.current); return; }
+      id.current = ts.render(box.current, {
         sitekey: TURNSTILE_SITE_KEY,
         appearance: 'interaction-only',
         action: 'sign-in',
         callback: (token: string) => { setProblem(''); onToken(token); },
         'expired-callback': () => onToken(''),
-        'error-callback': () => { onToken(''); setProblem("The sign-in check didn't finish. Wait a moment and it will try again."); },
+        'error-callback': () => { onToken(''); setProblem(t("The sign-in check didn't finish. Wait a moment and it will try again.")); },
       });
-    }).catch((e: Error) => setProblem(e.message));
+    }).catch((e: Error) => setProblem(t(e.message)));
     return () => { gone = true; };
   }, [resetKey, onToken]);
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getLang, t } from '../i18n';
 import { store, track, uid, useAll } from '../db';
 import { useApp } from '../state';
 import { CRISIS, NEEDS, VERIFIED_ON, isZip, matchResources } from '../lib/resources';
@@ -10,15 +11,23 @@ import { Icon } from '../components/Icon';
 export function CrisisCard() {
   return (
     <div className="card warm" style={{ marginBottom: '.9rem' }}>
-      <h3 style={{ marginBottom: '.25rem' }}>Need help right now?</h3>
-      <p className="small" style={{ margin: '0 0 .6rem' }}>If you or someone else is in immediate danger, call <b>911</b>. For any kind of emotional crisis, you can reach a trained counselor any time, free:</p>
-      <div className="row" style={{ gap: '.45rem' }}>
-        <a className="btn sm primary" href="tel:988">Call 988</a>
-        <a className="btn sm" href="sms:988">Text 988</a>
-        <a className="btn sm" href="https://988lifeline.org/chat/" target="_blank" rel="noopener noreferrer">Chat with 988</a>
-        <a className="btn sm" href="sms:741741?&body=HOME">Text HOME to 741741</a>
-      </div>
-      <p className="tiny muted" style={{ margin: '.5rem 0 0' }}>988 also offers support in Spanish. Veterans: dial 988, then press 1.</p>
+      <h3 style={{ marginBottom: '.25rem' }}>{t('Need help right now?')}</h3>
+      <p className="small" style={{ margin: '0 0 .6rem' }}>{t('If you or someone else is in immediate danger, call 911. For any kind of emotional crisis, you can reach a trained counselor any time, free:')}</p>
+      {getLang() === 'es' ? (
+        <div className="row" style={{ gap: '.45rem' }}>
+          <a className="btn sm primary" href="tel:988">Llama al 988 y marca 2</a>
+          <a className="btn sm" href="sms:988?&body=AYUDA">Envía AYUDA al 988</a>
+          <a className="btn sm" href="https://988lifeline.org/es/servicios-de-traduccion/servicios-en-espanol/" target="_blank" rel="noopener noreferrer">Chat en español</a>
+        </div>
+      ) : (
+        <div className="row" style={{ gap: '.45rem' }}>
+          <a className="btn sm primary" href="tel:988">Call 988</a>
+          <a className="btn sm" href="sms:988">Text 988</a>
+          <a className="btn sm" href="https://988lifeline.org/chat/" target="_blank" rel="noopener noreferrer">Chat with 988</a>
+          <a className="btn sm" href="sms:741741?&body=HOME">Text HOME to 741741</a>
+        </div>
+      )}
+      <p className="tiny muted" style={{ margin: '.5rem 0 0' }}>{t('988 also offers support in Spanish: call 988 and press 2, or text AYUDA to 988. Veterans: dial 988, then press 1.')}</p>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { t } from '../i18n';
 import { store, uid, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { fmtDateTime, greeting, relTime, sinceLast, welcomeLine } from '../lib/util';
@@ -126,15 +127,15 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
       <button className="card accent" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '1rem', alignItems: 'center' }} onClick={() => go({ name: 'log' })}>
         <span className="brand-mark" style={{ width: 52, height: 52, background: 'var(--accent)', color: 'var(--accent-ink)' }}><Icon name="plus" size={26} /></span>
         <span>
-          <b style={{ fontSize: '1.1rem' }}>Something felt different</b><br />
-          <span className="small muted">Note it in a few taps — every step is optional.</span>
+          <b style={{ fontSize: '1.1rem' }}>{t('Something felt different')}</b><br />
+          <span className="small muted">{t('Note it in a few taps — every step is optional.')}</span>
         </span>
       </button>
 
       <div className="row" style={{ gap: '.45rem', margin: '-.2rem 0 1rem' }}>
-        {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'front' })}><Icon name="front" size={16} /> Who's here</button>}
-        <button className="btn sm" onClick={() => go({ name: 'missed' })}><Icon name="compass" size={16} /> What did I miss?</button>
-        <button className="btn sm" onClick={() => go({ name: 'voice' })}><Icon name="mic" size={16} /> Voice note</button>
+        {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'front' })}><Icon name="front" size={16} /> {t("Who's here")}</button>}
+        <button className="btn sm" onClick={() => go({ name: 'missed' })}><Icon name="compass" size={16} /> {t('What did I miss?')}</button>
+        <button className="btn sm" onClick={() => go({ name: 'voice' })}><Icon name="mic" size={16} /> {t('Voice note')}</button>
       </div>
 
       <WeeklyReflection />
@@ -142,7 +143,7 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
       {me && !me.tracked && (
         <button className="card soft" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '.9rem', alignItems: 'center' }} onClick={() => go({ name: 'supporters' })}>
           <span style={{ color: 'var(--accent)' }}><Icon name="heart" size={24} /></span>
-          <span><b>Supporting someone</b><br /><span className="small muted">What dissociation can look like, and what to say.</span></span>
+          <span><b>{t('Supporting someone')}</b><br /><span className="small muted">{t('What dissociation can look like, and what to say.')}</span></span>
         </button>
       )}
 
@@ -173,19 +174,19 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         </div>
       ) : (
         <div className="card soft">
-          <div className="eyebrow"><Icon name="sparkle" size={14} /> A question for today</div>
+          <div className="eyebrow"><Icon name="sparkle" size={14} /> {t('A question for today')}</div>
           <p>{reflection}</p>
           <div className="row">
-            <button className="btn sm" onClick={() => go({ name: 'log' })}>Yes, note it</button>
-            <button className="btn ghost sm" onClick={() => toast('Thank you for checking in.')}>All quiet</button>
+            <button className="btn sm" onClick={() => go({ name: 'log' })}>{t('Yes, note it')}</button>
+            <button className="btn ghost sm" onClick={() => toast(t('Thank you for checking in.'))}>{t('All quiet')}</button>
           </div>
         </div>
       )}
 
       <div className="card">
-        <div className="row between"><div className="eyebrow" style={{ margin: 0 }}><Icon name="clock" size={14} /> Coming up</div>
-          <button className="btn ghost sm" onClick={() => go({ name: 'appointments' })}>{soon.length ? 'All' : 'Add an appointment'}</button></div>
-        {soon.length === 0 ? <p className="small muted" style={{ margin: '.3rem 0 0' }}>No appointments in the next week.</p> : soon.map(({ a, next }) => (
+        <div className="row between"><div className="eyebrow" style={{ margin: 0 }}><Icon name="clock" size={14} /> {t('Coming up')}</div>
+          <button className="btn ghost sm" onClick={() => go({ name: 'appointments' })}>{soon.length ? t('All') : t('Add an appointment')}</button></div>
+        {soon.length === 0 ? <p className="small muted" style={{ margin: '.3rem 0 0' }}>{t('No appointments in the next week.')}</p> : soon.map(({ a, next }) => (
           <button key={a.id} className="entry" style={{ background: 'none', border: 0, padding: '.45rem 0' }} onClick={() => go({ name: 'appointments' })}>
             <span className="bar" style={{ background: 'var(--accent-2)' }} />
             <span><b>{a.title || kindLabel(a)}</b><br /><span className="small muted">{fmtDateTime(next)}{a.location ? ` · ${a.location}` : ''}</span></span>
@@ -233,24 +234,24 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
 
       <button className="card blue" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '.9rem', alignItems: 'center' }} onClick={() => go({ name: 'support' })}>
         <span style={{ color: 'var(--accent-2)' }}><Icon name="people" size={26} /></span>
-        <span><b>Find support{me?.support?.zip ? ` near ${me.support.zip}` : ''}</b><br />
-          <span className="small muted">{me?.support?.zip ? 'Specialists, helplines and community matched to your needs.' : 'Add your ZIP code to find therapists, crisis services and community near you.'}</span></span>
+        <span><b>{me?.support?.zip ? t('Find support near {zip}', { zip: me.support.zip }) : t('Find support')}</b><br />
+          <span className="small muted">{me?.support?.zip ? t('Specialists, helplines and community matched to your needs.') : t('Add your ZIP code to find therapists, crisis services and community near you.')}</span></span>
       </button>
 
       <div className="card soft" style={{ padding: '.9rem' }}>
-        <div className="eyebrow">My tools</div>
+        <div className="eyebrow">{t('My tools')}</div>
         <div className="row" style={{ gap: '.45rem' }}>
-          <button className="btn sm" onClick={() => go({ name: 'calm' })}><Icon name="sparkle" size={16} /> Calm space</button>
-          <button className="btn sm" onClick={() => go({ name: 'garden' })}><Icon name="leaf" size={16} /> Mood Garden</button>
-          <button className="btn sm" onClick={() => go({ name: 'body' })}><Icon name="body" size={16} /> Body basics</button>
-          <button className="btn sm" onClick={() => go({ name: 'safety' })}><Icon name="shield" size={16} /> Safety plan</button>
-          <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>
-          {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> Inner board</button>}
-          <button className="btn sm" onClick={() => go({ name: 'voice' })}><Icon name="mic" size={16} /> Voice notes</button>
-          <button className="btn sm" onClick={() => go({ name: 'supporters' })}><Icon name="heart" size={16} /> Supporting someone</button>
-          <button className="btn sm" onClick={() => go({ name: 'prep' })}><Icon name="clipboard" size={16} /> Prepare for therapy</button>
-          <button className="btn sm" onClick={() => go({ name: 'careteam' })}><Icon name="shield" size={16} /> Share with my therapist</button>
-          <button className="btn sm" onClick={() => go({ name: 'help' })}><Icon name="help" size={16} /> Help &amp; guides</button>
+          <button className="btn sm" onClick={() => go({ name: 'calm' })}><Icon name="sparkle" size={16} /> {t('Calm space')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'garden' })}><Icon name="leaf" size={16} /> {t('Mood Garden')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'body' })}><Icon name="body" size={16} /> {t('Body basics')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'safety' })}><Icon name="shield" size={16} /> {t('Safety plan')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> {t('Comfort kit')}</button>
+          {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> {t('Inner board')}</button>}
+          <button className="btn sm" onClick={() => go({ name: 'voice' })}><Icon name="mic" size={16} /> {t('Voice notes')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'supporters' })}><Icon name="heart" size={16} /> {t('Supporting someone')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'prep' })}><Icon name="clipboard" size={16} /> {t('Prepare for therapy')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'careteam' })}><Icon name="shield" size={16} /> {t('Share with my therapist')}</button>
+          <button className="btn sm" onClick={() => go({ name: 'help' })}><Icon name="help" size={16} /> {t('Help & guides')}</button>
         </div>
       </div>
 

@@ -694,6 +694,17 @@
       "changelog": [
         "Anonymous counts"
       ]
+    },
+    {
+      "name": "Spanish (Español)",
+      "match": "español",
+      "requiredIn": [
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Español"
+      ]
     }
   ]
 }

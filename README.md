@@ -34,6 +34,7 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Voice notes** | Up to 2 minutes, recorded in the browser and stored inside an encrypted record. Always private. |
 | **Weekly reflection** | Optional weekend look-back: a gentle summary and three questions. Never scored; skippable. |
 | **Supporting someone** | Guide for partners, family and friends with words to try, things to do and to avoid. |
+| **Languages** | English, and **Español** (beta): setup, lock and sign-in, Home, Pause, safety plan, What did I miss? and Spanish crisis options. Other screens fall back to English. See `docs/I18N.md`. |
 | **Pause** | Breathing, **box breathing** (build a group of boxes), 5-4-3-2-1 grounding, "right now" orientation, crisis lines. |
 | **Sensory comfort** | Morning, Meadow, Dusk (dark) and High contrast themes; 4 text sizes; calm motion; readable font. No sounds, vibration or flashing. |
 | **Privacy** | Encrypted on the device with your passphrase (AES-256-GCM) and a recovery code; auto-lock; end-to-end encrypted sync. See [docs/SECURITY.md](docs/SECURITY.md). |

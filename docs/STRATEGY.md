@@ -29,6 +29,8 @@ Decisions and options for where iDID goes next. Items marked **Owner decision** 
 
 ## 2. Clinical advisory group
 
+The fuller plan is in `docs/ADVISORY_GROUP.md`: two groups (clinical advisors and a lived-experience council), where to find people, honoraria, a one-page agreement, a first-meeting agenda and messages you can send.
+
 **Owner decision:** who to invite. A starting charter:
 
 - **Purpose:** review new features, wording and safety flows. Advise on what *not* to build. Flag harm (for example, features that could reinforce avoidance, or be used to monitor someone).
@@ -93,7 +95,7 @@ Deferred, at your request. The PWA works on all phones today.
 
 ## 6. Spanish
 
-**Status: planned.** It's large, so it needs its own PR series.
+**Status: phase 1 built.** It covers the translation layer, the language picker and the core screens; see `docs/I18N.md` for coverage and the glossary. Next: native-speaker review, then the remaining screens and the website.
 
 - **Scope:** about 40 screens, 34 help guides, the tour, the supporter guide, the Learn and clinicians pages, and the privacy policy and terms. That's roughly 25,000 words of user-facing text.
 - **Approach:**

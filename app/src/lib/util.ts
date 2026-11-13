@@ -1,23 +1,24 @@
 import type { Entry, Member, Part, Duration, PartWord } from '../types';
 import { DURATIONS, ROLE_LABELS } from '../types';
 import { MOODS } from './defaults';
+import { getLang, locale, t, tn } from '../i18n';
 
-export const fmtDate = (t: number) =>
-  new Date(t).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
-export const fmtTime = (t: number) =>
-  new Date(t).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-export const fmtDateTime = (t: number) => `${fmtDate(t)}, ${fmtTime(t)}`;
+export const fmtDate = (at: number) =>
+  new Date(at).toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' });
+export const fmtTime = (at: number) =>
+  new Date(at).toLocaleTimeString(locale(), { hour: 'numeric', minute: '2-digit' });
+export const fmtDateTime = (at: number) => `${fmtDate(at)}, ${fmtTime(at)}`;
 
-export function relTime(t: number): string {
-  const d = Date.now() - t;
+export function relTime(at: number): string {
+  const d = Date.now() - at;
   const m = Math.round(d / 60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return `${m} min ago`;
+  if (m < 1) return t('just now');
+  if (m < 60) return t('{n} min ago', { n: m });
   const h = Math.round(m / 60);
-  if (h < 24) return `${h} hour${h === 1 ? '' : 's'} ago`;
+  if (h < 24) return tn(h, '{n} hour ago', '{n} hours ago');
   const days = Math.round(h / 24);
-  if (days < 7) return `${days} day${days === 1 ? '' : 's'} ago`;
-  return fmtDate(t);
+  if (days < 7) return tn(days, '{n} day ago', '{n} days ago');
+  return fmtDate(at);
 }
 
 /** yyyy-MM-ddTHH:mm in local time, for <input type="datetime-local"> */
@@ -32,6 +33,11 @@ export const moodLabel = (m: number | null) => MOODS.find((x) => x.value === m)?
 export const roleLabel = (m: Member) => ROLE_LABELS[m.role];
 
 export function partWords(w: PartWord) {
+  if (getLang() === 'es') {
+    const es: Record<PartWord, [string, string]> = { parts: ['parte', 'partes'], alters: ['alter', 'alters'], headmates: ['compañero interno', 'compañeros internos'], selves: ['yo', 'yoes'] };
+    const [one, many] = es[w];
+    return { one, many, One: cap(one), Many: cap(many) };
+  }
   const singular: Record<PartWord, string> = { parts: 'part', alters: 'alter', headmates: 'headmate', selves: 'self' };
   return { one: singular[w], many: w, One: cap(singular[w]), Many: cap(w) };
 }

@@ -14,6 +14,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-11-13
+
+Safer sign-in, and clear terms and privacy rights.
+
 ### Added
 - Terms of use at idid.care/terms. Setup now asks you to confirm you're 13 or older and agree to the terms.
 - The privacy policy now explains your rights over health information under US state laws (Washington, Nevada, Connecticut and California), lists the companies that help run iDID, and says what we'd do if something went wrong.
@@ -236,7 +240,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.13.2...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/wiseguy002/IDID/compare/v0.13.2...v0.14.0
 [0.13.2]: https://github.com/wiseguy002/IDID/compare/v0.13.1...v0.13.2
 [0.13.1]: https://github.com/wiseguy002/IDID/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/wiseguy002/IDID/compare/v0.12.1...v0.13.0

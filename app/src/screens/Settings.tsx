@@ -82,6 +82,7 @@ export default function Settings() {
         <div className="eyebrow">I call them</div>
         <Segmented label="Word for parts" value={s.partWord} onChange={(v: PartWord) => up({ partWord: v })}
           options={[{ value: 'parts', label: 'Parts' }, { value: 'alters', label: 'Alters' }, { value: 'headmates', label: 'Headmates' }, { value: 'selves', label: 'Selves' }]} />
+        <Switch label="Weekly reflection" hint="On the weekend, a gentle look back at your week. Never scored, always skippable" checked={!!s.weeklyReflection} onChange={(v) => up({ weeklyReflection: v })} />
         <Switch label="Looking-back check-ins" hint="When you return, gently ask if there's anything to add about a recent moment" checked={s.showCheckIn} onChange={(v) => up({ showCheckIn: v })} />
       </div>
       <div className="card">

@@ -6,6 +6,7 @@ import { sleepInsight } from '../lib/body';
 import { moodLabel, partWords } from '../lib/util';
 import { ChipSelect, Empty, PageHead, Segmented } from '../components/ui';
 import { Icon } from '../components/Icon';
+import { PastReflections } from '../components/WeeklyReflection';
 
 export function Bars({ data, max = 6, color }: { data: [string, number][]; max?: number; color?: string }) {
   if (!data.length) return <p className="small muted">Nothing noted yet.</p>;
@@ -147,6 +148,7 @@ export default function Insights() {
           <button className="btn block" onClick={() => go({ name: 'share' })}><Icon name="share" size={18} /> Export or share with a clinician</button>
         </div>
       )}
+      <PastReflections />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import Restore from './Restore';
 
 export default function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
+  const [agreed, setAgreed] = useState(false);
   const [returning, setReturning] = useState(() => takeStartWithSignIn() && cloudConfigured());
   const [mode, setMode] = useState<'self' | 'support'>('self');
   const [myName, setMyName] = useState('');
@@ -79,7 +80,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       members.push(them);
       subjectId = them.id;
     }
-    updateDevice({ theme, textSize, reduceMotion, activeMemberId: me.id, lastOpenedAt: null });
+    updateDevice({ theme, textSize, reduceMotion, activeMemberId: me.id, lastOpenedAt: null, termsAcceptedAt: Date.now() });
     await updatePrefs({ circleName: circleName.trim(), partWord });
     await store.putMany('parts', partNames.map((n, i) => ({ id: uid(), memberId: subjectId, name: n, color: PALETTE[(i + 2) % PALETTE.length], createdAt: now + i })));
     if (isZip(zip) || needs.length) {
@@ -106,7 +107,9 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
         <h3>Private by design</h3>
         <p className="small" style={{ margin: 0 }}>Everything you write is encrypted on this device with a passphrase only you know. If you later connect a trust circle, entries are encrypted before they leave your device, so even our server can't read them.</p>
       </div>
-      <p className="muted small">iDID is a journaling tool, not a medical device or a replacement for professional care.</p>
+      <p className="muted small">iDID is a journaling tool, not a medical device or a replacement for professional care. In an emergency, call 911, or call or text 988.</p>
+      <Switch label="I'm 13 or older, and I agree to the terms" hint="Read the terms of use and privacy policy at idid.care" checked={agreed} onChange={setAgreed} />
+      <p className="small" style={{ margin: 0 }}><a href="https://idid.care/terms" target="_blank" rel="noopener noreferrer">Terms of use</a> · <a href="https://idid.care/privacy" target="_blank" rel="noopener noreferrer">Privacy policy</a></p>
       {cloudConfigured() && <button className="btn block" onClick={() => setReturning(true)} disabled={busy}><Icon name="people" size={18} /> I already use iDID</button>}
       <button className="btn ghost sm" onClick={sample} disabled={busy}>Just looking? Explore with a sample circle</button>
     </div>,
@@ -180,7 +183,8 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     </div>,
   ];
 
-  const canNext = step === 1 ? !!(myName.trim() && (mode === 'self' || theirName.trim()))
+  const canNext = step === 0 ? agreed
+    : step === 1 ? !!(myName.trim() && (mode === 'self' || theirName.trim()))
     : step === 4 ? strength.ok && pass === pass2 && !busy
     : step === 5 ? savedCode
     : step === 6 ? !zip || isZip(zip) : true;

@@ -605,6 +605,83 @@
       "changelog": [
         "Mood Garden"
       ]
+    },
+    {
+      "name": "Who's here (fronting log)",
+      "match": "who's here|who&#39;s here|who’s here",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "jsonld",
+        "security"
+      ],
+      "changelog": [
+        "Who's here"
+      ]
+    },
+    {
+      "name": "What did I miss?",
+      "match": "what did i miss",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "jsonld"
+      ],
+      "changelog": [
+        "What did I miss?"
+      ]
+    },
+    {
+      "name": "Voice notes",
+      "match": "voice notes?",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "jsonld",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Voice notes"
+      ]
+    },
+    {
+      "name": "Weekly reflection",
+      "match": "weekly reflection",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme"
+      ],
+      "changelog": [
+        "Weekly reflection"
+      ]
+    },
+    {
+      "name": "Supporting someone guide",
+      "match": "supporting someone",
+      "requiredIn": [
+        "home",
+        "fact",
+        "release",
+        "help",
+        "readme",
+        "jsonld"
+      ],
+      "changelog": [
+        "Supporting someone"
+      ]
     }
   ]
 }

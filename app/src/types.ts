@@ -215,6 +215,10 @@ export interface DeviceSettings {
   quietEnd: string;
   /** Last app version this device has shown "What's new" for. */
   lastSeenVersion: string | null;
+  /** When this device's user confirmed they're 13+ and agreed to the terms and privacy policy (ms). */
+  termsAcceptedAt?: number;
+  /** Offer a gentle look back at the week on Sundays. */
+  weeklyReflection?: boolean;
   /** Show badges and celebrate milestones. */
   badges: boolean;
   /** Mood Garden: show check-ins as weather. */
@@ -473,4 +477,45 @@ export interface CareShare {
   updatedAt: number;
   publishedAt: number | null;
   publishedHash: string;
+}
+
+/** A quick "who's here" log: who was fronting from this moment on. Always private to the person. */
+export interface FrontLog {
+  id: ID;
+  /** The tracked person whose system this is. */
+  memberId: ID;
+  /** Parts present now (first is in front; the rest co-fronting). */
+  partIds: ID[];
+  /** Not sure who's here. */
+  unknown: boolean;
+  /** Things feel blurry or far away. */
+  blurry: boolean;
+  note: string;
+  at: number;
+}
+
+/** A short encrypted voice recording. The audio lives inside the encrypted record. */
+export interface VoiceNote {
+  id: ID;
+  memberId: ID;
+  /** Part speaking, if known. */
+  partId: ID | null;
+  title: string;
+  mime: string;
+  /** Base64 audio. Kept short (2 minutes) so each note fits in one encrypted record. */
+  audio: string;
+  durationMs: number;
+  createdAt: number;
+}
+
+/** A weekly gentle reflection. */
+export interface Reflection {
+  id: ID;
+  memberId: ID;
+  /** Start of the week it looks back on (ms, local midnight). */
+  weekOf: number;
+  helped: string;
+  hard: string;
+  hope: string;
+  createdAt: number;
 }

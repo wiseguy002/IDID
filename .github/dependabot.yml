@@ -1,0 +1,21 @@
+# Weekly dependency updates. Security fixes arrive as soon as GitHub publishes an advisory.
+# Every update PR runs the full CI (types, tests, build, website and database checks) before anyone merges it.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /app
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: npm
+    directory: /site
+    schedule:
+      interval: monthly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

@@ -132,11 +132,16 @@ export function lockAccount() {
   if (state.phase !== 'off') set({ phase: remote ? 'needs-keys' : 'signed-out', status: 'idle' });
 }
 
-/** Email a sign-in code. `existingOnly` (signing in on a new device) never creates a new account. */
-export async function sendCode(email: string, existingOnly = false) {
+/**
+ * Email a sign-in code. `existingOnly` (signing in on a new device) never creates a new account.
+ * `captchaToken` comes from the Turnstile check (see components/Captcha.tsx); each token works once.
+ */
+export async function sendCode(email: string, existingOnly = false, captchaToken?: string) {
   const redirect = location.origin + location.pathname;
-  const { error } = await supabase().auth.signInWithOtp({ email, options: { emailRedirectTo: redirect, shouldCreateUser: !existingOnly } });
+  const { error } = await supabase().auth.signInWithOtp({ email, options: { emailRedirectTo: redirect, shouldCreateUser: !existingOnly, captchaToken: captchaToken || undefined } });
   if (error) {
+    if (/captcha/i.test(error.message)) throw new Error("The sign-in check didn't go through. Wait a moment for it to finish, then try again.");
+    if (/rate limit|too many|security purposes/i.test(error.message)) throw new Error('Too many codes were requested just now. Please wait a few minutes, then try again.');
     if (existingOnly && /signups? not allowed|not found|otp_disabled/i.test(error.message)) throw new Error("We couldn't find an iDID account for that email. Check the spelling, or set up iDID as new.");
     throw new Error(error.message);
   }

@@ -30,7 +30,11 @@ export type Route =
   /** Care team & shared views. memberId/newName prefill a new view; fromCircle is the account to move out of the circle. */
   | { name: 'careteam'; memberId?: string; newName?: string; fromCircle?: string }
   | { name: 'help'; topic?: string }
-  | { name: 'garden' };
+  | { name: 'garden' }
+  | { name: 'front' }
+  | { name: 'missed' }
+  | { name: 'voice' }
+  | { name: 'supporters' };
 
 export interface AppCtx {
   settings: Settings;

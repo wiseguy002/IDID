@@ -3,6 +3,7 @@ import { store, uid, useAll } from '../db';
 import { canSee, useApp } from '../state';
 import { fmtDateTime, greeting, relTime, sinceLast, welcomeLine } from '../lib/util';
 import { Icon } from '../components/Icon';
+import { WeeklyReflection } from '../components/WeeklyReflection';
 import { useUpcoming } from './Appointments';
 import { kindLabel } from '../lib/schedule';
 import { APP_VERSION, RELEASES } from '../version';
@@ -130,6 +131,21 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
         </span>
       </button>
 
+      <div className="row" style={{ gap: '.45rem', margin: '-.2rem 0 1rem' }}>
+        {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'front' })}><Icon name="front" size={16} /> Who's here</button>}
+        <button className="btn sm" onClick={() => go({ name: 'missed' })}><Icon name="compass" size={16} /> What did I miss?</button>
+        <button className="btn sm" onClick={() => go({ name: 'voice' })}><Icon name="mic" size={16} /> Voice note</button>
+      </div>
+
+      <WeeklyReflection />
+
+      {me && !me.tracked && (
+        <button className="card soft" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', gap: '.9rem', alignItems: 'center' }} onClick={() => go({ name: 'supporters' })}>
+          <span style={{ color: 'var(--accent)' }}><Icon name="heart" size={24} /></span>
+          <span><b>Supporting someone</b><br /><span className="small muted">What dissociation can look like, and what to say.</span></span>
+        </button>
+      )}
+
       {requests.map((r) => {
         const e = entries.find((x) => x.id === r.entryId);
         if (!e) return null;
@@ -230,6 +246,8 @@ export default function Home({ prevOpened }: { prevOpened: number | null }) {
           <button className="btn sm" onClick={() => go({ name: 'safety' })}><Icon name="shield" size={16} /> Safety plan</button>
           <button className="btn sm" onClick={() => go({ name: 'comfort' })}><Icon name="box" size={16} /> Comfort kit</button>
           {me?.tracked && <button className="btn sm" onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> Inner board</button>}
+          <button className="btn sm" onClick={() => go({ name: 'voice' })}><Icon name="mic" size={16} /> Voice notes</button>
+          <button className="btn sm" onClick={() => go({ name: 'supporters' })}><Icon name="heart" size={16} /> Supporting someone</button>
           <button className="btn sm" onClick={() => go({ name: 'prep' })}><Icon name="clipboard" size={16} /> Prepare for therapy</button>
           <button className="btn sm" onClick={() => go({ name: 'careteam' })}><Icon name="shield" size={16} /> Share with my therapist</button>
           <button className="btn sm" onClick={() => go({ name: 'help' })}><Icon name="help" size={16} /> Help &amp; guides</button>

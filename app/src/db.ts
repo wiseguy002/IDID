@@ -118,6 +118,9 @@ export interface Backup {
   meds?: KindMap['meds'][];
   comfort?: KindMap['comfort'][];
   prep?: KindMap['prep'][];
+  fronts?: KindMap['fronts'][];
+  voice?: KindMap['voice'][];
+  reflections?: KindMap['reflections'][];
   prefs?: Prefs;
 }
 
@@ -126,13 +129,14 @@ export function exportAll(): Backup {
     app: 'idid', version: 2, appVersion: APP_VERSION, exportedAt: new Date().toISOString(),
     members: store.all('members'), parts: store.all('parts'), entries: store.all('entries'),
     observations: store.all('observations'), appointments: store.all('appointments'), contacts: store.all('contacts'), checkins: store.all('checkins'), activity: store.all('activity'), safety: store.all('safety'), board: store.all('board'), body: store.all('body'),
-    meds: store.all('meds'), comfort: store.all('comfort'), prep: store.all('prep'), prefs: getPrefs(),
+    meds: store.all('meds'), comfort: store.all('comfort'), prep: store.all('prep'),
+    fronts: store.all('fronts'), voice: store.all('voice'), reflections: store.all('reflections'), prefs: getPrefs(),
   };
 }
 
 export async function importAll(b: Partial<Backup> & { app: string }, mode: 'merge' | 'replace') {
   if (b.app !== 'idid') throw new Error('This file is not an iDID backup.');
-  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity', 'safety', 'board', 'body', 'meds', 'comfort', 'prep'] as const;
+  const kinds = ['members', 'parts', 'entries', 'observations', 'appointments', 'contacts', 'checkins', 'activity', 'safety', 'board', 'body', 'meds', 'comfort', 'prep', 'fronts', 'voice', 'reflections'] as const;
   if (mode === 'replace') {
     for (const k of kinds) for (const r of store.all(k)) await store.remove(k, r.id);
   }
@@ -191,6 +195,9 @@ export function factsFor(memberId: string, extra: { online: boolean; notificatio
     appointments: store.all('appointments').filter((a) => !a.memberIds.length || a.memberIds.includes(memberId)).length,
     careShares: store.all('careShares').filter((c) => c.subjectId === memberId).length,
     invitesSent: store.all('invitations').filter((i) => i.createdBy === memberId).length,
+    fronts: store.all('fronts').filter((x) => x.memberId === memberId).length,
+    voiceNotes: store.all('voice').filter((x) => x.memberId === memberId).length,
+    weeklyReflections: store.all('reflections').filter((x) => x.memberId === memberId && !!(x.helped || x.hard || x.hope)).length,
     ...extra,
   };
 }

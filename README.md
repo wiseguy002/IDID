@@ -1,6 +1,6 @@
 # iDID — a gentle journal
 
-**Current version: 0.13.2** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.15.0** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
 iDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 
@@ -29,6 +29,11 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Timeline & Patterns** | Search and filters; mood trend, triggers, fronting, triggers per part, places, day × time heatmap. |
 | **Share & export** | Clinician summary (print/PDF), CSV, full backup and restore. |
 | **Mood Garden** | One plant per part (or per person, including family members), grown only by care: moments, check-ins, pauses, box breathing, kind notes. Choose plant types and names; optional weather from check-ins (wind and storms on hard days, plants keep growing); seasons or always spring; gentle "ways to help it grow" ideas linked to the rest of the app, and a tally of what you've already done. |
+| **Who's here** | Two-tap fronting log (co-fronting, "not sure", blurry), front history, patterns (time in front, usual times, common hand-overs) and inner-board notes surfaced when the part they're for arrives. Always private. |
+| **What did I miss?** | After lost time: grounding with today's date, then everything noted in iDID during the gap (fronts, moments, board and voice notes, circle notes, check-ins, appointments) and what's coming up. |
+| **Voice notes** | Up to 2 minutes, recorded in the browser and stored inside an encrypted record. Always private. |
+| **Weekly reflection** | Optional weekend look-back: a gentle summary and three questions. Never scored; skippable. |
+| **Supporting someone** | Guide for partners, family and friends with words to try, things to do and to avoid. |
 | **Pause** | Breathing, **box breathing** (build a group of boxes), 5-4-3-2-1 grounding, "right now" orientation, crisis lines. |
 | **Sensory comfort** | Morning, Meadow, Dusk (dark) and High contrast themes; 4 text sizes; calm motion; readable font. No sounds, vibration or flashing. |
 | **Privacy** | Encrypted on the device with your passphrase (AES-256-GCM) and a recovery code; auto-lock; end-to-end encrypted sync. See [docs/SECURITY.md](docs/SECURITY.md). |

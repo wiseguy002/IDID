@@ -14,7 +14,7 @@ import type { Activity } from '../types';
 
 export type EventName =
   | 'tour' | 'pause' | 'patterns' | 'timeline' | 'export' | 'calendar' | 'support-viewed'
-  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered' | 'box-breath' | 'help' | 'garden';
+  | 'kind-sent' | 'kind-received' | 'kind-act' | 'request' | 'comfort' | 'whats-new' | 'calm' | 'calm-helped' | 'calm-answered' | 'box-breath' | 'help' | 'garden' | 'missed' | 'supporters';
 
 /** Counts the app derives from stored data for one person. */
 export interface Facts {
@@ -42,6 +42,10 @@ export interface Facts {
   careShares: number;
   /** Invites this person has made for the online circle. */
   invitesSent: number;
+  /** "Who's here" notes. */
+  fronts?: number;
+  voiceNotes?: number;
+  weeklyReflections?: number;
 }
 
 export interface Feature {
@@ -67,6 +71,11 @@ export const FEATURES: Feature[] = [
   { id: 'pause', name: 'Pause tools', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathing, box breathing, 5-4-3-2-1 grounding and "right now" orientation.', used: (_f, a) => ev(a, 'pause'), tipPriority: 2, tip: 'Pause has breathing and grounding tools for when things feel like too much.' },
   { id: 'help', name: 'Help & guides', group: 'Make it yours', route: { name: 'help' }, about: 'Step-by-step guides to everything in iDID.', used: (_f, a) => ev(a, 'help'), tipPriority: 6, tip: 'Help & guides walks through everything in iDID, from logging a moment to sharing with your therapist.' },
   { id: 'garden', name: 'Mood Garden', group: 'Calm & coping', route: { name: 'garden' }, about: 'A plant for each part, grown by the ways you look after yourself.', used: (_f, a) => ev(a, 'garden'), tipPriority: 3, tip: 'Your Mood Garden grows from check-ins, pauses and the moments you notice. Nothing in it ever wilts.' },
+  { id: 'fronting', name: "Who's here", group: 'Noticing', route: { name: 'front' }, about: 'Note which parts are around in two taps, and see gentle patterns.', used: (f) => (f.fronts ?? 0) > 0, tipPriority: 6, tip: "Who's here lets you note which parts are around in two taps, and shows notes left for them on the inner board." },
+  { id: 'missed', name: 'What did I miss?', group: 'Calm & coping', route: { name: 'missed' }, about: 'After lost time: the date, then what happened in iDID during the gap.', used: (_f, a) => ev(a, 'missed'), tipPriority: 4, tip: 'After lost time, What did I miss? shows the date and gathers what happened in iDID while you were away.' },
+  { id: 'voice', name: 'Voice notes', group: 'Noticing', route: { name: 'voice' }, about: 'Record up to two minutes in your own voice, encrypted.', used: (f) => (f.voiceNotes ?? 0) > 0 },
+  { id: 'reflection', name: 'Weekly reflection', group: 'Noticing', route: { name: 'settings' }, about: 'A gentle look back at your week, on the weekend.', used: (f) => (f.weeklyReflections ?? 0) > 0 },
+  { id: 'supporters', name: 'Supporting someone', group: 'Together', route: { name: 'supporters' }, about: 'Words to try and things to do when someone dissociates.', used: (_f, a) => ev(a, 'supporters') },
   { id: 'box', name: 'Box breathing', group: 'Calm & coping', route: { name: 'pause' }, about: 'Breathe in a square and build a little group of boxes.', used: (_f, a) => ev(a, 'box-breath') },
   { id: 'calm', name: 'Calm space', group: 'Calm & coping', route: { name: 'calm' }, about: 'Ripples, light trails and drifting lights to unwind for a minute.', used: (_f, a) => ev(a, 'calm'), tipPriority: 3, tip: 'The Calm space is a quiet minute of ripples or drifting lights, with nothing to do and nothing to win.' },
   { id: 'checkins', name: 'Gentle check-ins', group: 'Calm & coping', route: { name: 'settings' }, about: 'A kind word and a small idea, a few times a day.', used: (f) => f.checkins > 0 },

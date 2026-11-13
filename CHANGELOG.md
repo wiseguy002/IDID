@@ -14,7 +14,31 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Added
+- A page for therapists and other clinicians at idid.care/clinicians: what clients can bring to sessions, how sharing works, and what iDID isn't.
+
+## [0.15.0] - 2026-11-13
+
+Knowing who's here, finding your way back after lost time, and help for the people who support you.
+
+### Added
+- **Who's here**: note which parts are around in two taps, including co-fronting, "not sure" and when things feel blurry. See your front history and gentle patterns: roughly how long each part is around, when they usually arrive, and common hand-overs. Notes left on the inner board for a part now appear as soon as that part is here.
+- **What did I miss?**: for after lost time. It starts with today's date and a moment to ground, then gathers everything noted in iDID during the gap, and what's coming up next.
+- **Voice notes**: record up to two minutes when typing is too much. Encrypted on your device and private to you.
+- **Weekly reflection** (turn it on in Settings): on the weekend, a gentle look back at your week with three optional questions. Never scored, always skippable. Past reflections appear on Patterns.
+- **Supporting someone**: a guide for partners, family and friends, with words to try and things to do when someone feels far away, has a different part around, has lost time, or is overwhelmed.
+- The sample circle now includes two weeks of "who's here" notes and a note waiting for a part.
+
+## [0.14.0] - 2026-11-13
+
+Safer sign-in, and clear terms and privacy rights.
+
+### Added
+- Terms of use at idid.care/terms. Setup now asks you to confirm you're 13 or older and agree to the terms.
+- The privacy policy now explains your rights over health information under US state laws (Washington, Nevada, Connecticut and California), lists the companies that help run iDID, and says what we'd do if something went wrong.
+
 ### Changed
+- Signing in now includes a quick check that you're a person, not a bot. Most people never see it. It keeps sign-in emails flowing for everyone.
 - The website home page now shows the Mood Garden, on a sunny day and in a storm.
 
 ## [0.13.2] - 2026-11-12
@@ -231,7 +255,9 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.13.2...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/wiseguy002/IDID/compare/v0.14.0...v0.15.0
+[0.14.0]: https://github.com/wiseguy002/IDID/compare/v0.13.2...v0.14.0
 [0.13.2]: https://github.com/wiseguy002/IDID/compare/v0.13.1...v0.13.2
 [0.13.1]: https://github.com/wiseguy002/IDID/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/wiseguy002/IDID/compare/v0.12.1...v0.13.0

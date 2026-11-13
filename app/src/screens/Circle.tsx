@@ -101,6 +101,7 @@ export default function Circle() {
         <button className="btn sm" onClick={() => go({ name: 'support' })}><Icon name="heart" size={16} /> Find support</button>
         <button className="btn sm" onClick={() => go({ name: 'account' })}><Icon name="people" size={16} /> Connect devices & invite</button>
         <button className="btn sm" onClick={() => go({ name: 'careteam' })}><Icon name="shield" size={16} /> Therapist &amp; care team</button>
+        <button className="btn sm" onClick={() => go({ name: 'supporters' })}><Icon name="heart" size={16} /> Supporting someone</button>
       </div>
       <div className="card">
         <div className="row between"><h2 style={{ margin: 0 }}>People</h2>
@@ -128,7 +129,10 @@ export default function Circle() {
           <div className="card" key={t.id}>
             <div className="row between"><h2 style={{ margin: 0 }}>{t.id === me?.id ? `My ${w.many}` : `${t.name}'s ${w.many}`}</h2>
               <button className="btn sm" onClick={() => setEditP(newPart(t.id))}><Icon name="plus" size={17} /> Add</button></div>
-            <button className="btn sm" style={{ marginTop: '.6rem' }} onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> Inner board</button>
+            <div className="row" style={{ marginTop: '.6rem', gap: '.45rem' }}>
+              <button className="btn sm" onClick={() => go({ name: 'board' })}><Icon name="board" size={16} /> Inner board</button>
+              {t.id === me?.id && <button className="btn sm" onClick={() => go({ name: 'front' })}><Icon name="front" size={16} /> Who's here</button>}
+            </div>
             {active.length === 0 && <p className="small muted" style={{ marginTop: '.6rem' }}>No {w.many} added yet. Add them whenever it feels right — or never. Both are okay.</p>}
             <div className="chips" style={{ marginTop: '.7rem' }}>
               {active.map((p) => <button key={p.id} className="chip" onClick={() => setEditP(p)}><span className="dot" style={{ background: p.color }} />{p.name}{p.pronouns ? <span className="muted small">({p.pronouns})</span> : null}</button>)}

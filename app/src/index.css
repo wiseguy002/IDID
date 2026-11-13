@@ -316,3 +316,14 @@ textarea.input { min-height: 96px; resize: vertical; }
 .care-ideas li > div { display: grid; gap: .15rem; min-width: 0; }
 .care-ideas .btn { flex-shrink: 0; }
 @media (max-width: 380px) { .care-ideas li { flex-direction: column; align-items: stretch; } }
+
+.captcha:empty { display: none; }
+.captcha { margin: .6rem 0; }
+
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+.meter { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: .25rem; }
+.meter > i { display: block; height: 100%; border-radius: 99px; }
+.ground-now { font-size: 1.35rem; font-weight: 700; margin: .2rem 0; }
+.rec-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #c0392b; animation: pulse 1.2s ease-in-out infinite; vertical-align: middle; }
+@keyframes pulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .rec-dot { animation: none; } }

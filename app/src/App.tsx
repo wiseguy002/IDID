@@ -32,6 +32,10 @@ import Calm from './screens/Calm';
 import CareTeam from './screens/CareTeam';
 import Help from './screens/Help';
 import Garden from './screens/Garden';
+import Fronting from './screens/Fronting';
+import Missed from './screens/Missed';
+import VoiceNotes from './screens/VoiceNotes';
+import Supporters from './screens/Supporters';
 import { CheckOnSheet } from './components/CheckOn';
 import { Cover, useHideShortcut } from './components/QuickHide';
 import { OfflineNotice } from './components/OfflineNotice';
@@ -224,6 +228,10 @@ export default function App() {
           {route.name === 'careteam' && <CareTeam />}
           {route.name === 'help' && <Help />}
           {route.name === 'garden' && <Garden />}
+          {route.name === 'front' && <Fronting />}
+          {route.name === 'missed' && <Missed prevOpened={prevOpened ?? null} />}
+          {route.name === 'voice' && <VoiceNotes />}
+          {route.name === 'supporters' && <Supporters />}
           {route.name === 'prep' && <Prep key={route.appointmentId ?? 'next'} appointmentId={route.appointmentId} />}
         </main>
         {!inWizard && (

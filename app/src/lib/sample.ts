@@ -48,6 +48,17 @@ export async function loadSample() {
     });
   }
   await store.putMany('parts', parts);
+  // Two weeks of "who's here": Wren most mornings, Kai on busy afternoons, Robin some evenings.
+  const day0 = new Date(now); day0.setHours(0, 0, 0, 0);
+  const fronts = [];
+  for (let d = 14; d >= 1; d--) {
+    const base = day0.getTime() - d * 86400000;
+    fronts.push({ id: uid(), memberId: alex.id, partIds: [wren.id], unknown: false, blurry: false, note: '', at: base + 8 * 3600000 });
+    if (d % 2 === 0) fronts.push({ id: uid(), memberId: alex.id, partIds: [kai.id], unknown: false, blurry: d % 4 === 0, note: d % 4 === 0 ? 'Busy store' : '', at: base + 14 * 3600000 });
+    if (d % 3 === 0) fronts.push({ id: uid(), memberId: alex.id, partIds: [robin.id, wren.id], unknown: false, blurry: false, note: '', at: base + 19 * 3600000 });
+  }
+  await store.putMany('fronts', fronts);
+  await store.put('board', { id: uid(), memberId: alex.id, fromPartId: wren.id, toPartIds: [robin.id], text: 'Robin, the thunder last night was just a storm. You were safe the whole time. There are crayons in the blue box.', pinned: true, done: false, seenBy: {}, createdAt: now - 20 * 3600000 });
   await store.putMany('entries', entries);
   await store.putMany('observations', entries.filter((e) => e.noticedByIds.includes(sam.id)).slice(0, 6).map((e, i) => ({
     id: uid(), entryId: e.id, memberId: sam.id, status: i === 0 ? 'requested' as const : 'done' as const, requestedAt: e.loggedAt,

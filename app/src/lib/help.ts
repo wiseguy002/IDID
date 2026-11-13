@@ -161,6 +161,54 @@ export const HELP: HelpTopic[] = [
     keywords: 'garden plants grow progress motivation weather seasons parts alters habits encouragement',
   },
   {
+    id: 'fronting', group: 'Everyday use', title: 'Who’s here (fronting log)',
+    summary: 'Note which parts are around in two taps, and see gentle patterns.',
+    body: [
+      { p: 'Open **Who’s here** from Home or your parts in Circle. Tap who’s around now (more than one is fine, the first is noted as in front), or **Not sure**. You can mark that things feel blurry and add a word about it.' },
+      { list: [
+        '**Notes waiting**: if someone left a note on the inner board for a part who’s here now, it appears right away. Tap **Mark as read** when they’ve seen it.',
+        '**Patterns** (after a few notes): roughly how much time each part spends in front, when they usually arrive, and the most common hand-overs, over 7, 30 or 90 days.',
+        '**History** lists every note, and you can delete any of them.',
+      ] },
+      { tip: 'The fronting log is always private: it’s encrypted with a key only your own devices hold, even if you share a circle. Patterns are rough on purpose and worked out on your device.' },
+    ],
+    open: [{ label: 'Open Who’s here', route: { name: 'front' } }, { label: 'Inner board', route: { name: 'board' } }],
+    keywords: 'fronting front switch switching alters parts headmates who is here log history patterns co-fronting',
+  },
+  {
+    id: 'missed', group: 'Calm and safety', title: 'What did I miss?',
+    summary: 'After lost time: today’s date, then what happened in iDID during the gap.',
+    body: [
+      { p: 'Losing time is a common part of dissociation. **What did I miss?** (on Home) starts by grounding you: the day, date and time, and a moment to notice where you are.' },
+      { p: 'Then choose **since when**: since you last opened iDID, the last few hours, today, the last week, or the last time you remember. iDID gathers everything noted in that time: who was around, moments logged, inner-board notes, voice notes, notes from your circle, check-ins, appointments that were scheduled, and what’s coming up in the next two days.' },
+      { tip: 'It only shows what was added to iDID. If you’re unsure what else happened, it’s okay to ask someone you trust.' },
+    ],
+    open: [{ label: 'What did I miss?', route: { name: 'missed' } }],
+    keywords: 'lost time amnesia memory gap missed what happened blank grounding',
+  },
+  {
+    id: 'voice', group: 'Everyday use', title: 'Voice notes',
+    summary: 'Record up to two minutes in your own voice, encrypted.',
+    body: [
+      { p: 'When typing is too much, open **Voice notes** from Home and tap **Record**. Add a title or who’s speaking if you like. Each note can be up to 2 minutes long.' },
+      { p: 'The first time, your browser asks to use the microphone. iDID only listens while you’re recording.' },
+      { tip: 'Recordings are encrypted on your device before they’re saved or synced, with a key only your own devices hold, so they’re never shared with your circle.' },
+    ],
+    open: [{ label: 'Open voice notes', route: { name: 'voice' } }],
+    keywords: 'voice audio record recording microphone speak talk',
+  },
+  {
+    id: 'reflection', group: 'Everyday use', title: 'Weekly reflection',
+    summary: 'An optional, gentle look back at your week.',
+    body: [
+      { p: 'Turn on **Weekly reflection** in Settings. From Saturday evening to Monday, Home offers a short look back: how many moments you noted, check-ins, and something kind about the week. You can answer three questions (what helped, what was hard, and one small hope for next week) or skip.' },
+      { p: 'Past reflections appear at the bottom of **Patterns**, and can be useful to bring to therapy.' },
+      { tip: 'Reflections are never scored, and missing a week is fine. They’re private to your own devices.' },
+    ],
+    open: [{ label: 'Open Settings', route: { name: 'settings' } }],
+    keywords: 'weekly reflection review week journal look back sunday',
+  },
+  {
     id: 'appointments', group: 'Everyday use', title: 'Appointments and therapy prep',
     summary: 'Reminders, calendar export, and notes to bring to sessions.',
     body: [
@@ -353,6 +401,17 @@ export const HELP: HelpTopic[] = [
     keywords: 'pdf print csv export backup report',
   },
 
+  {
+    id: 'supporters', group: 'Your circle', title: 'Supporting someone',
+    summary: 'For partners, family and friends: what to say and do.',
+    body: [
+      { p: 'The **Supporting someone** guide (Home → My tools, or Circle) explains what dissociation can look like and offers words to try, helpful things to do, and things to avoid when someone:' },
+      { list: ['seems far away or foggy', 'has a different part around', 'has lost time', 'is overwhelmed or panicking', 'wants to talk about it later'] },
+      { tip: 'You don’t need perfect words. Calm, kind and steady helps most. Ask the person what they’d prefer, and look after yourself too.' },
+    ],
+    open: [{ label: 'Open the guide', route: { name: 'supporters' } }],
+    keywords: 'supporter partner family friend what to say scripts help someone caregiver',
+  },
   // ---------- Privacy ----------
   {
     id: 'privacy', group: 'Privacy and your data', title: 'How your journal is protected',

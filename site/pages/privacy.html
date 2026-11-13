@@ -19,6 +19,7 @@
 
       <h2>On your device</h2>
       <p>iDID stores your journal in your browser's storage on your device. Each record is encrypted separately using AES-256-GCM. The key is protected by your passphrase and, separately, by a recovery code shown once when you set up. We never see or store either. When iDID is locked, nothing can be read without one of them. iDID locks itself after time in the background.</p>
+      <p><b>Voice notes</b> use your microphone only while you're recording. The recording is encrypted on your device straight away, like a written note.</p>
       <p>A few comfort settings (theme, text size, reminder times) are kept unencrypted on the device so the lock screen can display correctly. They contain nothing you wrote.</p>
       <p>iDID locks itself after a few minutes in the background. <b>Quick hide</b> (the eye icon, or Esc twice) locks it instantly and shows an ordinary-looking screen.</p>
 
@@ -29,7 +30,7 @@
         <li>Your account has its own encryption keys. The private key is stored only after being encrypted with your passphrase, so you can use iDID on a new device; we can't decrypt it.</li>
         <li>Each circle has its own key, shared only with members. Invite links carry a one-time secret in the part of the link browsers never send to servers.</li>
         <li>Records are re-encrypted before upload. Even what kind of record something is (an entry, a part or an appointment) is hidden from us.</li>
-        <li>"Only me" entries use a key that only your own devices hold, so other circle members can't read them.</li>
+        <li>"Only me" entries use a key that only your own devices hold, so other circle members can't read them. Your inner board, "Who's here" fronting log, voice notes and weekly reflections always work this way.</li>
       </ul>
       <h3>What our servers can see</h3>
       <ul>

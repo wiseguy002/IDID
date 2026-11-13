@@ -8,6 +8,8 @@ iDID is built so that the people running the server **cannot read your journal**
 - The encryption key is protected by your **passphrase** (PBKDF2-SHA-256, 600,000 iterations) and separately by a **recovery code** (125 bits of randomness). Neither the passphrase nor the code is ever stored.
 - While iDID is locked, decrypted data is not kept in memory. iDID locks automatically after time in the background (5 minutes by default; adjustable in Settings).
 - A few comfort settings (theme, text size, the reminder time) are stored unencrypted so the lock screen can look right. They contain nothing you wrote.
+- **Always private kinds:** the inner board, body basics, medications, comfort kit, therapy prep, check-ins, activity, care shares, the "Who's here" fronting log (`fronts`), voice notes (`voice`) and weekly reflections (`reflections`) are always encrypted with the person's own key when synced, never the circle key.
+- **Voice notes** are recorded with `MediaRecorder` at 24 kbit/s, capped at 2 minutes, and stored base64-encoded inside an ordinary encrypted record (well under the server's 1 MB per-record limit). The microphone is only requested when someone taps Record, and the Permissions-Policy allows it for the app's own origin only.
 
 ## Sharing with a circle (end-to-end encryption)
 
@@ -62,6 +64,6 @@ iDID is built so that the people running the server **cannot read your journal**
 
 - **Domain:** idid.care is registered with Cloudflare and signed with DNSSEC. CAA records allow only the certificate authorities Cloudflare uses (Let's Encrypt, Google Trust Services, SSL.com, DigiCert, Sectigo). SSL mode is Full (strict), TLS 1.2 is the minimum, and every page sends HSTS with preload.
 - **Email authentication:** SPF and Resend's DKIM key are published, and DMARC is set to `p=quarantine`, so mail pretending to come from idid.care lands in spam. Aggregate reports go to hello@idid.care. Sending as an idid.care address from anywhere other than Resend (for example Gmail's "send mail as") will fail DMARC unless it goes through Resend's SMTP.
-- **Headers:** both sites send a strict Content-Security-Policy (the app allows only itself, Supabase and Cloudflare's Turnstile), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer` and a Permissions-Policy that turns off camera, microphone and location.
+- **Headers:** both sites send a strict Content-Security-Policy (the app allows only itself, Supabase and Cloudflare's Turnstile), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer` and a Permissions-Policy that turns off camera and location everywhere, and allows the microphone only on the app itself, for voice notes.
 - **Dependencies:** CI fails if anything that ships to people has a known high-severity vulnerability (`npm audit --omit=dev`), and Dependabot opens weekly update PRs, each checked by the full CI.
 - **Incidents:** see `docs/INCIDENT_RESPONSE.md`. Compliance status and owner to-dos are in `docs/COMPLIANCE.md`.

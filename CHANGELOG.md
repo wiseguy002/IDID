@@ -14,6 +14,14 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Added
+- **Who's here**: note which parts are around in two taps, including co-fronting, "not sure" and when things feel blurry. See your front history and gentle patterns: roughly how long each part is around, when they usually arrive, and common hand-overs. Notes left on the inner board for a part now appear as soon as that part is here.
+- **What did I miss?**: for after lost time. It starts with today's date and a moment to ground, then gathers everything noted in iDID during the gap, and what's coming up next.
+- **Voice notes**: record up to two minutes when typing is too much. Encrypted on your device and private to you.
+- **Weekly reflection** (turn it on in Settings): on the weekend, a gentle look back at your week with three optional questions. Never scored, always skippable. Past reflections appear on Patterns.
+- **Supporting someone**: a guide for partners, family and friends, with words to try and things to do when someone feels far away, has a different part around, has lost time, or is overwhelmed.
+- The sample circle now includes two weeks of "who's here" notes and a note waiting for a part.
+
 ## [0.14.0] - 2026-11-13
 
 Safer sign-in, and clear terms and privacy rights.

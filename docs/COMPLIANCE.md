@@ -68,4 +68,4 @@ Before a public launch, ask a lawyer to review the privacy policy, terms and inc
 ## Keep it true
 
 - Any new data the server sees, or any new service provider, must be added to the privacy page, `docs/SECURITY.md` and the provider list *before* it ships.
-- Analytics of any kind need explicit opt-in and an update to the privacy page.
+- Analytics of any kind need explicit opt-in and an update to the privacy page. The only analytics today are the opt-in anonymous counts (privacy page "Anonymous counts"; ask the lawyer to confirm they're de-identified under WA MHMDA).

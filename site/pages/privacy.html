@@ -3,7 +3,7 @@
   <div class="wrap narrow">
     <p class="eyebrow">Privacy</p>
     <h1>Your story stays yours</h1>
-    <p class="lede muted">iDID was built so that the people who run it can't read your journal. Here's how, in plain language. <span class="small">Last updated 13 November 2026.</span></p>
+    <p class="lede muted">iDID was built so that the people who run it can't read your journal. Here's how, in plain language. <span class="small">Last updated 14 November 2026.</span></p>
   </div>
 </section>
 <section style="padding-top:1rem">
@@ -13,7 +13,7 @@
       <ul class="list-check">
         <li><span>Everything you write is <b>encrypted on your device</b> with your passphrase.</span></li>
         <li><span>If you share with a circle, it's <b>encrypted end-to-end</b>. Our servers only store scrambled data, and we don't have the keys.</span></li>
-        <li><span><b>No ads, no trackers, no analytics, no selling or sharing data.</b> This website doesn't use cookies either.</span></li>
+        <li><span><b>No ads, no trackers, no selling or sharing data.</b> No analytics either, unless you choose to share anonymous counts. This website doesn't use cookies.</span></li>
         <li><span>You can <b>export or delete</b> everything at any time.</span></li>
       </ul>
 
@@ -59,6 +59,15 @@
         <li><b>Use another device</b>: sign in with "I already use iDID" and your journal comes back, decrypted only on your device with your passphrase.</li>
         <li><b>Delete</b> everything on a device from Settings → Delete all data.</li>
         <li><b>Leave</b> the online circle or sign out at any time.</li>
+      </ul>
+
+      <h3 id="counts">Anonymous counts (off unless you turn them on)</h3>
+      <p>In Settings → Privacy, you can choose to <b>share anonymous counts</b> to help us learn which tools are useful. Here's exactly what that means:</p>
+      <ul>
+        <li>While it's on, your device counts how many times you open each screen of iDID (for example "Who's here: 4"), using only the app's own fixed screen names. It never includes anything you write, names, parts, moods or times.</li>
+        <li>Once a week, last week's counts are sent <b>without your account, device or circle</b>. Our server only adds them to totals for everyone together and keeps nothing else: no user ID, no device ID and no time of sending. Like any web request, the connection briefly passes through Cloudflare and Supabase, whose standard logs see an IP address, but iDID doesn't store it with the counts.</li>
+        <li>Only the iDID team can see the totals.</li>
+        <li>Turning it off stops it straight away and deletes any counts not yet sent from your device.</li>
       </ul>
 
       <h2 id="health-data">Consumer health data</h2>

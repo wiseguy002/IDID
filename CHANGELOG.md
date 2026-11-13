@@ -15,6 +15,7 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 ## [Unreleased]
 
 ### Added
+- **Anonymous counts** (off unless you turn them on in Settings → Privacy): share how often each screen is opened, once a week and without your account, so we can learn which tools help. Never anything you write. Turning it off deletes counts not yet sent.
 - A page for therapists and other clinicians at idid.care/clinicians: what clients can bring to sessions, how sharing works, and what iDID isn't.
 
 ## [0.15.0] - 2026-11-13

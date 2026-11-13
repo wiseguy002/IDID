@@ -423,11 +423,12 @@ export const HELP: HelpTopic[] = [
         'Invite links and therapist links carry their keys after the #, which browsers never send to servers.',
         'Notifications never include details, only a gentle nudge to open iDID.',
         'No ads, no trackers, and we never sell data.',
+        'Anonymous counts are off unless you turn them on in Settings → Privacy. They only say how often each screen was opened, sent without your account.',
         'You can ask us for a copy of what our servers hold, or to delete it, at privacy@idid.care. The full privacy policy and terms are at idid.care/privacy and idid.care/terms.',
       ] },
     ],
     open: [{ label: 'What the server sees', route: { name: 'account' } }],
-    keywords: 'encryption security private data safe rights delete copy terms hipaa',
+    keywords: 'encryption security private data safe rights delete copy terms hipaa analytics anonymous counts usage',
   },
   {
     id: 'passphrase', group: 'Privacy and your data', title: 'Passphrase and recovery code',

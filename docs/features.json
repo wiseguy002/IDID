@@ -682,6 +682,18 @@
       "changelog": [
         "Supporting someone"
       ]
+    },
+    {
+      "name": "Anonymous counts (opt-in)",
+      "match": "anonymous counts",
+      "requiredIn": [
+        "help",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Anonymous counts"
+      ]
     }
   ]
 }

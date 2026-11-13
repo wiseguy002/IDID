@@ -219,6 +219,8 @@ export interface DeviceSettings {
   termsAcceptedAt?: number;
   /** Offer a gentle look back at the week on Sundays. */
   weeklyReflection?: boolean;
+  /** Opt-in: send anonymous weekly counts of which screens were opened (lib/counts.ts). Off by default. */
+  shareCounts?: boolean;
   /** Show badges and celebrate milestones. */
   badges: boolean;
   /** Mood Garden: show check-ins as weather. */

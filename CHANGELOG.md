@@ -14,6 +14,9 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Added
+- A page for therapists and other clinicians at idid.care/clinicians: what clients can bring to sessions, how sharing works, and what iDID isn't.
+
 ## [0.15.0] - 2026-11-13
 
 Knowing who's here, finding your way back after lost time, and help for the people who support you.

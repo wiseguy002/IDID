@@ -14,6 +14,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-11-13
+
+Knowing who's here, finding your way back after lost time, and help for the people who support you.
+
 ### Added
 - **Who's here**: note which parts are around in two taps, including co-fronting, "not sure" and when things feel blurry. See your front history and gentle patterns: roughly how long each part is around, when they usually arrive, and common hand-overs. Notes left on the inner board for a part now appear as soon as that part is here.
 - **What did I miss?**: for after lost time. It starts with today's date and a moment to ground, then gathers everything noted in iDID during the gap, and what's coming up next.
@@ -248,7 +252,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/wiseguy002/IDID/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/wiseguy002/IDID/compare/v0.13.2...v0.14.0
 [0.13.2]: https://github.com/wiseguy002/IDID/compare/v0.13.1...v0.13.2
 [0.13.1]: https://github.com/wiseguy002/IDID/compare/v0.13.0...v0.13.1

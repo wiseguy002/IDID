@@ -1,0 +1,49 @@
+name: Preview
+# Every pull request from this repository gets preview copies of the website and app on Cloudflare Pages,
+# at https://pr-<number>.idid-site.pages.dev and https://pr-<number>.idid-app.pages.dev, so changes to
+# headers, redirects and caching can be tested on the real host before they go live.
+# Pages marks preview copies "noindex". Dependabot PRs have no access to the secrets, so they're skipped.
+on:
+  pull_request:
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Build website
+        run: node site/tools/build-site.mjs
+      - name: Build app
+        working-directory: app
+        run: npm ci && npm run build
+      - name: Deploy website preview
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: site
+          wranglerVersion: '3.114.0'
+          command: pages deploy dist --project-name idid-site --branch pr-${{ github.event.pull_request.number }} --commit-dirty=true
+      - name: Deploy app preview
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: app
+          wranglerVersion: '3.114.0'
+          command: pages deploy dist --project-name idid-app --branch pr-${{ github.event.pull_request.number }} --commit-dirty=true

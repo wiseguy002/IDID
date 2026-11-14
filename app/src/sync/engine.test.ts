@@ -49,7 +49,9 @@ describe('end-to-end encrypted sync', () => {
     expect(aEng.status).toBe('idle');
 
     const dump = JSON.stringify([...server.records.values(), ...server.profiles.values(), server.members]);
-    for (const secret of ['secret words', 'only alex', 'Kitchen', 'Alex', 'smoke alarm', 'entries', 'observations']) expect(dump).not.toContain(secret);
+    // Short words are checked with quotes, as they'd appear in leaked JSON: base64 ciphertext never contains quotes,
+    // so a short word like Alex can't match by chance.
+    for (const secret of ['secret words', 'only alex', 'Kitchen', '"Alex"', 'smoke alarm', 'entries', 'observations']) expect(dump).not.toContain(secret);
     // The observation request scheduled a push for Bob, with no content.
     expect(server.reminders).toEqual([expect.objectContaining({ user_id: 'u-bob', kind: 'observation', tag: 'obs-o1' })]);
 

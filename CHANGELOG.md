@@ -14,9 +14,15 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.18.3] - 2026-11-14
+
+Safer circles: kind notes fully anonymous, a sturdier key change, and safer spreadsheet exports.
+
 ### Fixed
 - Changing the circle's key after removing someone is now all or nothing, so a dropped connection can't leave some devices unable to read the circle. If the change doesn't finish, iDID tells you and finishes it the next time it connects.
 - After removing someone, iDID now tells you how many unused invite links stopped working, so you know to send new ones.
+
+### Security
 - Kind notes are now fully anonymous: whoever sends one can no longer find out who received it, and whoever receives one can no longer find out who sent it.
 - People with view-only access can no longer send "Check on me" alerts or observation requests to others in the circle.
 - Only the person who made an invite, or the circle's owner, can cancel it. The Cancel invite button now shows only to them.
@@ -300,7 +306,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.18.2...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.18.3...HEAD
+[0.18.3]: https://github.com/wiseguy002/IDID/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/wiseguy002/IDID/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/wiseguy002/IDID/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/wiseguy002/IDID/compare/v0.17.0...v0.18.0

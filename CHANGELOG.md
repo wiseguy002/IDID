@@ -14,6 +14,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-14
+
+Safer circles after someone leaves, and a way to help shape iDID.
+
 ### Added
 - When the circle's owner removes someone, iDID now also changes the circle's encryption key, so their old copy of the key can't open anything written later. Everyone still in the circle keeps everything, including "only me" entries. Unused invite links stop working, so send new ones if needed.
 - **Help shape iDID**: an optional form (in Suggest a feature, or Settings) to volunteer to try new features early and tell us what helps. It's read by the iDID team, so it isn't end-to-end encrypted, and it only holds what you type in it.
@@ -274,7 +278,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.17.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/wiseguy002/IDID/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/wiseguy002/IDID/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/wiseguy002/IDID/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/wiseguy002/IDID/compare/v0.14.0...v0.15.0

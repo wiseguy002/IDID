@@ -17,6 +17,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 ### Fixed
 - Changing the circle's key after removing someone is now all or nothing, so a dropped connection can't leave some devices unable to read the circle. If the change doesn't finish, iDID tells you and finishes it the next time it connects.
 - After removing someone, iDID now tells you how many unused invite links stopped working, so you know to send new ones.
+- Kind notes are now fully anonymous: whoever sends one can no longer find out who received it, and whoever receives one can no longer find out who sent it.
+- People with view-only access can no longer send "Check on me" alerts or observation requests to others in the circle.
+- Only the person who made an invite, or the circle's owner, can cancel it. The Cancel invite button now shows only to them.
+- Spreadsheet exports (your entries, and the team's request list) now keep text that starts with =, +, - or @ as plain text, so a spreadsheet can't run it as a formula.
 
 ## [0.18.2] - 2026-11-14
 

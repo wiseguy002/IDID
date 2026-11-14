@@ -96,14 +96,17 @@ select pg_temp.expect((select public.send_kindness(7, 'flower')), 'carol sends a
 select pg_temp.expect((select public.send_kindness(8, 'star') = false), 'not the same person twice in a week');
 select pg_temp.expect_error($q$select public.send_kindness(500, 'sun')$q$, 'only curated messages');
 select pg_temp.expect_error($q$select public.send_kindness(1, 'skull')$q$, 'only curated icons');
+select pg_temp.expect((select count(*) = 0 from public.reminders where kind = 'kindness'), 'sender cannot see who received their kind note');
+delete from public.reminders where kind = 'kindness';
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 select pg_temp.expect((select count(*) = 1 from public.kind_notes), 'alice received one note');
 select pg_temp.expect((select message_id = 7 from public.kind_notes), 'alice reads the message');
 select pg_temp.expect_error('select sender_id from public.kind_notes', 'recipient cannot see the sender');
 select pg_temp.expect_error('select * from public.kind_notes', 'recipient cannot select all columns');
+select pg_temp.expect((select not has_table_privilege('authenticated', 'public.kind_notes', 'select')), 'no table-wide read on kind notes, only the safe columns');
 update public.kind_notes set read_at = now();
 select pg_temp.expect_error($q$update public.kind_notes set message_id = 1$q$, 'recipient cannot change the note');
-select pg_temp.expect((select count(*) = 1 from public.reminders where kind = 'kindness'), 'push queued for recipient');
+select pg_temp.expect((select count(*) = 1 from public.reminders where kind = 'kindness'), 'push queued for recipient (and the sender could not cancel it)');
 select pg_temp.expect_error($q$insert into public.kind_notes (recipient_id, message_id, icon) values ('00000000-0000-0000-0000-00000000000c', 1, 'sun')$q$, 'no direct inserts');
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
 select pg_temp.expect((select count(*) = 0 from public.kind_notes), 'sender cannot read sent notes');
@@ -153,12 +156,30 @@ select pg_temp.expect((select count(*) = 0 from public.records where ct = 'viewe
 select pg_temp.expect_error(format($q$insert into public.invites (circle_id, wrapped_circle_key) values (%L, 'x')$q$, :'cid'), 'viewer cannot invite');
 select pg_temp.expect_error($q$update public.circle_members set role = 'member' where user_id = auth.uid()$q$, 'viewer cannot promote themselves');
 select pg_temp.expect_error(format($q$select public.set_member_role(%L, auth.uid(), 'member')$q$, :'cid'), 'only the owner changes access');
+select pg_temp.expect_error($q$insert into public.reminders (user_id, kind, fire_at, tag) values ('00000000-0000-0000-0000-00000000000a', 'checkon', now(), 'checkon-viewer')$q$, 'viewer cannot send check-on alerts');
+select pg_temp.expect_error($q$insert into public.reminders (user_id, kind, fire_at, tag) values ('00000000-0000-0000-0000-00000000000a', 'observation', now(), 'obs-viewer')$q$, 'viewer cannot send observation requests');
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 select public.set_member_role(:'cid', '00000000-0000-0000-0000-00000000000c', 'member');
 select pg_temp.expect_error(format($q$select public.set_member_role(%L, auth.uid(), 'viewer')$q$, :'cid'), 'owner role cannot be changed');
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
 insert into public.records (circle_id, rid, ct) values (:'cid', 'rid-carol-0000000001', 'v1.carol');
 select pg_temp.expect((select count(*) = 1 from public.records where rid = 'rid-carol-0000000001'), 'after the owner allows it, carol can add');
+insert into public.reminders (user_id, kind, fire_at, tag) values ('00000000-0000-0000-0000-00000000000a', 'checkon', now(), 'checkon-member');
+select pg_temp.expect((select count(*) = 1 from public.reminders where tag = 'checkon-member'), 'a member can send check-on alerts');
+-- Unused invites: only whoever made one, or the owner, can cancel it.
+insert into public.invites (circle_id, wrapped_circle_key) values (:'cid', 'v1.carol-made') returning id as cinv \gset
+insert into public.invites (circle_id, wrapped_circle_key) values (:'cid', 'v1.carol-made-2') returning id as cinv2 \gset
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+insert into public.invites (circle_id, wrapped_circle_key) values (:'cid', 'v1.alice-made') returning id as ainv \gset
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+delete from public.invites where id = :'ainv';
+select pg_temp.expect((select count(*) = 1 from public.invites where id = :'ainv'), 'a member cannot cancel someone else''s invite');
+delete from public.invites where id = :'cinv';
+select pg_temp.expect((select count(*) = 0 from public.invites where id = :'cinv'), 'a member can cancel their own invite');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+delete from public.invites where id = :'cinv2';
+select pg_temp.expect((select count(*) = 0 from public.invites where id = :'cinv2'), 'the owner can cancel any invite in the circle');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
 select pg_temp.expect_error(format($q$insert into public.invites (circle_id, wrapped_circle_key, role) values (%L, 'x', 'viewer')$q$, :'cid'), 'only the owner makes view-only invites');
 
 -- ---------- Handing the circle to someone else ----------

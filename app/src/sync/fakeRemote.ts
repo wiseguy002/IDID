@@ -43,9 +43,14 @@ class FakeRemote implements Remote {
   }
   async listInvites(c: string): Promise<InviteRow[]> {
     this.member(c);
-    return [...this.s.invites.entries()].filter(([, i]) => i.circle_id === c).map(([id, i]) => ({ id, created_at: i.created_at, expires_at: i.expires_at, used_by: i.used_by, used_at: i.used ? new Date().toISOString() : null, role: i.role }));
+    return [...this.s.invites.entries()].filter(([, i]) => i.circle_id === c).map(([id, i]) => ({ id, created_at: i.created_at, expires_at: i.expires_at, used_by: i.used_by, used_at: i.used ? new Date().toISOString() : null, role: i.role, created_by: i.created_by }));
   }
-  async revokeInvite(id: string) { const i = this.s.invites.get(id); if (i) { this.member(i.circle_id); this.s.invites.delete(id); } }
+  /** Like the server: whoever made the invite, or the owner, can cancel it; anyone else's attempt does nothing. */
+  async revokeInvite(id: string) {
+    const i = this.s.invites.get(id);
+    const owner = i && this.s.members.some((m) => m.circle_id === i.circle_id && m.user_id === this.uid && m.role === 'owner');
+    if (i && (i.created_by === this.uid || owner)) this.s.invites.delete(id);
+  }
   async transferOwnership(c: string, u: string) {
     this.owner(c);
     if (u === this.uid) throw new Error('you already own this circle');
@@ -122,8 +127,9 @@ class FakeRemote implements Remote {
     for (const r of rows) await this.addReminder(r);
   }
   async addReminder(r: ReminderRow) {
-    const shares = this.s.members.some((a) => a.user_id === this.uid && this.s.members.some((b) => b.circle_id === a.circle_id && b.user_id === r.user_id));
-    if (r.user_id !== this.uid && !((r.kind === 'observation' || r.kind === 'checkon') && shares)) throw new Error('rls');
+    // Only someone who can add to a shared circle may wake another member (view-only members can't).
+    const canWake = this.s.members.some((a) => a.user_id === this.uid && a.role !== 'viewer' && this.s.members.some((b) => b.circle_id === a.circle_id && b.user_id === r.user_id));
+    if (r.user_id !== this.uid && !((r.kind === 'observation' || r.kind === 'checkon') && canWake)) throw new Error('rls');
     if (!this.s.reminders.some((x) => x.user_id === r.user_id && x.tag === r.tag)) this.s.reminders.push({ ...r, created_by: this.uid });
   }
   async savePushSubscription(s: PushSub) { this.s.subs.push({ ...s, user_id: this.uid }); }

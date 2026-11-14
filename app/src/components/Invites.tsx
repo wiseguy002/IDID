@@ -61,6 +61,9 @@ function InviteRowView({ inv, row, onChange, onSend }: { inv: Invitation; row?: 
   const { toast } = useApp();
   const [busy, setBusy] = useState(false);
   const st = statusOf(inv, row);
+  // A waiting invite can be canceled (or replaced) only by whoever made it, or by the circle's owner.
+  const role = useAccount().role;
+  const mayCancel = !row || row.created_by === currentUserId() || role === 'owner';
   const act = async (fn: () => Promise<void>) => { setBusy(true); try { await fn(); } catch (e) { toast(e instanceof Error ? e.message : 'Something went wrong.'); } setBusy(false); onChange(); };
   return (
     <div className="invite-row" data-status={st}>
@@ -79,8 +82,8 @@ function InviteRowView({ inv, row, onChange, onSend }: { inv: Invitation; row?: 
       {st !== 'joined' && (
         <div className="row" style={{ marginTop: '.5rem', flexWrap: 'wrap' }}>
           {st === 'waiting' && <button className="btn sm" disabled={busy} onClick={() => onSend(inv, row?.expires_at)}><Icon name="bell" size={15} /> Remind</button>}
-          <button className="btn sm" disabled={busy} onClick={() => act(async () => { onSend(await renewInvitation(inv.id)); toast('New link ready. The old one no longer works.'); })}>New link</button>
-          {st === 'waiting' && <button className="btn ghost sm" disabled={busy} onClick={() => act(async () => { await cancelInvitation(inv.id); toast('Invite canceled.'); })}>Cancel invite</button>}
+          {(st !== 'waiting' || mayCancel) && <button className="btn sm" disabled={busy} onClick={() => act(async () => { onSend(await renewInvitation(inv.id)); toast('New link ready. The old one no longer works.'); })}>New link</button>}
+          {st === 'waiting' && mayCancel && <button className="btn ghost sm" disabled={busy} onClick={() => act(async () => { await cancelInvitation(inv.id); toast('Invite canceled.'); })}>Cancel invite</button>}
         </div>
       )}
     </div>

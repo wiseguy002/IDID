@@ -1,6 +1,7 @@
 import type { Entry, Member, Part, Duration, PartWord } from '../types';
 import { DURATIONS, ROLE_LABELS } from '../types';
 import { MOODS } from './defaults';
+import { toCsv } from './csv';
 import { getLang, locale, t, tn } from '../i18n';
 
 export const fmtDate = (at: number) =>
@@ -83,10 +84,6 @@ export function download(filename: string, content: string | Blob, type = 'text/
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-const csvCell = (v: unknown) => {
-  const s = v == null ? '' : String(v);
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
 
 export function entriesToCsv(entries: Entry[], members: Member[], parts: Part[]) {
   const mName = (id: string) => members.find((m) => m.id === id)?.name ?? '';
@@ -103,7 +100,7 @@ export function entriesToCsv(entries: Entry[], members: Member[], parts: Part[])
     e.lostTime, e.possibleCause, durationLabel(e.duration), e.noticedByIds.map(mName).join('; '),
     e.noticedByOthers, e.notes, e.followUps.map((f) => `${mName(f.memberId)}: ${f.text}`).join(' | '),
   ]);
-  return [head, ...rows].map((r) => r.map(csvCell).join(',')).join('\n');
+  return toCsv([head, ...rows].map((r) => r.map((v) => (v == null ? '' : String(v)))));
 }
 
 export function countBy<T>(items: T[], key: (t: T) => string[] | string | null | undefined) {

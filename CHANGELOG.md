@@ -14,6 +14,13 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Changed
+- The crisis bar at the top of idid.care now uses the same words as our sister sites: "If you are in crisis, call or text 988. In immediate danger, call 911." On phones it shows just the numbers. The Crisis Text Line (text HOME to 741741) is now in the footer.
+- Settings → About iDID and the website footer now say iDID is from weDID (wedid.care), with our promise: no ads, no trackers, no selling data, no AI talking to you.
+
+### Fixed
+- On the website in dark mode, the check marks in lists now use the dark-mode color instead of the light one.
+
 ## [0.18.3] - 2026-11-14
 
 Safer circles: kind notes fully anonymous, a sturdier key change, and safer spreadsheet exports.

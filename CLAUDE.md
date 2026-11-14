@@ -23,3 +23,17 @@ After enough changes that help, website, press materials or docs may be out of d
 - Inline `style` attributes are fine in `site/pages`: the build moves them into classes because the CSP blocks inline styles.
 - Live database changes are migrations in `supabase/migrations/`, applied in filename order. Ask the owner before applying them to the live project.
 - Write user-facing text in plain, gentle language and American English (color, organization, counselor, canceled). Never put private details in notifications.
+
+## Status and roadmap (updated 13 November 2026)
+
+- **Live:** v0.18.0 at app.idid.care and idid.care. Recent: Spanish beta (core screens), circle key rotation after removing someone, Help shape iDID volunteer form, opt-in anonymous counts, terms and health-data privacy policy, sign-in CAPTCHA.
+- **`main` is protected:** every change goes through a PR with the `app`, `site` and `database` checks green. The owner says "merge" for each PR. Work on a branch, open a draft PR, reset the branch to `origin/main` after it merges.
+- **Next (waiting on the owner):** Ko-fi page link, to be added as "Support iDID" in Settings and the site footer, with Ko-fi on the privacy page's provider list (its public supporter list should be off). Native-speaker review of `app/src/i18n/es.ts` (see `docs/I18N.md`). Advisory group outreach (volunteer for now; see `docs/ADVISORY_GROUP.md`).
+- **On hold by the owner's choice:** Spanish phase 2 (remaining screens and website), Supabase backups, lawyer review.
+- **To check:** DNSSEC for idid.care still showed "pending" on 14 November (the domain was registered 12 November). If still pending after 18 November, turn DNSSEC off and on in Cloudflare (idid.care → DNS → Settings).
+- **Not yet tested on a real phone:** the Turnstile sign-in check (tested only in automated browsers).
+- **Gotchas:** CI uses Node 24 and npm 11. Regenerate `app/package-lock.json` with that npm, or `npm ci` fails in CI. Live DB migrations are applied through the Supabase Management API after the owner OKs them; also insert the version into `supabase_migrations.schema_migrations`. Only "only me" records are left untouched by key rotation, because record ids come from the circle's first key (kept in the keyring).
+
+## How the owner likes to work
+
+Plain language, recommendations rather than option lists, outcome first, then what was and wasn't tested. Do work end to end without asking, but ask before applying live database migrations, and wait for "merge" on each PR.

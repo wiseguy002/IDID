@@ -14,6 +14,13 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-11-14
+
+A way to support iDID.
+
+### Added
+- **Support iDID**: an optional way to contribute through Ko-fi, linked from Settings and the website. iDID stays free with no ads, and contributing never unlocks or changes anything. Ko-fi only handles the payment.
+
 ## [0.18.0] - 2026-11-14
 
 Safer circles after someone leaves, and a way to help shape iDID.
@@ -278,7 +285,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.18.1...HEAD
+[0.18.1]: https://github.com/wiseguy002/IDID/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/wiseguy002/IDID/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/wiseguy002/IDID/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/wiseguy002/IDID/compare/v0.15.0...v0.16.0

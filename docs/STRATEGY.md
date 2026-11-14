@@ -53,6 +53,8 @@ The `/clinicians` page already invites interest (hello@idid.care, subject "Clini
 
 ## 3. Funding (no ads, ever)
 
+**Status (14 November 2026):** voluntary contributions are live through Ko-fi at https://ko-fi.com/ididcare, linked from Settings → About and the website footer. Keep its public supporter list turned off. Ko-fi is on the privacy page's provider list.
+
 Running costs today are near zero: Cloudflare free, Supabase free, Resend free (shared with your other apps). Expected costs as iDID grows:
 
 | Item | When | Cost |

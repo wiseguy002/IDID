@@ -435,6 +435,7 @@ export const HELP: HelpTopic[] = [
         'Notifications never include details, only a gentle nudge to open iDID.',
         'No ads, no trackers, and we never sell data.',
         'Anonymous counts are off unless you turn them on in Settings → Privacy. They only say how often each screen was opened, sent without your account.',
+        'iDID is free, with no ads. Optional contributions through Ko-fi (Settings → Support iDID) help keep it running. Ko-fi only handles the payment and never receives anything from your journal.',
         'You can ask us for a copy of what our servers hold, or to delete it, at privacy@idid.care. The full privacy policy and terms are at idid.care/privacy and idid.care/terms.',
       ] },
     ],

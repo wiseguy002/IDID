@@ -256,4 +256,9 @@ select public.rotate_circle_key(:'cid', :'sealed'::jsonb);
 select pg_temp.expect((select bool_and(sealed_circle_key = 's1.rotated-' || user_id::text) from public.circle_members where circle_id = :'cid'), 'every member has the new key');
 select pg_temp.expect((select count(*) = 0 from public.invites where id = :'pending'), 'unused invites with the old key are cancelled');
 reset role;
+
+-- ---------- Policy performance ----------
+select pg_temp.expect((select count(*) = 0 from pg_policies where schemaname = 'public'
+  and (coalesce(qual, '') || ' ' || coalesce(with_check, '')) ~ '(?<!SELECT )auth\.uid\(\)'),
+  'policies call (select auth.uid()) so the user is looked up once per query');
 \echo ALL RLS TESTS PASSED

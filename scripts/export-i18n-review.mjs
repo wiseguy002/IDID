@@ -26,7 +26,9 @@ for (const line of esText.split('\n')) {
 const files = (d) => readdirSync(d).flatMap((f) => { const p = join(d, f); return statSync(p).isDirectory() ? files(p) : /\.tsx?$/.test(f) && !/\.test\./.test(f) && !p.includes('/i18n/') ? [p] : []; });
 const sources = files(src).map((f) => [relative(root, f), readFileSync(f, 'utf8')]);
 // Prefer files that pass the string to t()/tx()/tn(); fall back to any file containing it (lists, shared labels).
-const marked = (s, en) => [`'${en.replace(/'/g, "\\'")}'`, `"${en}"`].some((q) => ['t(', 'tx(', 'tn('].some((fn) => s.includes(fn + q)) || s.includes(`, ${q}`));
+// The English text as it appears in source, as a single- or double-quoted literal (backslashes first, then quotes).
+const literal = (en, q) => q + en.replace(/\\/g, '\\\\').replaceAll(q, '\\' + q) + q;
+const marked = (s, en) => [literal(en, "'"), literal(en, '"')].some((q) => ['t(', 'tx(', 'tn('].some((fn) => s.includes(fn + q)) || s.includes(`, ${q}`));
 const where = (en) => {
   const hit = sources.filter(([, s]) => marked(s, en));
   const list = hit.length ? hit : sources.filter(([, s]) => s.includes(`'${en}'`) || s.includes(`"${en}"`));

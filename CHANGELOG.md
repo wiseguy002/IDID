@@ -15,6 +15,9 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 ## [Unreleased]
 
 ### Changed
+- Gentler wording in three places: the "What did I miss?" screen now says losing time isn't your fault, one kind note now reads "I'm thinking of you today.", and the "Not alone" badge is now called "Trusted person".
+
+### Changed
 - The crisis bar at the top of idid.care now uses the same words as our sister sites: "If you are in crisis, call or text 988. In immediate danger, call 911." On phones it shows just the numbers. The Crisis Text Line (text HOME to 741741) is now in the footer.
 - Settings → About iDID and the website footer now say iDID is from weDID (wedid.care), with our promise: no ads, no trackers, no selling data, no AI talking to you.
 

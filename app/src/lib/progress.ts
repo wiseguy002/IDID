@@ -131,7 +131,7 @@ export const BADGES: Badge[] = [
   { id: 'shared', name: 'Shared with care', icon: 'share', about: 'Exported a summary for someone who helps you.', earned: (_f, a) => c(a, 'export') >= 1 },
   { id: 'garden-visit', name: 'Gardener', icon: 'leaf', about: 'Visited your Mood Garden.', earned: (_f, a) => c(a, 'garden') >= 1 },
   { id: 'care-team', name: 'My care team', icon: 'shield', about: 'Shared a read-only view with someone who helps you.', earned: (f) => f.careShares >= 1 },
-  { id: 'circle', name: 'Not alone', icon: 'people', about: 'Added someone to your trust circle.', earned: (f) => f.circlePeople >= 1 },
+  { id: 'circle', name: 'Trusted person', icon: 'people', about: 'Added someone to your trust circle.', earned: (f) => f.circlePeople >= 1 },
   { id: 'good-witness', name: 'Good witness', icon: 'note', about: 'Added what you noticed for someone in your circle.', earned: (f) => f.observationsGiven >= 1 },
   { id: 'kind-word', name: 'Kind word', icon: 'heart', about: 'Sent an anonymous kind note.', earned: (_f, a) => c(a, 'kind-sent') >= 1 },
   { id: 'kindness-10', name: 'Kindness spreader', icon: 'heart', about: 'Sent 10 kind notes.', earned: (_f, a) => c(a, 'kind-sent') >= 10 },

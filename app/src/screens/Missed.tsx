@@ -102,7 +102,7 @@ export default function Missed({ prevOpened }: { prevOpened: number | null }) {
       </Section>}
 
       <div className="card soft">
-        <p className="small" style={{ margin: 0 }}>{t("Losing time can feel frightening. It's a common part of dissociation, and you're not alone. If you feel unsafe, open your safety plan, or call or text 988.")} <button className="linkish" onClick={() => go({ name: 'safety' })}>{t('Open my safety plan')}</button></p>
+        <p className="small" style={{ margin: 0 }}>{t("Losing time can feel frightening. It's a common part of dissociation, and it isn't your fault. If you feel unsafe, open your safety plan, or call or text 988.")} <button className="linkish" onClick={() => go({ name: 'safety' })}>{t('Open my safety plan')}</button></p>
       </div>
     </div>
   );

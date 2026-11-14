@@ -370,6 +370,6 @@ export const ES: Record<string, string> = {
   'Appointments during that time': 'Citas durante ese tiempo',
   "If you're not sure whether it happened, it's okay to call and ask.": 'Si no estás seguro/a de si fuiste, está bien llamar y preguntar.',
   'Coming up in the next two days': 'Lo que viene en los próximos dos días',
-  "Losing time can feel frightening. It's a common part of dissociation, and you're not alone. If you feel unsafe, open your safety plan, or call or text 988.": 'Perder tiempo puede dar miedo. Es una parte común de la disociación, y no estás solo/a. Si no te sientes seguro/a, abre tu plan de seguridad, o llama o envía un mensaje al 988.',
+  "Losing time can feel frightening. It's a common part of dissociation, and it isn't your fault. If you feel unsafe, open your safety plan, or call or text 988.": 'Perder tiempo puede dar miedo. Es una parte común de la disociación, y no es tu culpa. Si no te sientes seguro/a, abre tu plan de seguridad, o llama o envía un mensaje al 988.',
   'Open my safety plan': 'Abrir mi plan de seguridad',
 };

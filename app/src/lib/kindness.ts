@@ -8,7 +8,7 @@ export const KIND_MESSAGES: string[] = [
   'Keep your head up. You matter.',
   'Someone out here is rooting for you today.',
   "It's okay to go slowly. You're still moving.",
-  'You are not alone in this.',
+  "I'm thinking of you today.",
   'Rest is part of healing, not a break from it.',
   'Every part of you deserves kindness.',
   'Thank you for still being here.',

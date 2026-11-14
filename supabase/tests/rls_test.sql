@@ -202,6 +202,7 @@ reset role; select set_config('request.jwt.claim.sub', '', false); set role anon
 select pg_temp.expect_error('select * from public.records', 'anon cannot read records');
 select pg_temp.expect_error($q$select public.get_invite(gen_random_uuid())$q$, 'anon cannot call functions');
 select pg_temp.expect_error($q$select public.send_kindness(1, 'sun')$q$, 'anon cannot send kind notes');
+select pg_temp.expect_error(format($q$select public.is_circle_writer(%L)$q$, :'cid'), 'anon cannot call membership helpers');
 select pg_temp.expect_error('select * from public.feedback', 'anon cannot read requests');
 select pg_temp.expect_error('select * from public.care_shares', 'anon cannot list care shares');
 select pg_temp.expect((select ct = 'v1.iv.summary' from public.get_care_share(:'cs')), 'a care link opens its summary');

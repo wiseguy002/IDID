@@ -24,16 +24,19 @@ After enough changes that help, website, press materials or docs may be out of d
 - Live database changes are migrations in `supabase/migrations/`, applied in filename order. Ask the owner before applying them to the live project.
 - Write user-facing text in plain, gentle language and American English (color, organization, counselor, canceled). Never put private details in notifications.
 
-## Status and roadmap (updated 13 November 2026)
+## Status and roadmap (updated 14 November 2026)
 
-- **Live:** v0.18.0 at app.idid.care and idid.care. Recent: Spanish beta (core screens), circle key rotation after removing someone, Help shape iDID volunteer form, opt-in anonymous counts, terms and health-data privacy policy, sign-in CAPTCHA.
+- **Live:** v0.18.1 at app.idid.care and idid.care. Support iDID via Ko-fi (ko-fi.com/ididcare, public supporter list off) is linked from Settings and the site footer. Recent: Spanish beta (core screens), circle key rotation after removing someone, Help shape iDID volunteer form, opt-in anonymous counts, terms and health-data privacy policy, sign-in CAPTCHA.
 - **`main` is protected:** every change goes through a PR with the `app`, `site` and `database` checks green. The owner says "merge" for each PR. Work on a branch, open a draft PR, reset the branch to `origin/main` after it merges.
-- **Next (waiting on the owner):** Ko-fi page link, to be added as "Support iDID" in Settings and the site footer, with Ko-fi on the privacy page's provider list (its public supporter list should be off). Native-speaker review of `app/src/i18n/es.ts` (see `docs/I18N.md`). Advisory group outreach (volunteer for now; see `docs/ADVISORY_GROUP.md`).
+- **Next (waiting on the owner):** Native-speaker review of `app/src/i18n/es.ts` (see `docs/I18N.md`). Advisory group outreach (volunteer for now; see `docs/ADVISORY_GROUP.md`).
 - **On hold by the owner's choice:** Spanish phase 2 (remaining screens and website), Supabase backups, lawyer review.
-- **To check:** DNSSEC for idid.care still showed "pending" on 14 November (the domain was registered 12 November). If still pending after 18 November, turn DNSSEC off and on in Cloudflare (idid.care → DNS → Settings).
+- **To check:** DNSSEC for idid.care was re-triggered on 14 November and is still "pending" (the domain's registry add period ends 17 November). Check-ins are scheduled for 14 and 17 November. If it's still stuck after a second re-toggle, ask the owner to contact Cloudflare support with the DS record.
+- **Possible later hardening:** Supabase's performance advisor suggests wrapping `auth.uid()` in `(select auth.uid())` inside RLS policies (faster at scale; no behavior change). `pg_net` sits in the public schema (installed by Supabase; leave unless Supabase recommends moving it).
 - **Not yet tested on a real phone:** the Turnstile sign-in check (tested only in automated browsers).
 - **Gotchas:** CI uses Node 24 and npm 11. Regenerate `app/package-lock.json` with that npm, or `npm ci` fails in CI. Live DB migrations are applied through the Supabase Management API after the owner OKs them; also insert the version into `supabase_migrations.schema_migrations`. Only "only me" records are left untouched by key rotation, because record ids come from the circle's first key (kept in the keyring).
 
 ## How the owner likes to work
 
 Plain language, recommendations rather than option lists, outcome first, then what was and wasn't tested. Do work end to end without asking, but ask before applying live database migrations, and wait for "merge" on each PR.
+
+**Always end with a next step.** Never tell the owner there's "nothing to do" or "nothing needed in the meantime." Every reply that finishes a piece of work ends with a recommended next step, plus what else could usefully be done next: website or content updates, security hardening, bug or health checks (live headers, `npm audit`, Supabase security and performance advisors, the site check, a collateral audit when due), or the next roadmap item. Recommend one clearly; offer a few alternatives only if they're genuinely useful.

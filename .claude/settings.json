@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:idid.care)",
+      "WebFetch(domain:app.idid.care)",
+      "WebFetch(domain:www.cloudflarestatus.com)",
+      "WebFetch(domain:www.githubstatus.com)",
+      "WebFetch(domain:resend-status.com)"
+    ]
+  }
+}

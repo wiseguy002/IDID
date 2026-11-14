@@ -729,6 +729,17 @@
       "changelog": [
         "circle's encryption key"
       ]
+    },
+    {
+      "name": "Support iDID (Ko-fi)",
+      "match": "ko-fi",
+      "requiredIn": [
+        "help",
+        "privacy"
+      ],
+      "changelog": [
+        "Support iDID"
+      ]
     }
   ]
 }

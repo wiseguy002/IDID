@@ -75,8 +75,8 @@ export class SupabaseRemote implements Remote {
   async circlePublicKeys(circleId: string) {
     return check(await this.sb.rpc('circle_public_keys', { c: circleId })) as { user_id: string; public_key: JsonWebKey }[];
   }
-  async rotateCircleKey(circleId: string, sealed: Record<string, string>) {
-    check(await this.sb.rpc('rotate_circle_key', { c: circleId, sealed }));
+  async rotateCircleKey(circleId: string, sealed: Record<string, string>, keyring: string) {
+    return check(await this.sb.rpc('rotate_circle_key', { c: circleId, sealed, keyring })) as { cancelled: number; seq: number };
   }
   async push(circleId: string, rows: { rid: string; ct: string }[]) {
     if (rows.length) check(await this.sb.from('records').upsert(rows.map((r) => ({ circle_id: circleId, ...r })), { onConflict: 'circle_id,rid' }));

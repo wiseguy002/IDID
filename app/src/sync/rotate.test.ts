@@ -4,7 +4,14 @@ import { Store } from '../data/store';
 import { decryptJson, newAesKey } from '../data/crypto';
 import { FakeServer } from './fakeRemote';
 import { SyncEngine } from './engine';
-import { KEYRING_RID, createAccount, createCircle, joinWithInvite, makeInvite, openCircle, restoreSession, rotateCircleKey, serialiseSession } from './keys';
+import { KEYRING_RID, createAccount, createCircle, joinWithInvite, makeInvite, openCircle, reencryptCircle, restoreSession, rotateCircleKey, serialiseSession, type CircleSession } from './keys';
+
+/** Change the key and re-encrypt, as the app does. */
+async function rotate(remote: Parameters<typeof rotateCircleKey>[0], s: CircleSession) {
+  const r = await rotateCircleKey(remote, s);
+  await reencryptCircle(remote, r.session);
+  return r.session;
+}
 import type { Entry } from '../types';
 
 const ITER = 100_000;
@@ -37,7 +44,7 @@ describe('circle key rotation', () => {
     const carolOldKey = carol.circleKey;
     await C.removeMember(alice.circleId, 'u-carol').catch(() => undefined);
     await A.removeMember(alice.circleId, 'u-carol');
-    const alice2 = await rotateCircleKey(A, alice);
+    const alice2 = await rotate(A, alice);
     expect(alice2.keyVersion).toBe(2);
     expect(await A.getInvite(pending.split('.')[0])).toBeNull(); // unused invites carried the old key
 
@@ -80,7 +87,7 @@ describe('circle key rotation', () => {
     const A = server.as('u-alice'), B = server.as('u-bob');
     const alice = await createCircle(A, await createAccount(A, 'alice pass', ITER));
     const bob = await joinWithInvite(B, await createAccount(B, 'bob pass', ITER), await makeInvite(A, alice));
-    const alice2 = await rotateCircleKey(A, alice);
+    const alice2 = await rotate(A, alice);
 
     // Bob hasn't noticed yet and pushes with the old key.
     const bStore = await device();
@@ -89,6 +96,7 @@ describe('circle key rotation', () => {
 
     const aStore = await device();
     const aEng = new SyncEngine(aStore, A, alice2, mem());
+    aEng.resaveOld = true; // the owner's devices re-save late rows
     await aEng.sync();
     expect(aStore.get('entries', 'late')?.notes).toBe('written with the old key');
     await aEng.sync(); // the re-save goes out with the new key
@@ -102,12 +110,78 @@ describe('circle key rotation', () => {
     const server = new FakeServer();
     const A = server.as('u-alice');
     const alice = await createCircle(A, await createAccount(A, 'alice pass', ITER));
-    const alice2 = await rotateCircleKey(A, alice);
+    const alice2 = await rotate(A, alice);
     const back = await restoreSession(await serialiseSession(alice2, 'a@example.com'));
     const s = await device();
     const viaSaved = new SyncEngine(s, A, { ...back, circleId: back.circleId!, circleKey: back.circleKey! }, mem());
     const original = new SyncEngine(s, A, alice, mem());
     expect(await viaSaved.rid('entries', 'x')).toBe(await original.rid('entries', 'x'));
     expect(back.keyVersion).toBe(2);
+  });
+
+  it('changes the key and saves the keyring together, so a failed change leaves the old key working', async () => {
+    const server = new FakeServer();
+    const A = server.as('u-alice'), B = server.as('u-bob');
+    const alice = await createCircle(A, await createAccount(A, 'alice pass', ITER));
+    const bob = await joinWithInvite(B, await createAccount(B, 'bob pass', ITER), await makeInvite(A, alice));
+    (A as unknown as { failNextRotation: boolean }).failNextRotation = true;
+    await expect(rotateCircleKey(A, alice)).rejects.toThrow();
+    expect(server.records.has(`${alice.circleId}:${KEYRING_RID}`)).toBe(false);
+    const again = await openCircle(B, bob, alice.circleId);
+    expect(again?.keyVersion).toBe(1);
+    expect(await crypto.subtle.exportKey('raw', again!.circleKey)).toEqual(await crypto.subtle.exportKey('raw', bob.circleKey));
+    // Anyone opening the circle straight after a change gets the new key and the keyring at once.
+    const { session } = await rotateCircleKey(A, alice);
+    const bob2 = await openCircle(B, bob, alice.circleId);
+    expect(bob2?.keyVersion).toBe(2);
+    expect(bob2?.ridSeed).toEqual(session.ridSeed);
+  });
+
+  it("doesn't let other members overwrite the keyring", async () => {
+    const server = new FakeServer();
+    const A = server.as('u-alice'), B = server.as('u-bob');
+    const alice = await createCircle(A, await createAccount(A, 'alice pass', ITER));
+    await joinWithInvite(B, await createAccount(B, 'bob pass', ITER), await makeInvite(A, alice));
+    await rotateCircleKey(A, alice);
+    await expect(B.push(alice.circleId, [{ rid: KEYRING_RID, ct: 'k:garbage' }])).rejects.toThrow();
+    await expect(A.push(alice.circleId, [{ rid: KEYRING_RID, ct: 'k:garbage' }])).rejects.toThrow();
+  });
+
+  it('finishes re-encrypting after an interruption', async () => {
+    const server = new FakeServer();
+    const A = server.as('u-alice');
+    const alice = await createCircle(A, await createAccount(A, 'alice pass', ITER));
+    const aStore = await device();
+    for (let i = 0; i < 5; i++) await aStore.put('entries', entry(`e${i}`, `entry ${i}`));
+    await new SyncEngine(aStore, A, alice, mem()).sync();
+    const { session, cancelled } = await rotateCircleKey(A, alice);
+    expect(cancelled).toBe(0);
+    // Interrupted before any re-encryption: rows still open with the old key, and readers still get them.
+    const fresh = await device();
+    await new SyncEngine(fresh, A, session, mem()).sync();
+    expect(fresh.all('entries').length).toBe(5);
+    await reencryptCircle(A, session);
+    await reencryptCircle(A, session); // running it again changes nothing
+    const shared = [...server.records.values()].filter((r) => r.ct.startsWith('c:'));
+    expect(shared.length).toBe(5);
+    for (const r of shared) await expect(decryptJson(session.circleKey, r.ct.slice(2), `${alice.circleId}:${r.rid}`)).resolves.toBeDefined();
+  });
+
+  it('remembers rows it had to skip, so they can be read again', async () => {
+    const server = new FakeServer();
+    const A = server.as('u-alice');
+    const alice = await createCircle(A, await createAccount(A, 'alice pass', ITER));
+    await A.push(alice.circleId, [{ rid: 'x'.repeat(43), ct: 'c:not-readable' }]);
+    const state = mem();
+    const eng = new SyncEngine(await device(), A, alice, state);
+    let rekey = 0;
+    eng.onRekey = () => { rekey++; };
+    await eng.sync();
+    expect(rekey).toBe(1);
+    eng.skipUnreadable = true;
+    await eng.sync();
+    const st = await state.load() as { lastSeq: number; skippedFrom?: number };
+    expect(st.skippedFrom).toBeDefined();
+    expect(st.lastSeq).toBeGreaterThanOrEqual(st.skippedFrom!);
   });
 });

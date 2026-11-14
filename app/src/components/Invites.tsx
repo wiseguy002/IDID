@@ -203,7 +203,7 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
   const pending = invites.filter((i) => i.memberId === member.id && statusOf(i, roster.rows.get(i.id)) === 'waiting').sort((a, b) => b.createdAt - a.createdAt)[0];
   const share = shares.find((s) => s.memberId === member.id);
   const isMe = member.userId && member.userId === currentUserId();
-  const act = async (fn: () => Promise<void>, done: string) => { setBusy(true); try { await fn(); toast(done); } catch (e) { toast(e instanceof Error ? e.message : 'Something went wrong.'); } setBusy(false); roster.refresh(); };
+  const act = async <T,>(fn: () => Promise<T>, done: string | ((r: T) => string)) => { setBusy(true); try { const r = await fn(); toast(typeof done === 'string' ? done : done(r)); } catch (e) { toast(e instanceof Error ? e.message : 'Something went wrong.'); } setBusy(false); roster.refresh(); };
 
   if (!roster.connected) return <p className="small muted">Connect your circle online (Circle → Connect devices &amp; invite) to invite {member.name} to use iDID on their own device.</p>;
   return (
@@ -220,7 +220,7 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
                   act(() => setAccess(member.userId!, v), v === 'viewer' ? `${member.name} can now only view.` : `${member.name} can now view and add.`);
                 }} />
                 <button className="btn sm" disabled={busy} onClick={() => setHanding(true)}><Icon name="people" size={15} /> Make {member.name} the circle's owner</button>
-                <button className="btn ghost danger sm" disabled={busy} onClick={async () => { setBusy(true); try { const r = await removeAccount(member.userId!); toast(r.rotated ? `${member.name} no longer has access. The circle's key was changed, so their old copy can't open anything new.` : `${member.name} no longer has access. Anything already on their device stays there.`); } catch (e) { toast(e instanceof Error ? e.message : 'Something went wrong.'); } setBusy(false); roster.refresh(); }}>Remove {member.name}'s access</button>
+                <button className="btn ghost danger sm" disabled={busy} onClick={() => act(() => removeAccount(member.userId!), (r) => removedMessage(member.name, r))}>Remove {member.name}'s access</button>
               </>
             )}
           </>
@@ -269,4 +269,13 @@ export function personStatus(m: Member, roster: ReturnType<typeof useRoster>, in
   const inv = invites.filter((i) => i.memberId === m.id).sort((a, b) => b.createdAt - a.createdAt)[0];
   if (inv) { const st = statusOf(inv, roster.rows.get(inv.id)); if (st === 'waiting') return 'invited · waiting'; if (st === 'expired') return 'invite expired'; }
   return '';
+}
+
+/** What to tell the owner after removing someone, including whether the circle's key was changed. */
+function removedMessage(name: string, r: { rotated: boolean; cancelled: number; rekeyError?: string }): string {
+  if (r.rekeyError) return `${name} no longer has access, but changing the circle's key didn't finish. iDID will try again the next time it connects.`;
+  if (!r.rotated) return `${name} no longer has access. Anything already on their device stays there.`;
+  const links = r.cancelled === 1 ? ' One unused invite link stopped working, so send a new one if you still need it.'
+    : r.cancelled > 1 ? ` ${r.cancelled} unused invite links stopped working, so send new ones if you still need them.` : '';
+  return `${name} no longer has access. The circle's key was changed, so their old copy can't open anything new.${links}`;
 }

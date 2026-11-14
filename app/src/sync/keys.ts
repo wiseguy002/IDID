@@ -158,13 +158,12 @@ export async function withKeyring(remote: Remote, s: CircleSession): Promise<Cir
 
 /**
  * Owner only, after removing someone: switch the circle to a brand-new key.
- * 1. Seal the new key to everyone still in the circle (this also cancels unused invites, which carry the old key).
- * 2. Save the keyring (earlier keys + record-id seed), encrypted with the new key.
- * 3. Re-encrypt every shared record with the new key. Record ids stay the same, so "only me" records,
- *    which only their owner can read, stay valid without being touched.
+ * In one server step (all or nothing): seal the new key to everyone still in the circle, save the keyring
+ * (earlier keys + record-id seed, encrypted with the new key) and cancel unused invites, which carry the old key.
+ * Then call reencryptCircle to move the shared records over to the new key.
  * Someone who was removed keeps only the old key, which can't read anything written from now on.
  */
-export async function rotateCircleKey(remote: Remote, s: CircleSession): Promise<CircleSession> {
+export async function rotateCircleKey(remote: Remote, s: CircleSession): Promise<{ session: CircleSession; cancelled: number; ringSeq: number }> {
   const cur = s.keyVersion ? s : await withKeyring(remote, s);
   const next = await newAesKey();
   const ridSeed = cur.ridSeed ?? new Uint8Array(await crypto.subtle.exportKey('raw', cur.circleKey));
@@ -173,25 +172,37 @@ export async function rotateCircleKey(remote: Remote, s: CircleSession): Promise
 
   const sealed: Record<string, string> = {};
   for (const m of await remote.circlePublicKeys(s.circleId)) sealed[m.user_id] = await sealKey(next, m.public_key, `circle:${s.circleId}`);
-  await remote.rotateCircleKey(s.circleId, sealed);
-
   const ring: Keyring = { v: version, ridSeed: toB64(ridSeed), old: await Promise.all(oldKeys.map(rawKey)) };
-  await remote.push(s.circleId, [{ rid: KEYRING_RID, ct: `k:${await encryptJson(next, ring, `${s.circleId}:keyring`)}` }]);
+  const { cancelled, seq } = await remote.rotateCircleKey(s.circleId, sealed, `k:${await encryptJson(next, ring, `${s.circleId}:keyring`)}`);
+  return { session: { ...s, circleKey: next, oldKeys, ridSeed, keyVersion: version }, cancelled, ringSeq: seq };
+}
 
+/**
+ * Re-encrypt every shared record that still opens only with an earlier key. Record ids stay the same, so
+ * "only me" records, which only their owner can read, stay valid without being touched. Safe to run again
+ * after an interruption: rows already on the new key are left alone.
+ */
+export async function reencryptCircle(remote: Remote, s: CircleSession) {
+  const oldKeys = s.oldKeys ?? [];
+  if (!oldKeys.length) return;
+  // Everything written after the keyring was saved already uses the new key (late writers are re-saved by sync),
+  // and the rows re-uploaded here move past it too, so stop there.
+  const stopAt = (await remote.getRecord(s.circleId, KEYRING_RID))?.seq ?? Infinity;
   for (let after = 0; ;) {
     const rows = await remote.pull(s.circleId, after, 200);
     const out: { rid: string; ct: string }[] = [];
+    let done = rows.length < 200;
     for (const r of rows) {
+      if (r.seq >= stopAt) { done = true; break; }
       after = Math.max(after, r.seq);
       if (!r.ct.startsWith('c:')) continue;
       const aad = `${s.circleId}:${r.rid}`;
+      try { await decryptJson(s.circleKey, r.ct.slice(2), aad); continue; } catch { /* not on the new key yet */ }
       for (const k of oldKeys) {
-        try { out.push({ rid: r.rid, ct: `c:${await encryptJson(next, await decryptJson(k, r.ct.slice(2), aad), aad)}` }); break; } catch { /* try an older key */ }
+        try { out.push({ rid: r.rid, ct: `c:${await encryptJson(s.circleKey, await decryptJson(k, r.ct.slice(2), aad), aad)}` }); break; } catch { /* try an older key */ }
       }
     }
-    // Re-uploaded rows move to the end of the change list. They only open with the new key, so they're skipped when reached.
     if (out.length) await remote.push(s.circleId, out);
-    if (rows.length < 200) break;
+    if (done) break;
   }
-  return { ...s, circleKey: next, oldKeys, ridSeed, keyVersion: version };
 }

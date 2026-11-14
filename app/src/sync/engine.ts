@@ -7,14 +7,18 @@ import { decryptJson, encryptJson } from '../data/crypto';
 import { ALWAYS_PRIVATE, type Envelope, type Store } from '../data/store';
 import type { CheckOnAlert, Observation } from '../types';
 import { KEYRING_RID, readKeyring, type CircleSession } from './keys';
+import type { Remote, ReminderRow } from './remote';
 
 /** The circle's key changed; reopen the circle to get the new one. */
 export class RekeyNeeded extends Error { constructor() { super('The circle key changed.'); } }
-import type { Remote, ReminderRow } from './remote';
 
 const PAGE = 200;
 
-export interface SyncState { lastSeq: number }
+export interface SyncState {
+  lastSeq: number;
+  /** Change number of the first shared row that no known key could open and was skipped. Reading starts again from here once a newer key arrives. */
+  skippedFrom?: number;
+}
 export type SyncStatus = 'idle' | 'syncing' | 'offline' | 'error';
 
 export class SyncEngine {
@@ -90,7 +94,9 @@ export class SyncEngine {
    */
   onRekey: (() => void) | null = null;
   /** After a reopen found no newer key: skip rows nothing can open, rather than asking again. */
-  skipUnreadable = false
+  skipUnreadable = false;
+  /** Re-save rows written with an earlier key. Only the owner's devices do this, so it isn't repeated by everyone. */
+  resaveOld = false;
 
   /** Run push+pull, coalescing overlapping calls. */
   sync(): Promise<void> {
@@ -162,27 +168,32 @@ export class SyncEngine {
   async pullOnce() {
     const st = await this.state.load();
     let last = st.lastSeq;
+    let skippedFrom = st.skippedFrom;
+    const save = () => this.state.save(skippedFrom === undefined ? { lastSeq: last } : { lastSeq: last, skippedFrom });
     for (;;) {
       const rows = await this.remote.pull(this.s.circleId, last, PAGE);
       for (const r of rows) {
         if (r.rid === KEYRING_RID) {
           // A newer keyring means the circle key changed. If it no longer opens with our key, we need the new one.
           const ring = await readKeyring(this.s.circleId, this.s.circleKey, r.ct).catch(() => null);
-          if (!ring || ring.v > (this.s.keyVersion ?? 1)) { await this.state.save({ lastSeq: last }); throw new RekeyNeeded(); }
+          if (!ring || ring.v > (this.s.keyVersion ?? 1)) { await save(); throw new RekeyNeeded(); }
           last = Math.max(last, r.seq);
           continue;
         }
         const got = await this.open(r.rid, r.ct);
-        if (got.unreadable && !this.skipUnreadable) { await this.state.save({ lastSeq: last }); throw new RekeyNeeded(); }
+        if (got.unreadable) {
+          if (!this.skipUnreadable) { await save(); throw new RekeyNeeded(); }
+          skippedFrom = Math.min(skippedFrom ?? r.seq, r.seq);
+        }
         const env = got.env;
         if (env && (await this.rid(env.kind, env.id)) === r.rid) {
           await this.store.applyRemote(env);
           // Written with an earlier key (by a device that hadn't caught up yet): save it again with the current key.
-          if (got.old && !this.readOnly && !env.deleted) await this.store.requeue(env.kind, env.id);
+          if (got.old && this.resaveOld && !this.readOnly && !env.deleted) await this.store.requeue(env.kind, env.id);
         }
         last = Math.max(last, r.seq);
       }
-      await this.state.save({ lastSeq: last });
+      await save();
       if (rows.length < PAGE) break;
     }
   }

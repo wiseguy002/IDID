@@ -1,6 +1,9 @@
 /** In-memory server with the same access rules as the real schema, for tests. */
 import type { CareShareRow, InviteRow, MembershipRow, ProfileRow, PushSub, RecordRow, ReminderRow, Remote } from './remote';
 
+/** The keyring's record id (keys.ts KEYRING_RID). Like the database, only rotateCircleKey may write it. */
+const KEYRING = 'keyring-circle-v1';
+
 export class FakeServer {
   profiles = new Map<string, ProfileRow>();
   members: MembershipRow[] = [];
@@ -84,17 +87,28 @@ class FakeRemote implements Remote {
     if (!this.s.members.some((m) => m.circle_id === c && m.user_id === this.uid)) return [];
     return this.s.members.filter((m) => m.circle_id === c && this.s.profiles.has(m.user_id)).map((m) => ({ user_id: m.user_id, public_key: this.s.profiles.get(m.user_id)!.public_key }));
   }
-  async rotateCircleKey(c: string, sealed: Record<string, string>) {
+  /** Set to make the next rotateCircleKey fail before changing anything (tests). */
+  failNextRotation = false;
+  async rotateCircleKey(c: string, sealed: Record<string, string>, keyring: string) {
     this.owner(c);
+    if (this.failNextRotation) { this.failNextRotation = false; throw new Error('network'); }
+    if (!keyring.startsWith('k:')) throw new Error('bad keyring');
     const ms = this.s.members.filter((m) => m.circle_id === c);
     if (ms.some((m) => !(m.user_id in sealed))) throw new Error('every member needs a copy of the new key');
     if (Object.keys(sealed).some((u) => !ms.some((m) => m.user_id === u))) throw new Error('keys must be for current members only');
+    // All at once, like the database function.
     for (const m of ms) m.sealed_circle_key = sealed[m.user_id];
-    for (const [id, i] of this.s.invites) if (i.circle_id === c && !i.used) this.s.invites.delete(id);
+    const seq = ++this.s.seq;
+    this.s.records.set(`${c}:${KEYRING}`, { circle_id: c, rid: KEYRING, ct: keyring, seq });
+    let cancelled = 0;
+    for (const [id, i] of this.s.invites) if (i.circle_id === c && !i.used) { this.s.invites.delete(id); cancelled++; }
+    for (const l of this.s.listeners.get(c) ?? []) l();
+    return { cancelled, seq };
   }
   async push(c: string, rows: { rid: string; ct: string }[]) {
     if (!rows.length) return;
     this.writer(c);
+    if (rows.some((r) => r.rid === KEYRING)) throw new Error('rls: only the owner can change the keyring');
     for (const r of rows) this.s.records.set(`${c}:${r.rid}`, { circle_id: c, rid: r.rid, ct: r.ct, seq: ++this.s.seq });
     for (const l of this.s.listeners.get(c) ?? []) l();
   }

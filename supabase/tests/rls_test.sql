@@ -232,4 +232,27 @@ select pg_temp.expect((select count(*) = 0 from public.feature_counts where feat
 select pg_temp.expect((select reports = 2 from public.feature_count_reports where week = '2026-W46'), 'admins see how many people shared');
 reset role;
 select pg_temp.expect((select count(*) = 0 from information_schema.columns where table_schema = 'public' and table_name in ('feature_counts', 'feature_count_reports') and column_name ~ 'user|device|ip|created|at$'), 'no column could identify a person or a moment');
+
+-- ---------- Circle key rotation ----------
+reset role;
+insert into public.profiles (id, public_key, wrapped_private_key, key_salt, sealed_personal_key)
+  select m.user_id, '{"kty":"EC","who":"member"}', 'v1.x.y', 'salt', 's1.x.y' from public.circle_members m
+  where m.circle_id = :'cid' on conflict (id) do nothing;
+select user_id as other from public.circle_members where circle_id = :'cid' and role <> 'owner' limit 1 \gset
+select user_id as owner from public.circle_members where circle_id = :'cid' and role = 'owner' \gset
+select jsonb_object_agg(user_id::text, 's1.rotated-' || user_id::text) as sealed from public.circle_members where circle_id = :'cid' \gset
+select pg_temp.as_user(:'owner');
+select pg_temp.expect((select count(*) = (select count(*) from public.circle_members where circle_id = :'cid') from public.circle_public_keys(:'cid')), 'members can list the circle''s public keys');
+insert into public.invites (circle_id, wrapped_circle_key) values (:'cid', 'v1.old-key') returning id as pending \gset
+select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb - %L)$q$, :'cid', :'sealed', :'other'), 'every member must get the new key');
+select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb || '{"00000000-0000-0000-0000-0000000000ff":"s1.x"}')$q$, :'cid', :'sealed'), 'no keys for people outside the circle');
+select pg_temp.as_user(:'other');
+select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb)$q$, :'cid', :'sealed'), 'only the owner can change the circle key');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000ee');
+select pg_temp.expect((select count(*) = 0 from public.circle_public_keys(:'cid')), 'outsiders cannot list public keys');
+select pg_temp.as_user(:'owner');
+select public.rotate_circle_key(:'cid', :'sealed'::jsonb);
+select pg_temp.expect((select bool_and(sealed_circle_key = 's1.rotated-' || user_id::text) from public.circle_members where circle_id = :'cid'), 'every member has the new key');
+select pg_temp.expect((select count(*) = 0 from public.invites where id = :'pending'), 'unused invites with the old key are cancelled');
+reset role;
 \echo ALL RLS TESTS PASSED

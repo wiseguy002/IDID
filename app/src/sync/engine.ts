@@ -6,7 +6,10 @@
 import { decryptJson, encryptJson } from '../data/crypto';
 import { ALWAYS_PRIVATE, type Envelope, type Store } from '../data/store';
 import type { CheckOnAlert, Observation } from '../types';
-import type { CircleSession } from './keys';
+import { KEYRING_RID, readKeyring, type CircleSession } from './keys';
+
+/** The circle's key changed; reopen the circle to get the new one. */
+export class RekeyNeeded extends Error { constructor() { super('The circle key changed.'); } }
 import type { Remote, ReminderRow } from './remote';
 
 const PAGE = 200;
@@ -34,7 +37,8 @@ export class SyncEngine {
 
   constructor(store: Store, remote: Remote, s: CircleSession, state: { load(): Promise<SyncState>; save(v: SyncState): Promise<void> }) {
     this.store = store; this.remote = remote; this.s = s; this.state = state;
-    this.macKey = crypto.subtle.exportKey('raw', s.circleKey).then(async (raw) => {
+    // Record ids come from the circle's first key (kept in the keyring after a key change), so they never change.
+    this.macKey = (s.ridSeed ? Promise.resolve(s.ridSeed) : crypto.subtle.exportKey('raw', s.circleKey)).then(async (raw) => {
       const ikm = await crypto.subtle.importKey('raw', raw, 'HKDF', false, ['deriveKey']);
       return crypto.subtle.deriveKey({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(32), info: new TextEncoder().encode('idid-rid') }, ikm, { name: 'HMAC', hash: 'SHA-256', length: 256 }, false, ['sign']);
     });
@@ -61,13 +65,32 @@ export class SyncEngine {
   }
 
   async decode(rid: string, ct: string): Promise<Envelope | null> {
-    const aad = `${this.s.circleId}:${rid}`;
-    try {
-      if (ct.startsWith('c:')) return await decryptJson<Envelope>(this.s.circleKey, ct.slice(2), aad);
-      if (ct.startsWith(`p:${this.s.userId}:`)) return await decryptJson<Envelope>(this.s.personalKey, ct.slice(3 + this.s.userId.length), aad);
-      return null; // someone else's private entry
-    } catch { return null; }
+    return (await this.open(rid, ct)).env;
   }
+
+  /** Decrypt a server row. `old` = it opened only with an earlier circle key; `unreadable` = a shared row no known key opens. */
+  private async open(rid: string, ct: string): Promise<{ env: Envelope | null; old?: boolean; unreadable?: boolean }> {
+    const aad = `${this.s.circleId}:${rid}`;
+    if (ct.startsWith('c:')) {
+      const keys = [this.s.circleKey, ...(this.s.oldKeys ?? [])];
+      for (let i = 0; i < keys.length; i++) {
+        try { return { env: await decryptJson<Envelope>(keys[i], ct.slice(2), aad), old: i > 0 }; } catch { /* try an older key */ }
+      }
+      return { env: null, unreadable: true };
+    }
+    try {
+      if (ct.startsWith(`p:${this.s.userId}:`)) return { env: await decryptJson<Envelope>(this.s.personalKey, ct.slice(3 + this.s.userId.length), aad) };
+    } catch { /* fall through */ }
+    return { env: null }; // someone else's private entry
+  }
+
+  /**
+   * Called when the circle's key has changed (someone was removed). The owner of this engine should reopen
+   * the circle with the new key and start a fresh engine. Until then, this engine stops reading.
+   */
+  onRekey: (() => void) | null = null;
+  /** After a reopen found no newer key: skip rows nothing can open, rather than asking again. */
+  skipUnreadable = false
 
   /** Run push+pull, coalescing overlapping calls. */
   sync(): Promise<void> {
@@ -82,6 +105,7 @@ export class SyncEngine {
           this.lastSyncedAt = Date.now();
           this.setStatus('idle');
         } catch (e) {
+          if (e instanceof RekeyNeeded) { this.setStatus('idle'); this.onRekey?.(); break; }
           this.lastError = e instanceof Error ? e.message : String(e);
           this.setStatus(typeof navigator !== 'undefined' && navigator.onLine === false ? 'offline' : 'error');
           break;
@@ -141,8 +165,21 @@ export class SyncEngine {
     for (;;) {
       const rows = await this.remote.pull(this.s.circleId, last, PAGE);
       for (const r of rows) {
-        const env = await this.decode(r.rid, r.ct);
-        if (env && (await this.rid(env.kind, env.id)) === r.rid) await this.store.applyRemote(env);
+        if (r.rid === KEYRING_RID) {
+          // A newer keyring means the circle key changed. If it no longer opens with our key, we need the new one.
+          const ring = await readKeyring(this.s.circleId, this.s.circleKey, r.ct).catch(() => null);
+          if (!ring || ring.v > (this.s.keyVersion ?? 1)) { await this.state.save({ lastSeq: last }); throw new RekeyNeeded(); }
+          last = Math.max(last, r.seq);
+          continue;
+        }
+        const got = await this.open(r.rid, r.ct);
+        if (got.unreadable && !this.skipUnreadable) { await this.state.save({ lastSeq: last }); throw new RekeyNeeded(); }
+        const env = got.env;
+        if (env && (await this.rid(env.kind, env.id)) === r.rid) {
+          await this.store.applyRemote(env);
+          // Written with an earlier key (by a device that hadn't caught up yet): save it again with the current key.
+          if (got.old && !this.readOnly && !env.deleted) await this.store.requeue(env.kind, env.id);
+        }
         last = Math.max(last, r.seq);
       }
       await this.state.save({ lastSeq: last });

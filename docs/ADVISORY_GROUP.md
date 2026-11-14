@@ -31,7 +31,7 @@ Clinical advisors:
 Lived experience:
 - Peer-run organizations and communities for people with DID and dissociation. Contact the organizers first and ask how they'd like to be approached. Don't recruit in members' spaces without permission.
 - **NAMI** affiliates and state certified-peer-specialist programs, for a peer specialist seat.
-- People already using iDID: add an optional "I'd like to help shape iDID" link in the app's Suggest a feature screen. It would arrive like a feature request, so it isn't end-to-end encrypted, and the screen must say so.
+- People already using iDID: the **Help shape iDID** form (Suggest a feature screen, or Settings) lets people volunteer. Sign-ups arrive in Manage requests, highlighted in blue, with a reply email. Reply from hello@idid.care.
 
 ## Commitment and thanks
 
@@ -100,4 +100,4 @@ Send screenshots and the `/clinicians` page a week ahead.
 1. Volunteer for now (decided). Revisit payment when funding arrives.
 2. Pick 3 clinicians and 2–3 peer organizations to contact first.
 3. Set up a private shared folder for agendas and the agreement.
-4. When someone says yes, ask Claude to add the opt-in "help shape iDID" link and, with permission, a "reviewed by" note on the clinicians page.
+4. Check Manage requests for Help shape iDID sign-ups. When advisors agree to be named, ask Claude to add a "reviewed by" note to the clinicians page.

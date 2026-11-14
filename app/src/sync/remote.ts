@@ -37,6 +37,12 @@ export interface Remote {
   /** Owner only: delete a circle and everything stored in it. */
   deleteCircle(circleId: string): Promise<void>;
   pull(circleId: string, afterSeq: number, limit: number): Promise<RecordRow[]>;
+  /** One record by its id, or null. */
+  getRecord(circleId: string, rid: string): Promise<RecordRow | null>;
+  /** Public keys of everyone in the circle (members only). */
+  circlePublicKeys(circleId: string): Promise<{ user_id: string; public_key: JsonWebKey }[]>;
+  /** Owner only: replace every member's sealed circle key at once; cancels unused invites. */
+  rotateCircleKey(circleId: string, sealed: Record<string, string>): Promise<void>;
   push(circleId: string, rows: { rid: string; ct: string }[]): Promise<void>;
   subscribe(circleId: string, onChange: () => void): () => void;
   /** Replace this user's unsent appointment, check-in and suggestion reminders. */

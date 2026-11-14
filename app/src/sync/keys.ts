@@ -8,12 +8,21 @@
  */
 import {
   PBKDF2_ITERATIONS, deriveKeyFromPassphrase, deriveKeyFromSecret, exportPrivate, fromB64, importPrivate, newAesKey,
-  newIdentity, openSealedKey, randomBytes, sealKey, toB64, unwrapAesKey, wrapAesKey, type Identity,
+  newIdentity, openSealedKey, randomBytes, sealKey, toB64, unwrapAesKey, wrapAesKey, encryptJson, decryptJson, type Identity,
 } from '../data/crypto';
 import type { Remote } from './remote';
 
 export interface AccountKeys { userId: string; identity: Identity; personalKey: CryptoKey }
-export interface CircleSession extends AccountKeys { circleId: string; circleKey: CryptoKey }
+export interface CircleSession extends AccountKeys {
+  circleId: string;
+  circleKey: CryptoKey;
+  /** Earlier circle keys, from the keyring (newest first). Used only to read records written before a key change. */
+  oldKeys?: CryptoKey[];
+  /** Seed for record ids. It stays the same when the circle key changes, so record ids (and "only me" records) stay valid. */
+  ridSeed?: Uint8Array<ArrayBuffer>;
+  /** 1 for a circle whose key has never changed. */
+  keyVersion?: number;
+}
 
 export async function createAccount(remote: Remote, passphrase: string, iterations = PBKDF2_ITERATIONS): Promise<AccountKeys> {
   const userId = remote.userId()!;
@@ -54,7 +63,7 @@ export async function createCircle(remote: Remote, acct: AccountKeys): Promise<C
   const tmpId = 'new';
   // The AAD includes the circle id, which we only learn after creating it: seal, create, then re-seal.
   const circleId = await remote.createCircle(await sealKey(circleKey, acct.identity.publicJwk, `circle:${tmpId}`));
-  return { ...acct, circleId, circleKey };
+  return { ...acct, circleId, circleKey, oldKeys: [], keyVersion: 1 };
 }
 
 export async function openCircle(remote: Remote, acct: AccountKeys, circleId?: string): Promise<CircleSession | null> {
@@ -64,7 +73,9 @@ export async function openCircle(remote: Remote, acct: AccountKeys, circleId?: s
   const m = circleId ? ms.find((x) => x.circle_id === circleId) : newest;
   if (!m) return null;
   for (const aad of [`circle:${m.circle_id}`, 'circle:new']) {
-    try { return { ...acct, circleId: m.circle_id, circleKey: await openSealedKey(m.sealed_circle_key, acct.identity, aad) }; } catch { /* try next */ }
+    let circleKey: CryptoKey;
+    try { circleKey = await openSealedKey(m.sealed_circle_key, acct.identity, aad); } catch { continue; }
+    return withKeyring(remote, { ...acct, circleId: m.circle_id, circleKey });
   }
   throw new Error("Couldn't open this circle's key.");
 }
@@ -86,28 +97,101 @@ export async function joinWithInvite(remote: Remote, acct: AccountKeys, token: s
   try { circleKey = await unwrapAesKey(inv.wrapped_circle_key, await deriveKeyFromSecret(fromB64(secretB64), 'idid-invite'), 'invite'); }
   catch { throw new Error("This invite link doesn't look right. Ask for a new link."); }
   const circleId = await remote.acceptInvite(id, await sealKey(circleKey, acct.identity.publicJwk, `circle:${inv.circle_id}`));
-  return { ...acct, circleId, circleKey };
+  return withKeyring(remote, { ...acct, circleId, circleKey });
 }
 
 // ---------- Local cache (sealed with the device data key) ----------
 
-export interface SavedSession { userId: string; circleId: string | null; email: string; publicJwk: JsonWebKey; priv: string; personal: string; circle: string | null }
+export interface SavedSession {
+  userId: string; circleId: string | null; email: string; publicJwk: JsonWebKey; priv: string; personal: string; circle: string | null;
+  /** Keyring details (after a circle key change): earlier keys, the record-id seed and the key version. */
+  old?: string[]; ridSeed?: string; keyVersion?: number;
+}
 
 const raw = async (k: CryptoKey) => toB64(new Uint8Array(await crypto.subtle.exportKey('raw', k)));
 const aes = (b: string) => crypto.subtle.importKey('raw', fromB64(b), { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
 
-export async function serialiseSession(s: AccountKeys & { circleId?: string | null; circleKey?: CryptoKey | null }, email: string): Promise<SavedSession> {
+export type MaybeCircle = AccountKeys & { circleId: string | null; circleKey: CryptoKey | null } & Partial<Pick<CircleSession, 'oldKeys' | 'ridSeed' | 'keyVersion'>>;
+
+export async function serialiseSession(s: AccountKeys & { circleId?: string | null; circleKey?: CryptoKey | null } & Partial<Pick<CircleSession, 'oldKeys' | 'ridSeed' | 'keyVersion'>>, email: string): Promise<SavedSession> {
   return {
+    old: s.oldKeys ? await Promise.all(s.oldKeys.map(raw)) : undefined,
+    ridSeed: s.ridSeed ? toB64(s.ridSeed) : undefined,
+    keyVersion: s.keyVersion,
     userId: s.userId, email, circleId: s.circleId ?? null, publicJwk: s.identity.publicJwk,
     priv: toB64(new Uint8Array(await crypto.subtle.exportKey('pkcs8', s.identity.privateKey))),
     personal: await raw(s.personalKey), circle: s.circleKey ? await raw(s.circleKey) : null,
   };
 }
 
-export async function restoreSession(v: SavedSession): Promise<AccountKeys & { circleId: string | null; circleKey: CryptoKey | null }> {
+export async function restoreSession(v: SavedSession): Promise<MaybeCircle> {
   const privateKey = await crypto.subtle.importKey('pkcs8', fromB64(v.priv), { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveKey']);
   return {
     userId: v.userId, identity: { publicJwk: v.publicJwk, privateKey }, personalKey: await aes(v.personal),
     circleId: v.circleId, circleKey: v.circle ? await aes(v.circle) : null,
+    oldKeys: v.old ? await Promise.all(v.old.map(aes)) : undefined,
+    ridSeed: v.ridSeed ? fromB64(v.ridSeed) : undefined,
+    keyVersion: v.keyVersion,
   };
+}
+
+// ---------- Circle key rotation ----------
+
+/** Server id of the keyring record. It's a fixed id rather than an HMAC, so it can be found before the record-id key is known. */
+export const KEYRING_RID = 'keyring-circle-v1';
+interface Keyring { v: number; ridSeed: string; old: string[] }
+const rawKey = async (k: CryptoKey) => toB64(new Uint8Array(await crypto.subtle.exportKey('raw', k)));
+const aesKey = (b: string) => crypto.subtle.importKey('raw', fromB64(b), { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
+
+export async function readKeyring(circleId: string, circleKey: CryptoKey, ct: string): Promise<Keyring> {
+  if (!ct.startsWith('k:')) throw new Error('not a keyring');
+  return decryptJson<Keyring>(circleKey, ct.slice(2), `${circleId}:keyring`);
+}
+
+/** Add what the circle's keyring knows (earlier keys, record-id seed, version) to a session. */
+export async function withKeyring(remote: Remote, s: CircleSession): Promise<CircleSession> {
+  const row = await remote.getRecord(s.circleId, KEYRING_RID);
+  if (!row) return { ...s, oldKeys: [], keyVersion: 1 };
+  const k = await readKeyring(s.circleId, s.circleKey, row.ct);
+  return { ...s, oldKeys: await Promise.all(k.old.map(aesKey)), ridSeed: fromB64(k.ridSeed), keyVersion: k.v };
+}
+
+/**
+ * Owner only, after removing someone: switch the circle to a brand-new key.
+ * 1. Seal the new key to everyone still in the circle (this also cancels unused invites, which carry the old key).
+ * 2. Save the keyring (earlier keys + record-id seed), encrypted with the new key.
+ * 3. Re-encrypt every shared record with the new key. Record ids stay the same, so "only me" records,
+ *    which only their owner can read, stay valid without being touched.
+ * Someone who was removed keeps only the old key, which can't read anything written from now on.
+ */
+export async function rotateCircleKey(remote: Remote, s: CircleSession): Promise<CircleSession> {
+  const cur = s.keyVersion ? s : await withKeyring(remote, s);
+  const next = await newAesKey();
+  const ridSeed = cur.ridSeed ?? new Uint8Array(await crypto.subtle.exportKey('raw', cur.circleKey));
+  const oldKeys = [cur.circleKey, ...(cur.oldKeys ?? [])];
+  const version = (cur.keyVersion ?? 1) + 1;
+
+  const sealed: Record<string, string> = {};
+  for (const m of await remote.circlePublicKeys(s.circleId)) sealed[m.user_id] = await sealKey(next, m.public_key, `circle:${s.circleId}`);
+  await remote.rotateCircleKey(s.circleId, sealed);
+
+  const ring: Keyring = { v: version, ridSeed: toB64(ridSeed), old: await Promise.all(oldKeys.map(rawKey)) };
+  await remote.push(s.circleId, [{ rid: KEYRING_RID, ct: `k:${await encryptJson(next, ring, `${s.circleId}:keyring`)}` }]);
+
+  for (let after = 0; ;) {
+    const rows = await remote.pull(s.circleId, after, 200);
+    const out: { rid: string; ct: string }[] = [];
+    for (const r of rows) {
+      after = Math.max(after, r.seq);
+      if (!r.ct.startsWith('c:')) continue;
+      const aad = `${s.circleId}:${r.rid}`;
+      for (const k of oldKeys) {
+        try { out.push({ rid: r.rid, ct: `c:${await encryptJson(next, await decryptJson(k, r.ct.slice(2), aad), aad)}` }); break; } catch { /* try an older key */ }
+      }
+    }
+    // Re-uploaded rows move to the end of the change list. They only open with the new key, so they're skipped when reached.
+    if (out.length) await remote.push(s.circleId, out);
+    if (rows.length < 200) break;
+  }
+  return { ...s, circleKey: next, oldKeys, ridSeed, keyVersion: version };
 }

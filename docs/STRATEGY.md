@@ -109,7 +109,7 @@ Deferred, at your request. The PWA works on all phones today.
 
 These are ideas, not commitments:
 
-- Circle key rotation after removing someone (noted in SECURITY.md).
+- ~~Circle key rotation after removing someone~~ (built in 0.18.0; see SECURITY.md).
 - Printable "about me" card for emergencies, such as "I may dissociate; here's how to help".
 - Gentle trigger forecasts on Patterns, such as "Sunday evenings have often been hard".
 - Shared-view support for voice notes, only if a client explicitly chooses it.

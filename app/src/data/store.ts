@@ -167,6 +167,14 @@ export class Store {
     if (cur && cur.at <= at) await this.persist.del('outbox', k);
   }
 
+  /** Queue one record to be uploaded again (for example, to re-encrypt it with a new circle key). */
+  async requeue(kind: Kind, id: string) {
+    const e = this.recs.get(rkey(kind, id));
+    if (!e) return;
+    await this.persist.put('outbox', rkey(kind, id), { kind, id, at: e.updatedAt });
+    this.onLocalChange?.();
+  }
+
   /** Queue every record for upload (used when a circle is first connected). */
   async queueAll() {
     for (const e of this.recs.values()) await this.persist.put('outbox', rkey(e.kind, e.id), { kind: e.kind, id: e.id, at: e.updatedAt });

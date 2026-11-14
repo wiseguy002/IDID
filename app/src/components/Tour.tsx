@@ -13,7 +13,7 @@ export function Tour({ onClose }: { onClose: () => void }) {
   const { go, me, settings } = useApp();
   const w = partWords(settings.partWord);
   const steps: Step[] = [
-    { icon: 'leaf', title: 'Welcome to iDID', body: 'A quiet, private place to notice what happens, find what helps, and stay connected to people you trust. This takes about a minute, and you can stop at any time.' },
+    { icon: 'leaf', title: 'Welcome to iDID', body: 'A quiet, private place to notice what happens, find what helps, and stay connected to people you trust. This takes about a minute, and you can stop at any time. Prefer Spanish? Choose Español in Settings → Language.' },
     { icon: 'plus', title: 'Note a moment', body: `When something feels different, tap Log. Every step is optional: when and where, possible triggers, how you feel, which ${w.many} were present, and who noticed. One word is enough.`, show: { name: 'log' }, showLabel: 'Try logging' },
     { icon: 'compass', title: 'Who’s here, and what you missed', body: `Who’s here notes which ${w.many} are around in two taps, and shows notes left for them on the inner board. After lost time, What did I miss? starts with today’s date and gathers what happened in iDID while you were away. Voice notes are there for when typing is too much.`, show: { name: 'missed' }, showLabel: 'What did I miss?' },
     { icon: 'heart', title: 'Pause when it’s a lot', body: 'Pause (top of every screen) has breathing, box breathing, grounding, a wordless Calm space, your safety plan, your comfort kit, and \"Check on me\" to quietly ask someone to reach out. The eye icon hides iDID instantly if someone walks in.', show: { name: 'pause' }, showLabel: 'Open Pause' },

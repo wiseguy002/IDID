@@ -14,6 +14,13 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+## [0.18.2] - 2026-11-14
+
+Website and press materials brought up to date.
+
+### Changed
+- The quick tour mentions that iDID is available in Spanish, and the website, fact sheet and press materials now describe Spanish, Ko-fi, Help shape iDID and the circle key change.
+
 ## [0.18.1] - 2026-11-14
 
 A way to support iDID.
@@ -285,7 +292,8 @@ The first version of iDID.
 - Welcome-back messages, "looking back" reflections, and Pause tools for breathing and grounding.
 - Calm themes (including dark and high contrast), text sizes, calm motion and an extra-readable font.
 
-[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.18.1...HEAD
+[Unreleased]: https://github.com/wiseguy002/IDID/compare/v0.18.2...HEAD
+[0.18.2]: https://github.com/wiseguy002/IDID/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/wiseguy002/IDID/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/wiseguy002/IDID/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/wiseguy002/IDID/compare/v0.16.0...v0.17.0

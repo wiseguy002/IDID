@@ -1,6 +1,6 @@
 # iDID — a gentle journal
 
-**Current version: 0.18.1** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
+**Current version: 0.18.2** · [What's changed](CHANGELOG.md) · [How versions work](docs/RELEASING.md)
 
 iDID is a calm, private app for documenting dissociative and trauma-related experiences (with DID in mind). It's built for one person, a family, or a small **trust circle**. In a few taps you can record that something felt different: when and where it happened, possible triggers, mood, which parts were fronting or co-fronting, lost time, how long it lasted, and who noticed. People in the circle who noticed get a gentle prompt to add their own observations.
 
@@ -22,7 +22,7 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Tools for hard days** | A wordless **Calm space** (ripples, light trails, drifting lights), a guided **safety plan**, **Check on me** (quietly ask people to reach out), **Quick hide**, a **comfort kit**, an **inner board** for notes between parts, **body basics** with medication reminders, and **therapy prep**. |
 | **Explore & badges** | A quick tour, every feature in one place with what you've tried, gentle milestone badges (no streaks, no comparison), and at most a weekly suggestion of something that might help. |
 | **Kindness** | A daily small act of kindness to pay it forward, and anonymous **kind notes**: pick a caring message to brighten a random person's day. Opt-in, curated, no direct messages. |
-| **Help & guides** | 29 searchable in-app guides with steps and shortcuts, plus **What's new** after every update. Works offline, with a calm error page if something breaks. |
+| **Help & guides** | 36 searchable in-app guides with steps and shortcuts, plus **What's new** after every update. Works offline, with a calm error page if something breaks. |
 | **Suggest a feature** | Ideas and requests go to the iDID team, who can reply and track status in an in-app **Manage requests** screen. |
 | **Find support** | ZIP code and needs (DID specialist, trauma, low-cost care, LGBTQ+, veterans, family…) drive matched crisis lines, nearby specialists and health centers, helplines, and learning and community resources. Personal support contacts (therapist, social worker, crisis center) are one tap away on the Pause screen. |
 | **Parts / system** | Parts with pronouns, age, role, notes and color. Your choice of word (parts / alters / headmates / selves). |
@@ -35,6 +35,10 @@ The app lives in [`app/`](app/). It's a React + TypeScript **Progressive Web App
 | **Weekly reflection** | Optional weekend look-back: a gentle summary and three questions. Never scored; skippable. |
 | **Supporting someone** | Guide for partners, family and friends with words to try, things to do and to avoid. |
 | **Languages** | English, and **Español** (beta): setup, lock and sign-in, Home, Pause, safety plan, What did I miss? and Spanish crisis options. Other screens fall back to English. See `docs/I18N.md`. |
+| **Circle key change** | When the owner removes someone, a new circle key is sealed to everyone still in the circle and shared records are re-encrypted; "only me" records stay valid. See `docs/SECURITY.md`. |
+| **Help shape iDID** | Optional volunteer form (Suggest a feature or Settings) for the lived-experience council and clinical advisors; read by the iDID team, not end-to-end encrypted. |
+| **Anonymous counts** | Off by default. Weekly screen-open totals sent without an account; the server keeps only aggregate counts. |
+| **Support iDID** | Optional contributions through Ko-fi (ko-fi.com/ididcare), linked from Settings and the site footer. Never unlocks features. |
 | **Pause** | Breathing, **box breathing** (build a group of boxes), 5-4-3-2-1 grounding, "right now" orientation, crisis lines. |
 | **Sensory comfort** | Morning, Meadow, Dusk (dark) and High contrast themes; 4 text sizes; calm motion; readable font. No sounds, vibration or flashing. |
 | **Privacy** | Encrypted on the device with your passphrase (AES-256-GCM) and a recovery code; auto-lock; end-to-end encrypted sync. See [docs/SECURITY.md](docs/SECURITY.md). |
@@ -69,6 +73,8 @@ The first screen has **"Explore with a sample circle"**, which loads fictional d
 2. ✅ Online circle with end-to-end encryption, invites, push alerts, appointments and calendar export
 3. ⏭️ Android (Google Play) and iOS (App Store) apps via Capacitor, with on-device notifications and Face ID / fingerprint unlock
 4. ✅ Per-person access, therapist & care-team sharing, handing over a circle, restore on a new device
-5. Later: rotate the circle key when someone leaves
+5. ✅ Rotate the circle key when the owner removes someone
+6. ✅ Español (beta) for the core screens. Next: native-speaker review, then the remaining screens and the website
+7. Later: faster row-level security at scale, Supabase backups, lawyer review before a public launch
 
 > iDID is a journaling tool, not a medical device, and is not a substitute for professional care.

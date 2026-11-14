@@ -220,7 +220,7 @@ export function AccessPanel({ member, roster }: { member: Member; roster: Return
                   act(() => setAccess(member.userId!, v), v === 'viewer' ? `${member.name} can now only view.` : `${member.name} can now view and add.`);
                 }} />
                 <button className="btn sm" disabled={busy} onClick={() => setHanding(true)}><Icon name="people" size={15} /> Make {member.name} the circle's owner</button>
-                <button className="btn ghost danger sm" disabled={busy} onClick={() => act(() => removeAccount(member.userId!), `${member.name} no longer has access. Anything already on their device stays there.`)}>Remove {member.name}'s access</button>
+                <button className="btn ghost danger sm" disabled={busy} onClick={async () => { setBusy(true); try { const r = await removeAccount(member.userId!); toast(r.rotated ? `${member.name} no longer has access. The circle's key was changed, so their old copy can't open anything new.` : `${member.name} no longer has access. Anything already on their device stays there.`); } catch (e) { toast(e instanceof Error ? e.message : 'Something went wrong.'); } setBusy(false); roster.refresh(); }}>Remove {member.name}'s access</button>
               </>
             )}
           </>

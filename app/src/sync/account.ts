@@ -13,7 +13,7 @@ import { nudgeTimesBetween } from '../lib/nudges';
 import { nudgesFor } from '../lib/useReminders';
 import { SyncEngine } from './engine';
 import { restoreJournal } from './restore';
-import { createAccount, createCircle, rewrapAccount, joinWithInvite, makeInvite, openAccount, openCircle, restoreSession, serialiseSession, type AccountKeys, type CircleSession } from './keys';
+import { createAccount, createCircle, rewrapAccount, joinWithInvite, makeInvite, openAccount, openCircle, restoreSession, rotateCircleKey, serialiseSession, type CircleSession, type MaybeCircle } from './keys';
 import type { CircleRole, InviteRow, Remote, ReminderRow } from './remote';
 import type { CareShare, Invitation } from '../types';
 import { buildCarePayload, careLink, newShareKey, payloadHash, sealPayload, type CareData } from '../lib/careShare';
@@ -36,7 +36,7 @@ export const useAccount = () => useSyncExternalStore((f) => { listeners.add(f); 
 export const getAccount = () => state;
 
 let remote: Remote | null = null;
-let keys: (AccountKeys & { circleId: string | null; circleKey: CryptoKey | null }) | null = null;
+let keys: MaybeCircle | null = null;
 let engine: SyncEngine | null = null;
 let stopEngine: (() => void) | null = null;
 
@@ -56,6 +56,7 @@ function startEngine() {
   engine = new SyncEngine(store, remote, keys as CircleSession, syncState);
   engine.myMemberIds = () => store.all('members').filter((m) => m.userId === keys?.userId || !m.userId).map((m) => m.id);
   engine.onStatus = () => set({ status: engine!.status, lastSyncedAt: engine!.lastSyncedAt, error: engine!.status === 'error' ? engine!.lastError : '' });
+  engine.onRekey = () => { reopenCircle().catch((e) => set({ status: 'error', error: e instanceof Error ? e.message : String(e) })); };
   const stopSync = engine.start();
   // Refresh server reminder times when appointments or reminder settings change.
   let lastSig = '';
@@ -279,9 +280,54 @@ export async function circleAccounts() {
   return remote.circleMembers(keys.circleId);
 }
 
-export async function removeAccount(userId: string) {
-  if (!remote || !keys?.circleId) return;
+/**
+ * Remove someone's access. If you own the circle, its key is changed straight after, so even with their old
+ * copy of the key they can't read anything written from now on.
+ */
+export async function removeAccount(userId: string): Promise<{ rotated: boolean }> {
+  if (!remote || !keys?.circleId) return { rotated: false };
   await remote.removeMember(keys.circleId, userId);
+  if (state.role !== 'owner') return { rotated: false };
+  await changeCircleKey();
+  return { rotated: true };
+}
+
+/** Owner only: switch the circle to a new key and re-encrypt what's shared (see keys.ts rotateCircleKey). */
+export async function changeCircleKey() {
+  if (!remote || !keys?.circleId || !keys.circleKey) throw new Error('Connect a circle first.');
+  await engine?.sync(); // upload anything waiting first, with the current key
+  stopEngine?.(); stopEngine = null; engine = null;
+  try {
+    const next = await rotateCircleKey(remote, keys as CircleSession);
+    keys = { ...keys, ...next };
+    await persistKeys();
+  } finally {
+    startEngine();
+  }
+}
+
+/** The circle's key changed on another device (or this account was removed): pick up the new key. */
+async function reopenCircle() {
+  if (!remote || !keys?.circleId) return;
+  const circleId = keys.circleId;
+  const c = await openCircle(remote, keys, circleId);
+  if (!c || c.circleId !== circleId) {
+    // No longer in this circle: stop syncing. The journal stays on this device.
+    stopEngine?.(); stopEngine = null; engine = null;
+    keys = { ...keys, circleId: null, circleKey: null, oldKeys: undefined, ridSeed: undefined, keyVersion: undefined };
+    await persistKeys(); await store.dropLocal('sync');
+    set({ phase: 'needs-circle', circleId: null, role: null });
+    return;
+  }
+  if ((c.keyVersion ?? 1) > (keys.keyVersion ?? 1)) {
+    keys = { ...keys, ...c };
+    await persistKeys();
+    startEngine();
+  } else if (engine) {
+    // Nothing newer: skip rows no key can open, rather than asking again.
+    engine.skipUnreadable = true;
+    engine.sync();
+  }
 }
 
 export function syncNow() { return engine?.sync(); }

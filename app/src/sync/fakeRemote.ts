@@ -75,6 +75,23 @@ class FakeRemote implements Remote {
     this.member(c);
     return [...this.s.records.values()].filter((r) => r.circle_id === c && r.seq > after).sort((a, b) => a.seq - b.seq).slice(0, limit).map(({ rid, ct, seq }) => ({ rid, ct, seq }));
   }
+  async getRecord(c: string, rid: string) {
+    this.member(c);
+    const r = this.s.records.get(`${c}:${rid}`);
+    return r ? { rid: r.rid, ct: r.ct, seq: r.seq } : null;
+  }
+  async circlePublicKeys(c: string) {
+    if (!this.s.members.some((m) => m.circle_id === c && m.user_id === this.uid)) return [];
+    return this.s.members.filter((m) => m.circle_id === c && this.s.profiles.has(m.user_id)).map((m) => ({ user_id: m.user_id, public_key: this.s.profiles.get(m.user_id)!.public_key }));
+  }
+  async rotateCircleKey(c: string, sealed: Record<string, string>) {
+    this.owner(c);
+    const ms = this.s.members.filter((m) => m.circle_id === c);
+    if (ms.some((m) => !(m.user_id in sealed))) throw new Error('every member needs a copy of the new key');
+    if (Object.keys(sealed).some((u) => !ms.some((m) => m.user_id === u))) throw new Error('keys must be for current members only');
+    for (const m of ms) m.sealed_circle_key = sealed[m.user_id];
+    for (const [id, i] of this.s.invites) if (i.circle_id === c && !i.used) this.s.invites.delete(id);
+  }
   async push(c: string, rows: { rid: string; ct: string }[]) {
     if (!rows.length) return;
     this.writer(c);

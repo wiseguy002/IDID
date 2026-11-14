@@ -705,6 +705,30 @@
       "changelog": [
         "Español"
       ]
+    },
+    {
+      "name": "Help shape iDID",
+      "match": "help shape idid",
+      "requiredIn": [
+        "help",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "Help shape iDID"
+      ]
+    },
+    {
+      "name": "Circle key change after removal",
+      "match": "changes the circle.s encryption key|circle key rotation",
+      "requiredIn": [
+        "help",
+        "privacy",
+        "security"
+      ],
+      "changelog": [
+        "circle's encryption key"
+      ]
     }
   ]
 }

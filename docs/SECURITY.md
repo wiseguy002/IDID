@@ -20,6 +20,17 @@ iDID is built so that the people running the server **cannot read your journal**
 - The same personal key always protects the **inner board, body basics, medications, comfort kit, therapy prep, check-ins and Explore progress**. Safety plans use it too, unless the person chooses to share their plan with the circle.
 - **Quick hide** clears decrypted data from memory (the same as locking) and shows an ordinary-looking screen; getting back in needs the passphrase.
 
+## Circle key rotation
+
+- When the owner removes someone, the app makes a new circle key (`rotateCircleKey` in `app/src/sync/keys.ts`):
+  1. It seals the new key to every remaining member's public key and replaces their copies in one step (`rotate_circle_key`, owner only). The server refuses unless every current member is included. Unused invite links carry the old key, so they're cancelled.
+  2. It saves a **keyring** record (fixed id `keyring-circle-v1`), encrypted with the new key. The keyring holds the earlier keys and the record-id seed.
+  3. It re-encrypts every shared record with the new key.
+- **Record ids don't change.** They're derived from the circle's first key, which is kept in the keyring. So "only me" records, which only their owner can decrypt, stay valid without being touched.
+- **Other members' devices** notice the newer keyring, reopen the circle with their new copy of the key, and keep syncing. A row that a lagging device wrote with an old key is still readable, and the next member who can write saves it again with the new key.
+- **A removed person's device** finds it is no longer in the circle and stops syncing. Their journal stays on their device.
+- **What it doesn't do:** take back anything the removed person already downloaded. The earlier keys stay readable to current members (in the keyring) so nothing is lost.
+
 ## Access in a circle
 
 - The circle's **owner** sets each person's role: **member** (can view and add) or **viewer** (view only). Roles are enforced by row-level security: viewers can read circle records but the server refuses their writes and invites, and only the owner can change roles (`set_member_role`). Members can't change their own role; only the sealed key column of their own membership is updatable.
@@ -50,6 +61,11 @@ iDID is built so that the people running the server **cannot read your journal**
 - Each person's role in a circle, and whether each invite has been used or has expired.
 - For each shared view: its ciphertext, when it was last updated, how many times it was opened and when, and its end date if one is set.
 
+## Help shape iDID (volunteer form)
+
+- An optional form on the Suggest a feature screen (`app/src/lib/shape.ts`). It is stored as an ordinary feature request (`kind = 'other'`, fixed title), so it has the same RLS: the sender and app admins can read it. It is **not** end-to-end encrypted.
+- It holds only what the person types: roles (which may reveal that they live with dissociation), a preferred way to take part, an optional name, a reply email and an optional note. The form says this, and requires a confirmation switch before sending.
+
 ## Opt-in anonymous counts
 
 - Off by default (Settings → Privacy → Share anonymous counts; `app/src/lib/counts.ts`). While on, the device tallies screen opens by route name from a fixed list (capped at 200 per screen per week) in `localStorage` under `idid.counts`. The tally holds no content, names, parts or times.
@@ -61,7 +77,7 @@ iDID is built so that the people running the server **cannot read your journal**
 
 - **Forgotten passphrase and lost recovery code:** the data can't be recovered by anyone. This is the cost of the server being unable to read it.
 - **Circle members can read what's shared with the circle.** The "can see shared entries" setting controls what the app shows, but anyone holding the circle key could technically decrypt circle-shared records. Use "Only me" for anything that must stay with you.
-- **Removing someone** from the circle stops them receiving new data from the server. Anything they already synced stays on their device. Rotating the circle key after a removal is planned.
+- **Removing someone** from the circle stops them receiving new data from the server. Anything they already synced stays on their device. When the owner removes someone, the circle key is changed straight after (see "Circle key rotation" above), so their old copy of the key can't open anything written later, even if they somehow got hold of the server's data. If a member leaves by themselves, the owner can't yet change the key without removing someone.
 - A circle member could overwrite or delete shared records. They can't forge readable content without the key, but they could vandalize it, so only invite people you trust, or give people **view only** access.
 - **Anyone holding a shared-view link can open it.** Send it privately. Removing access stops it working, but anything already seen, saved or printed can't be taken back.
 - Calendar exports (.ics or Google Calendar) leave iDID's encryption. iDID defaults to a neutral title and leaves out notes.

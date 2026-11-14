@@ -14,6 +14,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Added
+- When the circle's owner removes someone, iDID now also changes the circle's encryption key, so their old copy of the key can't open anything written later. Everyone still in the circle keeps everything, including "only me" entries. Unused invite links stop working, so send new ones if needed.
+- **Help shape iDID**: an optional form (in Suggest a feature, or Settings) to volunteer to try new features early and tell us what helps. It's read by the iDID team, so it isn't end-to-end encrypted, and it only holds what you type in it.
+
 ## [0.17.0] - 2026-11-13
 
 iDID in Español (beta), and easier-to-read colors.

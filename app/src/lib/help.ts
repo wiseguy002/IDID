@@ -329,11 +329,11 @@ export const HELP: HelpTopic[] = [
         '**View only**: sees what the circle shares but can’t add or change anything. Our server refuses their changes.',
         '**Only selected information**: isn’t part of the circle. They get a private, read-only view of only what you tick, such as patterns, moments, your safety plan or appointments.',
       ] },
-      { p: '**Remove access** stops them receiving anything new straight away. Anything already on their device stays there.' },
+      { p: '**Remove access** stops them receiving anything new straight away. When the circle’s owner removes someone, iDID also changes the circle’s encryption key, so their old copy of the key can’t open anything written later. Unused invite links stop working, so send new ones if you need them. Anything already on their device stays there.' },
       { tip: 'Moments marked "only me", your inner board, body basics, meds, comfort kit and therapy prep are always private to you, whatever someone’s access.' },
     ],
     open: [{ label: 'Open Circle', route: { name: 'circle' } }],
-    keywords: 'permissions roles view only read only remove access privacy selected',
+    keywords: 'permissions roles view only read only remove access privacy selected key rotation encryption key',
   },
   {
     id: 'ownership', group: 'Your circle', title: 'Handing the circle to someone else',
@@ -411,6 +411,17 @@ export const HELP: HelpTopic[] = [
     ],
     open: [{ label: 'Open the guide', route: { name: 'supporters' } }],
     keywords: 'supporter partner family friend what to say scripts help someone caregiver',
+  },
+  {
+    id: 'help-shape', group: 'Your circle', title: 'Help shape iDID',
+    summary: 'Volunteer to try new features early and give feedback.',
+    body: [
+      { p: 'If you’d like to help, open **Suggest a feature** (in Explore or Settings) and tap **Help shape iDID**. Choose what fits you (living with dissociation or DID, supporting someone, peer specialist or clinician), how you’d like to take part, and an email we can reply to. A first name or pseudonym is fine.' },
+      { p: 'It’s a short call every couple of months, or written feedback if you prefer, and you can stop any time. It’s volunteer for now.' },
+      { tip: 'The iDID team reads what you send here, so it isn’t end-to-end encrypted. It holds only what you type in the form, never your journal. Ask at hello@idid.care and we’ll delete it.' },
+    ],
+    open: [{ label: 'Help shape iDID', route: { name: 'feedback' } }],
+    keywords: 'volunteer advisory council feedback research help shape lived experience clinician',
   },
   // ---------- Privacy ----------
   {

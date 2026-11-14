@@ -49,7 +49,7 @@ export class SupabaseRemote implements Remote {
     return (check(await this.sb.from('invites').insert({ circle_id: circleId, wrapped_circle_key: wrapped, role }).select('id').single()) as { id: string }).id;
   }
   async listInvites(circleId: string) {
-    return check(await this.sb.from('invites').select('id,created_at,expires_at,used_by,used_at,role').eq('circle_id', circleId)) as InviteRow[];
+    return check(await this.sb.from('invites').select('id,created_at,expires_at,used_by,used_at,role,created_by').eq('circle_id', circleId)) as InviteRow[];
   }
   async revokeInvite(id: string) { check(await this.sb.from('invites').delete().eq('id', id)); }
   async transferOwnership(circleId: string, newOwner: string) {

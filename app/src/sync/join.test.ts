@@ -97,6 +97,29 @@ describe('a family member joins after starting on their own', () => {
     expect(b.get('entries', 'v1')).toBeUndefined();
   }, 30000);
 
+  it('view-only people cannot wake others, and invites are canceled only by their maker or the owner', async () => {
+    const server = new FakeServer();
+    const ownerR = server.as('u-a'), memR = server.as('u-m'), viewR = server.as('u-v');
+    const circle = await createCircle(ownerR, await createAccount(ownerR, 'owner pass phrase', ITER));
+    await joinWithInvite(memR, await createAccount(memR, 'member pass phrase', ITER), await makeInvite(ownerR, circle));
+    await joinWithInvite(viewR, await createAccount(viewR, 'viewer pass phrase', ITER), await makeInvite(ownerR, circle, 'viewer'));
+    const wake = { user_id: 'u-a', kind: 'checkon' as const, fire_at: new Date().toISOString(), tag: 'checkon-1' };
+    await expect(viewR.addReminder(wake)).rejects.toThrow(/rls/);
+    await memR.addReminder(wake);
+    expect(server.reminders.some((r) => r.tag === 'checkon-1' && r.created_by === 'u-m')).toBe(true);
+
+    const ownerInvite = (await makeInvite(ownerR, circle)).split('.')[0];
+    const memberInvite = (await makeInvite(memR, circle)).split('.')[0];
+    const memberInvite2 = (await makeInvite(memR, circle)).split('.')[0];
+    await memR.revokeInvite(ownerInvite);
+    expect(server.invites.has(ownerInvite)).toBe(true);
+    await memR.revokeInvite(memberInvite);
+    expect(server.invites.has(memberInvite)).toBe(false);
+    await ownerR.revokeInvite(memberInvite2);
+    expect(server.invites.has(memberInvite2)).toBe(false);
+    expect((await memR.listInvites(circle.circleId)).find((i) => i.id === ownerInvite)?.created_by).toBe('u-a');
+  }, 30000);
+
   it('the owner can hand the circle to someone in it, and stays as a member', async () => {
     const server = new FakeServer();
     const momR = server.as('u-mom'), samR = server.as('u-sam');

@@ -10,7 +10,7 @@ export interface ProfileRow {
 export type CircleRole = 'owner' | 'member' | 'viewer';
 export interface MembershipRow { circle_id: string; user_id: string; role: CircleRole; sealed_circle_key: string; created_at?: string }
 /** An invite as the circle sees it: whether it has been used, by whom, and when it expires. */
-export interface InviteRow { id: string; created_at: string; expires_at: string; used_by: string | null; used_at: string | null; role: 'member' | 'viewer' }
+export interface InviteRow { id: string; created_at: string; expires_at: string; used_by: string | null; used_at: string | null; role: 'member' | 'viewer'; created_by: string }
 /** A care-team share as its owner sees it (the summary itself is ciphertext). */
 export interface CareShareRow { id: string; views: number; last_viewed_at: string | null; updated_at: string; expires_at: string | null }
 export interface RecordRow { rid: string; ct: string; seq: number }

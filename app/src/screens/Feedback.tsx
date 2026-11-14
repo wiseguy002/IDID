@@ -7,6 +7,7 @@ import {
   submitRequest, updateRequest, featureCounts, type CountWeek, type FeatureRequest, type RequestKind, type RequestStatus,
 } from '../sync/community';
 import { download, relTime } from '../lib/util';
+import { toCsv } from '../lib/csv';
 import { ChipSelect, PageHead, Segmented } from '../components/ui';
 import { Icon } from '../components/Icon';
 import { SHAPE_ROLES, SHAPE_WAYS, isShapeRequest, shapeProblem, shapeRequest, type ShapeForm, type ShapeRole, type ShapeWay } from '../lib/shape';
@@ -107,7 +108,7 @@ export function AdminRequests() {
 
   const csv = () => {
     const rows = [['created_at', 'kind', 'status', 'title', 'details', 'app_version', 'team_note'], ...(all ?? []).map((r) => [r.created_at, r.kind, r.status, r.title, r.details, r.app_version ?? '', r.admin_note ?? ''])];
-    download(`idid-requests-${new Date().toISOString().slice(0, 10)}.csv`, rows.map((r) => r.map((c) => (/[",\n]/.test(c) ? `"${c.replace(/"/g, '""')}"` : c)).join(',')).join('\n'), 'text/csv');
+    download(`idid-requests-${new Date().toISOString().slice(0, 10)}.csv`, toCsv(rows), 'text/csv');
   };
 
   if (ok === false) return <div><PageHead title="Manage requests" onBack={() => go({ name: 'feedback' })} /><p className="muted">This page is only for the iDID team.</p></div>;

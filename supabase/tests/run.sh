@@ -2,7 +2,7 @@
 # Runs the schema + RLS tests against a throwaway local Postgres 16 cluster.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-BIN=$(ls -d /usr/lib/postgresql/*/bin | tail -1)
+BIN="${PG_BIN:-$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | tail -1)}"
 TMP="$(mktemp -d)"
 # initdb refuses to run as root; use the postgres OS user when we are root.
 RUN=""

@@ -34,7 +34,8 @@ iDID is built so that the people running the server **cannot read your journal**
 ## Access in a circle
 
 - The circle's **owner** sets each person's role: **member** (can view and add) or **viewer** (view only). Roles are enforced by row-level security: viewers can read circle records but the server refuses their writes and invites, and only the owner can change roles (`set_member_role`). Members can't change their own role; only the sealed key column of their own membership is updatable.
-- Invites carry the role chosen when they were made, and only the owner can make view-only invites.
+- Invites carry the role chosen when they were made, and only the owner can make view-only invites. An unused invite can be canceled only by whoever made it, or by the owner.
+- Only people who can add to a circle (owner and members, not viewers) can send another member a notification: an observation request or a "Check on me" alert (`can_wake`).
 - **Handing a circle over** (`transfer_ownership`) makes someone already in the circle the owner and the previous owner a member, and moves the circle's `created_by` so the circle no longer depends on the previous owner's account.
 - Who an invite was for (a name and optional contact, used to show status and send reminders) is stored in the circle as an encrypted record, never in plain text on the server. Invite links are sent from the person's own device, so the key in the link never passes through iDID's servers.
 
@@ -81,6 +82,8 @@ iDID is built so that the people running the server **cannot read your journal**
 - A circle member could overwrite or delete shared records. They can't forge readable content without the key, but they could vandalize it, so only invite people you trust, or give people **view only** access.
 - **Anyone holding a shared-view link can open it.** Send it privately. Removing access stops it working, but anything already seen, saved or printed can't be taken back.
 - Calendar exports (.ics or Google Calendar) leave iDID's encryption. iDID defaults to a neutral title and leaves out notes.
+- Spreadsheet (CSV) exports also leave iDID's encryption. Any cell that a spreadsheet would run as a formula (starting with `=`, `+`, `-`, `@`, a tab or a carriage return) gets a leading apostrophe, so text someone else wrote can't run as a formula when you open the file (`app/src/lib/csv.ts`).
+- **Kind notes** are anonymous: the server keeps the sender only for rate limits, and signed-in users can read just the note's message, icon and times (column grants, with the table-wide grant Supabase adds removed). The notification row for a note is recorded as the recipient's own, so the sender can't see or cancel it. Database tests run with Supabase's default grants so rules like these are tested as they behave live.
 - Browser extensions and malware on a device can see anything shown on screen.
 
 ## Infrastructure hardening

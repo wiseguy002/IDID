@@ -85,6 +85,7 @@ Put the three public values in `app/.env.production` and commit it:
 | `VITE_SUPABASE_URL` | Project URL from step 2 |
 | `VITE_SUPABASE_ANON_KEY` | anon public key from step 2 |
 | `VITE_VAPID_PUBLIC_KEY` | public key from step 4 |
+| `VITE_TURNSTILE_SITE_KEY` | Optional. Cloudflare Turnstile site key for the sign-in check (public). Leave empty to turn the check off. If you set it, also turn on CAPTCHA protection in Supabase (Authentication → Attack protection) with provider Turnstile and the widget's secret key, **after** the app with the site key is deployed. |
 
 All three are safe to publish: access is enforced by the database's row-level security, and journal data is encrypted on the device before it is sent. Never put the service-role key, the VAPID private key or `CRON_SECRET` in this file. The deploy workflow builds with these values on the next push to `main`.
 

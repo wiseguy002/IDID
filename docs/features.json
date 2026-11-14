@@ -689,7 +689,9 @@
       "requiredIn": [
         "help",
         "privacy",
-        "security"
+        "security",
+        "fact",
+        "readme"
       ],
       "changelog": [
         "Anonymous counts"
@@ -697,10 +699,14 @@
     },
     {
       "name": "Spanish (Español)",
-      "match": "español",
+      "match": "español|spanish",
       "requiredIn": [
         "help",
-        "readme"
+        "readme",
+        "home",
+        "fact",
+        "release",
+        "jsonld"
       ],
       "changelog": [
         "Español"
@@ -712,7 +718,10 @@
       "requiredIn": [
         "help",
         "privacy",
-        "security"
+        "security",
+        "home",
+        "fact",
+        "readme"
       ],
       "changelog": [
         "Help shape iDID"
@@ -720,11 +729,16 @@
     },
     {
       "name": "Circle key change after removal",
-      "match": "changes the circle.s encryption key|circle key rotation",
+      "match": "changes? the circle.s encryption key|circle key rotation|circle key change|encryption key is changed|encryption key changes",
       "requiredIn": [
         "help",
         "privacy",
-        "security"
+        "security",
+        "home",
+        "fact",
+        "release",
+        "readme",
+        "jsonld"
       ],
       "changelog": [
         "circle's encryption key"
@@ -735,7 +749,12 @@
       "match": "ko-fi",
       "requiredIn": [
         "help",
-        "privacy"
+        "privacy",
+        "home",
+        "fact",
+        "release",
+        "readme",
+        "presskit"
       ],
       "changelog": [
         "Support iDID"

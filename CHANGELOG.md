@@ -14,6 +14,10 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Fixed
+- Changing the circle's key after removing someone is now all or nothing, so a dropped connection can't leave some devices unable to read the circle. If the change doesn't finish, iDID tells you and finishes it the next time it connects.
+- After removing someone, iDID now tells you how many unused invite links stopped working, so you know to send new ones.
+
 ## [0.18.2] - 2026-11-14
 
 Website and press materials brought up to date.

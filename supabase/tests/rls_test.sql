@@ -245,16 +245,26 @@ select jsonb_object_agg(user_id::text, 's1.rotated-' || user_id::text) as sealed
 select pg_temp.as_user(:'owner');
 select pg_temp.expect((select count(*) = (select count(*) from public.circle_members where circle_id = :'cid') from public.circle_public_keys(:'cid')), 'members can list the circle''s public keys');
 insert into public.invites (circle_id, wrapped_circle_key) values (:'cid', 'v1.old-key') returning id as pending \gset
-select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb - %L)$q$, :'cid', :'sealed', :'other'), 'every member must get the new key');
-select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb || '{"00000000-0000-0000-0000-0000000000ff":"s1.x"}')$q$, :'cid', :'sealed'), 'no keys for people outside the circle');
+select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb - %L, 'k:ring')$q$, :'cid', :'sealed', :'other'), 'every member must get the new key');
+select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb || '{"00000000-0000-0000-0000-0000000000ff":"s1.x"}', 'k:ring')$q$, :'cid', :'sealed'), 'no keys for people outside the circle');
+select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb, 'c:not-a-keyring')$q$, :'cid', :'sealed'), 'the keyring must look like one');
+select pg_temp.expect((select count(*) = 0 from public.records where circle_id = :'cid' and rid = 'keyring-circle-v1'), 'a refused key change saves nothing');
 select pg_temp.as_user(:'other');
-select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb)$q$, :'cid', :'sealed'), 'only the owner can change the circle key');
+select pg_temp.expect_error(format($q$select public.rotate_circle_key(%L, %L::jsonb, 'k:ring')$q$, :'cid', :'sealed'), 'only the owner can change the circle key');
 select pg_temp.as_user('00000000-0000-0000-0000-0000000000ee');
 select pg_temp.expect((select count(*) = 0 from public.circle_public_keys(:'cid')), 'outsiders cannot list public keys');
 select pg_temp.as_user(:'owner');
-select public.rotate_circle_key(:'cid', :'sealed'::jsonb);
+select public.rotate_circle_key(:'cid', :'sealed'::jsonb, 'k:ring-v2') as rotated \gset
 select pg_temp.expect((select bool_and(sealed_circle_key = 's1.rotated-' || user_id::text) from public.circle_members where circle_id = :'cid'), 'every member has the new key');
 select pg_temp.expect((select count(*) = 0 from public.invites where id = :'pending'), 'unused invites with the old key are cancelled');
+select pg_temp.expect((:'rotated'::jsonb ->> 'cancelled')::int >= 1, 'the owner is told how many invites were cancelled');
+select pg_temp.expect((select ct = 'k:ring-v2' and seq = (:'rotated'::jsonb ->> 'seq')::bigint from public.records where circle_id = :'cid' and rid = 'keyring-circle-v1'), 'the keyring is saved with the new key');
+update public.records set ct = 'k:forged' where circle_id = :'cid' and rid = 'keyring-circle-v1';
+select pg_temp.as_user(:'other');
+update public.records set ct = 'k:forged' where circle_id = :'cid' and rid = 'keyring-circle-v1';
+select pg_temp.expect_error(format($q$insert into public.records (circle_id, rid, ct) values (%L, 'keyring-circle-v1', 'k:forged') on conflict (circle_id, rid) do update set ct = excluded.ct$q$, :'cid'), 'members cannot overwrite the keyring');
+reset role;
+select pg_temp.expect((select ct = 'k:ring-v2' from public.records where circle_id = :'cid' and rid = 'keyring-circle-v1'), 'only rotate_circle_key can change the keyring, not the owner or members directly');
 reset role;
 
 -- ---------- Policy performance ----------

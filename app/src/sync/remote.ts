@@ -41,8 +41,11 @@ export interface Remote {
   getRecord(circleId: string, rid: string): Promise<RecordRow | null>;
   /** Public keys of everyone in the circle (members only). */
   circlePublicKeys(circleId: string): Promise<{ user_id: string; public_key: JsonWebKey }[]>;
-  /** Owner only: replace every member's sealed circle key at once; cancels unused invites. */
-  rotateCircleKey(circleId: string, sealed: Record<string, string>): Promise<void>;
+  /**
+   * Owner only, in one step: replace every member's sealed circle key, save the keyring record and cancel unused
+   * invites. Returns how many invites were cancelled and the keyring's change number.
+   */
+  rotateCircleKey(circleId: string, sealed: Record<string, string>, keyring: string): Promise<{ cancelled: number; seq: number }>;
   push(circleId: string, rows: { rid: string; ct: string }[]): Promise<void>;
   subscribe(circleId: string, onChange: () => void): () => void;
   /** Replace this user's unsent appointment, check-in and suggestion reminders. */

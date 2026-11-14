@@ -11,9 +11,9 @@ import { APP_VERSION } from '../version';
 import { checkInTimes, remindersBetween } from '../lib/schedule';
 import { nudgeTimesBetween } from '../lib/nudges';
 import { nudgesFor } from '../lib/useReminders';
-import { SyncEngine } from './engine';
+import { SyncEngine, type SyncState } from './engine';
 import { restoreJournal } from './restore';
-import { createAccount, createCircle, rewrapAccount, joinWithInvite, makeInvite, openAccount, openCircle, restoreSession, rotateCircleKey, serialiseSession, type CircleSession, type MaybeCircle } from './keys';
+import { createAccount, createCircle, rewrapAccount, joinWithInvite, makeInvite, openAccount, openCircle, reencryptCircle, restoreSession, rotateCircleKey, serialiseSession, type CircleSession, type MaybeCircle } from './keys';
 import type { CircleRole, InviteRow, Remote, ReminderRow } from './remote';
 import type { CareShare, Invitation } from '../types';
 import { buildCarePayload, careLink, newShareKey, payloadHash, sealPayload, type CareData } from '../lib/careShare';
@@ -42,8 +42,8 @@ let stopEngine: (() => void) | null = null;
 
 const SESSION = 'account';
 const syncState = {
-  load: async () => (await store.openLocal<{ lastSeq: number }>('sync')) ?? { lastSeq: 0 },
-  save: (v: { lastSeq: number }) => store.sealLocal('sync', v),
+  load: async () => (await store.openLocal<SyncState>('sync')) ?? { lastSeq: 0 },
+  save: (v: SyncState) => store.sealLocal('sync', v),
 };
 
 async function persistKeys() {
@@ -76,7 +76,7 @@ function startEngine() {
   scheduleCarePublish(1000);
   set({ phase: 'connected', circleId: keys.circleId });
   linkMe();
-  refreshRole().catch(() => undefined);
+  refreshRole().then(finishRekey).catch(() => undefined);
   scheduleServerReminders().catch(() => undefined);
 }
 
@@ -91,7 +91,7 @@ export async function refreshRole() {
   if (!remote || !keys?.circleId) return;
   const mine = (await remote.myMemberships()).find((m) => m.circle_id === keys!.circleId);
   const role = mine?.role ?? null;
-  if (engine) engine.readOnly = role === 'viewer';
+  if (engine) { engine.readOnly = role === 'viewer'; engine.resaveOld = role === 'owner'; }
   // Remember the last role seen, so someone who was just handed the circle gets a one-time note.
   try {
     const key = `idid.role.${keys.circleId}`;
@@ -282,28 +282,68 @@ export async function circleAccounts() {
 
 /**
  * Remove someone's access. If you own the circle, its key is changed straight after, so even with their old
- * copy of the key they can't read anything written from now on.
+ * copy of the key they can't read anything written from now on. If the key change doesn't finish, it's
+ * remembered and tried again the next time this device connects (`rekeyError` says why it stopped).
  */
-export async function removeAccount(userId: string): Promise<{ rotated: boolean }> {
-  if (!remote || !keys?.circleId) return { rotated: false };
+export async function removeAccount(userId: string): Promise<{ rotated: boolean; cancelled: number; rekeyError?: string }> {
+  if (!remote || !keys?.circleId) return { rotated: false, cancelled: 0 };
   await remote.removeMember(keys.circleId, userId);
-  if (state.role !== 'owner') return { rotated: false };
-  await changeCircleKey();
-  return { rotated: true };
+  if (state.role !== 'owner') return { rotated: false, cancelled: 0 };
+  try {
+    const { cancelled } = await changeCircleKey();
+    return { rotated: true, cancelled };
+  } catch (e) {
+    return { rotated: false, cancelled: 0, rekeyError: e instanceof Error ? e.message : String(e) };
+  }
 }
 
+/** A key change that hasn't finished yet, kept on this device so it can be completed later. */
+const REKEY = 'rekey';
+interface PendingRekey { circleId: string; step: 'rotate' | 'reencrypt' }
+let rekeyBusy = false;
+/** Finishing an interrupted key change is tried once per app start, so a lasting problem can't loop. */
+let rekeyTried = false;
+
 /** Owner only: switch the circle to a new key and re-encrypt what's shared (see keys.ts rotateCircleKey). */
-export async function changeCircleKey() {
+export async function changeCircleKey(): Promise<{ cancelled: number }> {
   if (!remote || !keys?.circleId || !keys.circleKey) throw new Error('Connect a circle first.');
-  await engine?.sync(); // upload anything waiting first, with the current key
-  stopEngine?.(); stopEngine = null; engine = null;
+  return runRekey('rotate');
+}
+
+async function runRekey(step: PendingRekey['step']): Promise<{ cancelled: number }> {
+  if (!remote || !keys?.circleId || !keys.circleKey) return { cancelled: 0 };
+  if (rekeyBusy) throw new Error('The circle key is already being changed.');
+  const circleId = keys.circleId;
+  rekeyBusy = true; rekeyTried = true;
+  let cancelled = 0;
   try {
-    const next = await rotateCircleKey(remote, keys as CircleSession);
-    keys = { ...keys, ...next };
-    await persistKeys();
+    await store.sealLocal(REKEY, { circleId, step } satisfies PendingRekey);
+    await engine?.sync(); // upload anything waiting first, with the current key
+    // Stop syncing while records are re-encrypted, so this device doesn't write over them halfway.
+    stopEngine?.(); stopEngine = null; engine = null;
+    if (step === 'rotate') {
+      const r = await rotateCircleKey(remote, keys as CircleSession);
+      // The server now has the new key and keyring (saved together), so keep the new key before anything else.
+      keys = { ...keys, ...r.session }; cancelled = r.cancelled;
+      await persistKeys();
+      await store.sealLocal(REKEY, { circleId, step: 'reencrypt' } satisfies PendingRekey);
+    }
+    await reencryptCircle(remote, keys as CircleSession);
+    await store.dropLocal(REKEY);
   } finally {
+    rekeyBusy = false;
     startEngine();
   }
+  return { cancelled };
+}
+
+/** Finish a key change that was interrupted (for example, the connection dropped or the app was closed). */
+async function finishRekey() {
+  if (rekeyBusy || rekeyTried || !keys?.circleId || state.role !== 'owner') return;
+  const p = await store.openLocal<PendingRekey>(REKEY);
+  if (!p) return;
+  if (p.circleId !== keys.circleId) { await store.dropLocal(REKEY); return; }
+  await runRekey(p.step);
 }
 
 /** The circle's key changed on another device (or this account was removed): pick up the new key. */
@@ -315,16 +355,19 @@ async function reopenCircle() {
     // No longer in this circle: stop syncing. The journal stays on this device.
     stopEngine?.(); stopEngine = null; engine = null;
     keys = { ...keys, circleId: null, circleKey: null, oldKeys: undefined, ridSeed: undefined, keyVersion: undefined };
-    await persistKeys(); await store.dropLocal('sync');
+    await persistKeys(); await store.dropLocal('sync'); await store.dropLocal(REKEY);
     set({ phase: 'needs-circle', circleId: null, role: null });
     return;
   }
   if ((c.keyVersion ?? 1) > (keys.keyVersion ?? 1)) {
     keys = { ...keys, ...c };
     await persistKeys();
+    // Read again from the first row that was skipped because no key we had could open it.
+    const st = await syncState.load();
+    if (st.skippedFrom !== undefined) await syncState.save({ lastSeq: Math.min(st.lastSeq, st.skippedFrom - 1) });
     startEngine();
   } else if (engine) {
-    // Nothing newer: skip rows no key can open, rather than asking again.
+    // Nothing newer: skip rows no key can open for now (they're remembered and read again once a newer key arrives).
     engine.skipUnreadable = true;
     engine.sync();
   }

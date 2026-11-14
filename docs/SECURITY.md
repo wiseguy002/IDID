@@ -23,11 +23,11 @@ iDID is built so that the people running the server **cannot read your journal**
 ## Circle key rotation
 
 - When the owner removes someone, the app makes a new circle key (`rotateCircleKey` in `app/src/sync/keys.ts`):
-  1. It seals the new key to every remaining member's public key and replaces their copies in one step (`rotate_circle_key`, owner only). The server refuses unless every current member is included. Unused invite links carry the old key, so they're cancelled.
-  2. It saves a **keyring** record (fixed id `keyring-circle-v1`), encrypted with the new key. The keyring holds the earlier keys and the record-id seed.
-  3. It re-encrypts every shared record with the new key.
+  1. In one database transaction (`rotate_circle_key`, owner only), it replaces every remaining member's sealed copy of the key, saves the **keyring** record (fixed id `keyring-circle-v1`, encrypted with the new key, holding the earlier keys and the record-id seed) and cancels unused invite links, which carry the old key. The server refuses unless every current member is included. Because it's all or nothing, no device can ever get the new key without the keyring, or the other way round.
+  2. It re-encrypts every shared record with the new key (`reencryptCircle`). If this is interrupted, the owner's device remembers and finishes it the next time it connects. Rows not yet re-encrypted stay readable to members through the keyring.
+- **Only `rotate_circle_key` can write the keyring.** The ordinary record policies refuse that id, so a member's device can't replace or damage it.
 - **Record ids don't change.** They're derived from the circle's first key, which is kept in the keyring. So "only me" records, which only their owner can decrypt, stay valid without being touched.
-- **Other members' devices** notice the newer keyring, reopen the circle with their new copy of the key, and keep syncing. A row that a lagging device wrote with an old key is still readable, and the next member who can write saves it again with the new key.
+- **Other members' devices** notice the newer keyring, reopen the circle with their new copy of the key, and keep syncing. A row that a lagging device wrote with an old key is still readable, and the owner's devices save it again with the new key. A row no known key opens is skipped for now and read again once a newer key arrives.
 - **A removed person's device** finds it is no longer in the circle and stops syncing. Their journal stays on their device.
 - **What it doesn't do:** take back anything the removed person already downloaded. The earlier keys stay readable to current members (in the keyring) so nothing is lost.
 

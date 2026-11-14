@@ -58,7 +58,10 @@ describe('care-team shared views', () => {
     const s = share({ summary: true });
     const p = buildCarePayload(data, s);
     const ct = await sealPayload(p, s.key, s.id);
-    expect(ct).not.toContain('Sam');
+    // Look for the name as it would appear in leaked JSON. Ciphertext is base64 and never contains quotes,
+    // so this can't match by chance (a bare 'Sam' would, about once in 130 runs).
+    expect(ct).not.toContain('"Sam"');
+    expect(ct).not.toContain('"who"');
     expect((await openPayload(ct, s.key, s.id)).who).toBe('Sam');
     await expect(openPayload(ct, newShareKey(), s.id)).rejects.toThrow();
     await expect(openPayload(ct, s.key, '00000000-0000-4000-8000-000000000002')).rejects.toThrow();

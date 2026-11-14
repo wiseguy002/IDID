@@ -48,6 +48,9 @@ The website lists `hello@`, `press@` and `privacy@idid.care`. In the **idid.care
 - **SSL/TLS → Edge Certificates**: Always Use HTTPS = on; Minimum TLS = 1.2.
 - **Web Analytics**: leave off, or use Cloudflare's cookie-free analytics only for the website (never the app), and say so on the privacy page.
 - Security headers (HSTS, a strict Content Security Policy, no-referrer, no framing) ship with the site and app in their `_headers` files.
+- **Caching → Configuration → Browser Cache TTL**: "Respect Existing Headers", so the `_headers` caching rules (no-cache service workers, year-long hashed files) aren't replaced by Cloudflare's 4-hour default.
+- **Scrape Shield → Email Address Obfuscation**: can stay on; pages are sent with `no-transform` and wrapped in `<!--email_off-->`, so Cloudflare leaves them alone.
+- Every pull request gets preview copies at `https://pr-<number>.idid-site.pages.dev` and `https://pr-<number>.idid-app.pages.dev` (`.github/workflows/preview.yml`).
 
 ## 8. After the online circle is set up
 

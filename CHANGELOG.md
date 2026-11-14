@@ -14,6 +14,14 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Fixed
+- Email links on idid.care work again for everyone: Cloudflare no longer scrambles them, so they show the real address even without JavaScript.
+- If your connection drops, idid.care shows its gentle offline page again, and the app opens offline right after you first install it.
+
+### Changed
+- Stronger, more current security settings on idid.care and the app, and faster repeat visits: the app's files and the website's style and script are now kept by your browser until they change.
+- The app now has its own robots.txt and security contact file, like the website.
+
 ### Changed
 - Gentler wording in three places: the "What did I miss?" screen now says losing time isn't your fault, one kind note now reads "I'm thinking of you today.", and the "Not alone" badge is now called "Trusted person".
 

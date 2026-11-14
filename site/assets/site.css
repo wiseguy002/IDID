@@ -2,7 +2,8 @@
 :root {
   --bg: #f5efe6; --bg-2: #efe6d9; --surface: #fffaf2; --ink: #34312c; --muted: #6c645a; --line: #e3d8c8;
   --accent: #4f6c5e; --accent-ink: #fdfaf4; --accent-soft: #dfe8e0; --blue: #7a8aab; --blue-soft: #e3e7f0;
-  --warm: #a7794f; --warm-soft: #f3e4d4;
+  --warm: #a7794f; --warm-soft: #f3e4d4; --clay-text: #845f3d;
+  --check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235d7f6f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 10 17l9-10'/%3E%3C/svg%3E");
   --radius: 22px; --shadow: 0 1px 2px rgba(80,60,30,.06), 0 10px 30px rgba(80,60,30,.07);
   --font: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
@@ -12,14 +13,18 @@
   :root:not([data-theme="light"]) {
     --bg: #1d2024; --bg-2: #23272c; --surface: #282c32; --ink: #e8e2d8; --muted: #b3aca2; --line: #3b4148;
     --accent: #93b2a2; --accent-ink: #1d2024; --accent-soft: #33433c; --blue: #9eaccb; --blue-soft: #343b4a;
-    --warm: #d0a985; --warm-soft: #40372e; --shadow: 0 1px 2px rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.2);
+    --warm: #d0a985; --warm-soft: #40372e; --clay-text: #d0a985;
+    --check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2393b2a2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 10 17l9-10'/%3E%3C/svg%3E");
+    --shadow: 0 1px 2px rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.2);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #1d2024; --bg-2: #23272c; --surface: #282c32; --ink: #e8e2d8; --muted: #b3aca2; --line: #3b4148;
   --accent: #93b2a2; --accent-ink: #1d2024; --accent-soft: #33433c; --blue: #9eaccb; --blue-soft: #343b4a;
-  --warm: #d0a985; --warm-soft: #40372e; color-scheme: dark;
+  --warm: #d0a985; --warm-soft: #40372e; --clay-text: #d0a985;
+  --check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2393b2a2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 10 17l9-10'/%3E%3C/svg%3E");
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -44,7 +49,7 @@ p { margin: 0 0 1em; }
 /* Crisis bar: always one tap from help */
 .crisis { background: var(--warm-soft); color: var(--ink); font-size: .9rem; padding-block: .5rem; padding-top: calc(.5rem + env(safe-area-inset-top, 0px)); }
 .crisis .wrap { display: flex; gap: .4rem 1rem; flex-wrap: wrap; align-items: center; justify-content: center; text-align: center; }
-.crisis a { font-weight: 650; }
+.crisis a { color: var(--clay-text); font-weight: 700; }
 .crisis .short { display: none; }
 @media (max-width: 600px) { .crisis .long { display: none; } .crisis .short { display: inline; } }
 /* Leave room for the sticky header when jumping to a section. */
@@ -111,7 +116,7 @@ section { padding-block: clamp(3.5rem, 8vw, 6rem); }
 .list-check { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
 /* Padding + positioned check (not a grid), so mixed bold/plain text inside an item always flows as one paragraph. */
 .list-check li { position: relative; padding-left: 2.1rem; min-width: 0; }
-.list-check li::before { content: ""; position: absolute; left: 0; top: .2em; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235d7f6f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 10 17l9-10'/%3E%3C/svg%3E") center/14px no-repeat; }
+.list-check li::before { content: ""; position: absolute; left: 0; top: .2em; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft) var(--check-icon) center/14px no-repeat; }
 .quote { font-family: var(--serif); font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.45; }
 .notice { background: var(--warm-soft); border-radius: var(--radius); padding: 1.2rem 1.4rem; }
 .pill { display: inline-block; padding: .2rem .7rem; border-radius: 999px; background: var(--accent-soft); font-size: .82rem; font-weight: 600; color: var(--ink); }
@@ -150,6 +155,8 @@ footer.foot .cols { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 
 footer.foot h2 { color: var(--ink); margin: 0 0 .6rem; font-size: .95rem; font-family: inherit; letter-spacing: normal; }
 footer.foot ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .35rem; }
 footer.foot a { color: var(--muted); }
+footer.foot .family { display: inline-flex; align-items: center; gap: .4rem; }
+footer.foot .family img { width: 18px; height: 18px; display: block; }
 .oops-leaf { width: 120px; margin: 0 auto 1.2rem; animation: sway 6s ease-in-out infinite; transform-origin: 50% 90%; }
 @keyframes sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
 .oops-card { max-width: 30rem; margin: 2rem auto 0; text-align: center; }

@@ -173,6 +173,10 @@ export default function Settings() {
         <p>iDID is free, with no ads. If you'd like to help keep it running, you can make an optional contribution at <a href="https://ko-fi.com/ididcare" target="_blank" rel="noopener noreferrer">ko-fi.com/ididcare</a>. It never unlocks or changes anything in the app.</p>
         <p>Learn more about dissociation, DID and grounding at <a href="https://idid.care/learn" target="_blank" rel="noopener noreferrer">idid.care/learn</a>.</p>
         <p>iDID is a private journal for noticing dissociative and trauma-related experiences, and for gathering gentle observations from people you trust. It is not a diagnostic tool or a substitute for professional care.</p>
+        <p className="muted">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 64 64" style={{ verticalAlign: '-4px', marginRight: '.4rem' }}><g fill="none" stroke="currentColor" strokeWidth="4.5"><circle cx="24" cy="37" r="12" /><circle cx="40" cy="37" r="12" /><circle cx="32" cy="23" r="12" /></g></svg>
+          iDID is from weDID, a small family of free, private care apps: <a href="https://wedid.care" target="_blank" rel="noopener noreferrer">wedid.care</a>. No ads. No trackers. No selling data. No AI talking to you.
+        </p>
         <p style={{ margin: 0 }}>If you are in danger or thinking about harming yourself, please contact local emergency services. In the US, call or text <b>988</b>. In the UK & Ireland, Samaritans: <b>116 123</b>.</p>
       </div>
 

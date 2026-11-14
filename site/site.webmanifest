@@ -16,7 +16,6 @@
     { "src": "/assets/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
   ],
   "shortcuts": [
-    { "name": "Open the app", "url": "https://app.idid.care/" },
     { "name": "Learn about dissociation", "url": "/learn" }
   ]
 }

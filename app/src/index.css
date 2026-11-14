@@ -58,7 +58,7 @@ html[data-motion='reduce'] *, html[data-motion='reduce'] *::before, html[data-mo
   animation: none !important; transition: none !important; scroll-behavior: auto !important;
 }
 h1, h2, h3 { font-weight: 600; line-height: 1.25; margin: 0 0 .4em; letter-spacing: -.005em; }
-h1 { font-size: 1.6rem; } h2 { font-size: 1.22rem; } h3 { font-size: 1.05rem; }
+h1 { font-size: 1.6rem; } h2 { font-size: 1.22rem; } h3, .h3 { font-size: 1.05rem; }
 p { margin: 0 0 .8em; }
 a { color: var(--accent-text); }
 button, input, textarea, select { font: inherit; color: inherit; }

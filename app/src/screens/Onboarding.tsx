@@ -108,7 +108,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       <h1>{t('A quiet place to notice')}</h1>
       <p>{t('iDID helps you gently record moments that felt different — when and where they happened, what may have set them off, how you felt, and who was around — so that over time, patterns become easier to see and share.')}</p>
       <div className="card accent">
-        <h3>{t('Private by design')}</h3>
+        <h2 className="h3">{t('Private by design')}</h2>
         <p className="small" style={{ margin: 0 }}>{t("Everything you write is encrypted on this device with a passphrase only you know. If you later connect a trust circle, entries are encrypted before they leave your device, so even our server can't read them.")}</p>
       </div>
       <p className="muted small">{t('iDID is a journaling tool, not a medical device or a replacement for professional care. In an emergency, call 911, or call or text 988.')}</p>
@@ -137,7 +137,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       <Segmented label={t('Word for parts')} value={partWord} onChange={setPartWord}
         options={[{ value: 'parts', label: t('Parts') }, { value: 'alters', label: t('Alters') }, { value: 'headmates', label: t('Headmates') }, { value: 'selves', label: t('Selves') }]} />
       <div className="card soft">
-        <h3>{t('Add any {many} you know about', { many: w.many })}</h3>
+        <h2 className="h3">{t('Add any {many} you know about', { many: w.many })}</h2>
         <p className="small muted">{t('Optional — you can skip this, add more later, or add {many} as you discover them.', { many: w.many })}</p>
         <form className="row" onSubmit={(e) => { e.preventDefault(); addPart(); }}>
           <input className="input" style={{ flex: 1 }} value={partText} onChange={(e) => setPartText(e.target.value)} placeholder={t('{One} name', { One: w.One })} />

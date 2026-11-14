@@ -30,33 +30,22 @@ Where iDID stands on privacy law and account security, and what the owner still 
 
 These can't be done from the codebase. Each takes a few minutes.
 
-### 1. Turn on two-factor sign-in everywhere
+### 1. Two-factor sign-in: done (13 November 2026)
 
-Use an authenticator app or a passkey, not SMS, and keep the recovery codes somewhere safe and offline.
+Checked in the browser: GitHub (authenticator app and passkey), Cloudflare (authenticator app), Supabase (authenticator app, plus GitHub sign-in), Resend (MFA on, plus GitHub sign-in) and the Google account that receives hello@, privacy@ and press@ mail (passkeys, authenticator app).
 
-- **GitHub:** Settings → Password and authentication → Two-factor authentication.
-- **Cloudflare:** My Profile → Authentication → Two-Factor Authentication. It also protects the domain registration.
-- **Supabase:** Account → Security → Multi-factor authentication.
-- **Resend:** Settings → Account → Two-factor authentication.
-- **The email account that receives hello@, privacy@ and press@ mail** (Cloudflare forwards it there): myaccount.google.com → Security → 2-Step Verification.
+### 2. GitHub repository settings: done (13 November 2026)
 
-### 2. GitHub repository settings (wiseguy002/IDID)
+Secret scanning, push protection and Dependabot security updates are on. The "Protect Main" ruleset is active on the default branch: pull request required, checks `app`, `site` and `database` required, force pushes and deletion blocked. Actions workflow permissions are read-only.
 
-- **Settings → Code security:** turn on *Dependency graph*, *Dependabot alerts*, *Dependabot security updates*, *Secret scanning* and *Push protection*.
-- **Settings → Branches → Add branch ruleset** for `main`:
-  - Require a pull request before merging.
-  - Require status checks to pass: `app`, `site` and `database`.
-  - Block force pushes, and restrict deletions.
-- **Settings → Actions → General:** set Workflow permissions to *Read repository contents*.
-
-### 3. Backups
+### 3. Backups (on hold, owner's decision)
 
 The Supabase free plan has no downloadable backups. Pick one:
 
 - **Supabase Pro** ($25/month): daily backups kept 7 days, plus point-in-time recovery as an add-on. Simplest.
 - **Free option:** add a `SUPABASE_DB_URL` repository secret and a scheduled GitHub Action that runs `pg_dump` weekly and stores the encrypted dump as a workflow artifact. Ask Claude to add the workflow once the secret exists.
 
-### 4. Lawyer review
+### 4. Lawyer review (on hold, owner's decision)
 
 Before a public launch, ask a lawyer to review the privacy policy, terms and incident plan. Ask specifically about:
 

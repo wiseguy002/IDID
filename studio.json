@@ -1,0 +1,32 @@
+{
+  "contract": 1,
+  "name": "iDID",
+  "id": "idid",
+  "repo": "wiseguy002/IDID",
+  "branch": "main",
+  "liveUrl": "https://idid.care",
+  "previewUrl": "https://{slug}.idid-site.pages.dev",
+  "theme": {
+    "mark": "site/assets/logo.svg",
+    "light": { "page": "#F5EFE6", "panel": "#FFFAF2", "sidebar": "#4F6C5E", "sidebarInk": "#FDFAF4",
+               "ink": "#34312C", "muted": "#6C645A", "accent": "#4F6C5E", "accentInk": "#FDFAF4", "danger": "#A3392B" },
+    "dark": { "page": "#1D2024", "panel": "#282C32", "sidebar": "#16181B", "sidebarInk": "#E8E2D8",
+              "ink": "#E8E2D8", "muted": "#B3ACA2", "accent": "#93B2A2", "accentInk": "#1D2024", "danger": "#E58A7C" }
+  },
+  "pages": { "sources": "site/pages/*.html", "route": { "index.html": "/", "*.html": "/{name}" } },
+  "partials": [
+    { "file": "site/partials/head.html", "label": "Header and top menu" },
+    { "file": "site/partials/foot.html", "label": "Footer" }
+  ],
+  "templates": [ { "file": "site/templates/article.html", "label": "Plain article page" } ],
+  "media": { "folder": "site/assets/img", "maxBytes": 2000000,
+             "types": ["image/png", "image/jpeg", "image/svg+xml", "image/webp"] },
+  "settings": { "redirects": "site/_redirects" },
+  "build": { "ci": "deploy.yml", "output": "site/dist" },
+  "rules": {
+    "requiredText": ["988"],
+    "warnWords": ["not alone", "cure", "cures", "heal", "therapy", "clinically proven", "treat", "diagnose", "HIPAA"],
+    "lockedFiles": ["site/_headers", "site/sw.js", "site/assets/site.js", ".github/workflows/deploy.yml", ".github/workflows/ci.yml", ".github/workflows/release.yml"],
+    "maxFieldChars": { "text": 300, "rich": 20000 }
+  }
+}

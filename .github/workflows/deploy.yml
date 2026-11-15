@@ -1,13 +1,15 @@
 name: Deploy to Cloudflare Pages
 # Website → idid.care (Pages project "idid-site"); app → app.idid.care (Pages project "idid-app").
 # Needs repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID (see docs/DEPLOY.md).
+# Studio drafts (branches studio/<hex>) deploy only the website, as a private preview at
+# https://studio-<hex>.idid-site.pages.dev. Only main deploys the app and the live site.
 on:
   push:
-    branches: [main]
+    branches: [main, 'studio/**']
   workflow_dispatch:
 
 concurrency:
-  group: deploy
+  group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
@@ -15,6 +17,7 @@ permissions:
 
 jobs:
   app:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -54,8 +57,18 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+      - name: Build tests
+        run: node --test tools/*.test.mjs
       - name: Build website
         run: node tools/build-site.mjs
+      - name: Check Studio markers and studio.json
+        working-directory: .
+        run: node scripts/check-markers.mjs --profile
+      - name: Every page has the 988 crisis line
+        run: |
+          missing=$(grep -rL --include='*.html' 988 dist || true)
+          if [ -n "$missing" ]; then echo "::error::Pages without 988:"; echo "$missing"; exit 1; fi
+          echo "988 found on $(find dist -name '*.html' | wc -l) pages."
       - name: Deploy website
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
@@ -63,4 +76,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: site
           wranglerVersion: '3.114.0'
-          command: pages deploy dist --project-name idid-site --branch main --commit-dirty=true
+          command: pages deploy dist --project-name idid-site --branch ${{ github.ref_name }} --commit-dirty=true

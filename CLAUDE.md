@@ -47,3 +47,12 @@ Plain language, recommendations rather than option lists, outcome first, then wh
 **Never merge or deploy a pull request until Rob says "merge" for that specific PR in chat.** This includes notes-only and docs PRs. Passing checks are not enough, and a "merge" for one PR does not cover later ones. Open the PR, report the link, and wait.
 
 **Always end with a next step.** Never tell the owner there's "nothing to do" or "nothing needed in the meantime." Every reply that finishes a piece of work ends with a recommended next step, plus what else could usefully be done next: website or content updates, security hardening, bug or health checks (live headers, `npm audit`, Supabase security and performance advisors, the site check, a collateral audit when due), or the next roadmap item. Recommend one clearly; offer a few alternatives only if they're genuinely useful.
+
+## Studio (content manager, added 2026-11-15)
+
+idid.care's words can be edited in Studio at https://admin.wedid.care/content (code: `~/Studio`, contract: `~/Studio/docs/CONTRACT.md`). Pieces in this repo:
+- `studio.json` (repo root): what Studio may edit, theme, locked files.
+- Markers in `site/pages/*.html` and `site/partials/foot.html` (`data-cms` fields, `<!-- cms:area/block -->` sections); `data-cms-lock` on the crisis bar and the footer disclaimer and "from weDID" line. The build removes all markers from the live HTML. `node scripts/check-markers.mjs --profile` checks them.
+- Front matter may also hold `nav: no`, `sitemap: no`, `status: hidden` (page not built; menu and footer links to it dropped). `site/templates/article.html` is the "new page" template.
+- A Studio edit is a branch `studio/<hex>`: CI checks it (app and database jobs are skipped) and deploy.yml deploys only the website as a preview at `https://studio-<hex>.idid-site.pages.dev`. Publish merges it to `main`, which deploys as usual.
+- Use `<strong>`/`<em>`, not `<b>`/`<i>`: Studio's text editor only keeps the first pair.

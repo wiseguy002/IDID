@@ -1,39 +1,41 @@
 <!-- title: Privacy · iDID | description: How iDID protects your journal: encryption on your device, end-to-end encrypted sharing, no ads, no trackers, and exactly what our servers can and can't see. | keywords: encrypted journal, end-to-end encryption, private mental health app, no ads, no trackers, data privacy, therapist sharing consent -->
 <section class="hero" style="padding-bottom:1rem">
   <div class="wrap narrow">
-    <p class="eyebrow">Privacy</p>
-    <h1>Your story stays yours</h1>
+    <p class="eyebrow" data-cms="top-paragraph1" data-cms-type="rich" data-cms-label="Top of page: paragraph 1 (Privacy)">Privacy</p>
+    <h1 data-cms="top-title1" data-cms-type="text" data-cms-label="Top of page: title 1">Your story stays yours</h1>
     <p class="lede muted">iDID was built so that the people who run it can't read your journal. Here's how, in plain language. <span class="small">Last updated 13 November 2026.</span></p>
   </div>
 </section>
+<!-- cms:area id="sections" label="Page sections" -->
+<!-- cms:block id="main-text" label="Main text" -->
 <section style="padding-top:1rem">
   <div class="wrap">
     <article class="prose">
-      <h2>The short version</h2>
+      <h2 data-cms="the-short-version-heading" data-cms-type="text" data-cms-label="The short version: heading">The short version</h2>
       <ul class="list-check">
-        <li><span>Everything you write is <b>encrypted on your device</b> with your passphrase.</span></li>
-        <li><span>If you share with a circle, it's <b>encrypted end-to-end</b>. Our servers only store scrambled data, and we don't have the keys.</span></li>
-        <li><span><b>No ads, no trackers, no selling or sharing data.</b> No analytics either, unless you choose to share anonymous counts. This website doesn't use cookies.</span></li>
-        <li><span>You can <b>export or delete</b> everything at any time.</span></li>
+        <li><span>Everything you write is <strong data-cms="the-short-version-text1" data-cms-type="text" data-cms-label="The short version: text 1 (encrypted on your device)">encrypted on your device</strong> with your passphrase.</span></li>
+        <li><span>If you share with a circle, it's <strong data-cms="the-short-version-text2" data-cms-type="text" data-cms-label="The short version: text 2 (encrypted end-to-end)">encrypted end-to-end</strong>. Our servers only store scrambled data, and we don't have the keys.</span></li>
+        <li><span><strong data-cms="the-short-version-text3" data-cms-type="text" data-cms-label="The short version: text 3 (No ads, no trackers, no selling or sharing data.)">No ads, no trackers, no selling or sharing data.</strong> No analytics either, unless you choose to share anonymous counts. This website doesn't use cookies.</span></li>
+        <li><span>You can <strong data-cms="the-short-version-text4" data-cms-type="text" data-cms-label="The short version: text 4 (export or delete)">export or delete</strong> everything at any time.</span></li>
       </ul>
 
-      <h2>On your device</h2>
-      <p>iDID stores your journal in your browser's storage on your device. Each record is encrypted separately using AES-256-GCM. The key is protected by your passphrase and, separately, by a recovery code shown once when you set up. We never see or store either. When iDID is locked, nothing can be read without one of them. iDID locks itself after time in the background.</p>
-      <p><b>Voice notes</b> use your microphone only while you're recording. The recording is encrypted on your device straight away, like a written note.</p>
-      <p>A few comfort settings (theme, text size, reminder times) are kept unencrypted on the device so the lock screen can display correctly. They contain nothing you wrote.</p>
-      <p>iDID locks itself after a few minutes in the background. <b>Quick hide</b> (the eye icon, or Esc twice) locks it instantly and shows an ordinary-looking screen.</p>
+      <h2 data-cms="on-your-device-heading" data-cms-type="text" data-cms-label="On your device: heading">On your device</h2>
+      <p data-cms="on-your-device-paragraph1" data-cms-type="rich" data-cms-label="On your device: paragraph 1 (iDID stores your journal in your browser's…)">iDID stores your journal in your browser's storage on your device. Each record is encrypted separately using AES-256-GCM. The key is protected by your passphrase and, separately, by a recovery code shown once when you set up. We never see or store either. When iDID is locked, nothing can be read without one of them. iDID locks itself after time in the background.</p>
+      <p data-cms="on-your-device-paragraph2" data-cms-type="rich" data-cms-label="On your device: paragraph 2 (Voice notes use your microphone only while…)"><strong>Voice notes</strong> use your microphone only while you're recording. The recording is encrypted on your device straight away, like a written note.</p>
+      <p data-cms="on-your-device-paragraph3" data-cms-type="rich" data-cms-label="On your device: paragraph 3 (A few comfort settings (theme, text size,…)">A few comfort settings (theme, text size, reminder times) are kept unencrypted on the device so the lock screen can display correctly. They contain nothing you wrote.</p>
+      <p data-cms="on-your-device-paragraph4" data-cms-type="rich" data-cms-label="On your device: paragraph 4 (iDID locks itself after a few minutes in the…)">iDID locks itself after a few minutes in the background. <strong>Quick hide</strong> (the eye icon, or Esc twice) locks it instantly and shows an ordinary-looking screen.</p>
 
-      <h2>When you use the online circle</h2>
-      <p>Sharing between devices is optional. If you turn it on:</p>
-      <ul>
+      <h2 data-cms="when-you-use-the-online-circle-heading" data-cms-type="text" data-cms-label="When you use the online circle: heading">When you use the online circle</h2>
+      <p data-cms="when-you-use-the-online-circle-paragraph1" data-cms-type="rich" data-cms-label="When you use the online circle: paragraph 1 (Sharing between devices is optional. If you…)">Sharing between devices is optional. If you turn it on:</p>
+      <ul data-cms="when-you-use-the-online-circle-list1" data-cms-type="rich" data-cms-label="When you use the online circle: list 1 (You sign in with your email address and a…)">
         <li>You sign in with your email address and a one-time code. A quick check from Cloudflare Turnstile makes sure a person, not a bot, is asking for the code. It sees that someone is using the sign-in page, never anything from your journal.</li>
         <li>Your account has its own encryption keys. The private key is stored only after being encrypted with your passphrase, so you can use iDID on a new device; we can't decrypt it.</li>
         <li>Each circle has its own key, shared only with members. Invite links carry a one-time secret in the part of the link browsers never send to servers.</li>
         <li>Records are re-encrypted before upload. Even what kind of record something is (an entry, a part or an appointment) is hidden from us.</li>
         <li>"Only me" entries use a key that only your own devices hold, so other circle members can't read them. Your inner board, "Who's here" fronting log, voice notes and weekly reflections always work this way.</li>
       </ul>
-      <h3>What our servers can see</h3>
-      <ul>
+      <h3 data-cms="when-you-use-the-online-circle-subheading1" data-cms-type="text" data-cms-label="When you use the online circle: subheading 1 (What our servers can see)">What our servers can see</h3>
+      <ul data-cms="when-you-use-the-online-circle-list2" data-cms-type="rich" data-cms-label="When you use the online circle: list 2 (Your email address, and which accounts share a…)">
         <li>Your email address, and which accounts share a circle.</li>
         <li>The size of each encrypted record and when it changed.</li>
         <li>The times of reminders you turn on, so we can send a notification. Notifications only ever say something general, like "You have an appointment in 1 hour".</li>
@@ -41,93 +43,95 @@
         <li>For a view you share with your therapist or someone else: an encrypted copy we can't read, when it was last updated, how many times it has been opened and when, and when it ends, if you set an end date.</li>
       </ul>
 
-      <h2>Community features</h2>
-      <ul>
-        <li><b>Kind notes</b> are chosen from a list of messages written by iDID. They're anonymous: the person receiving one never learns who sent it, and senders never learn who received it. Our server keeps the link between sender and recipient only to enforce daily limits and prevent misuse. Receiving notes is opt-in.</li>
-        <li><b>Feature requests</b> are read by the iDID team, so they are not end-to-end encrypted. Please don't include personal or health details.</li>
-        <li><b>Help shape iDID</b> is an optional form for volunteering to give feedback. It sends the iDID team only what you type in it: which roles fit you (for example, that you live with dissociation), how you'd like to take part, a name or pseudonym, and an email to reply to. Like feature requests, it isn't end-to-end encrypted. We use it only to contact you about giving feedback, and we delete it whenever you ask.</li>
+      <h2 data-cms="community-features-heading" data-cms-type="text" data-cms-label="Community features: heading">Community features</h2>
+      <ul data-cms="community-features-list1" data-cms-type="rich" data-cms-label="Community features: list 1 (Kind notes are chosen from a list of messages…)">
+        <li><strong>Kind notes</strong> are chosen from a list of messages written by iDID. They're anonymous: the person receiving one never learns who sent it, and senders never learn who received it. Our server keeps the link between sender and recipient only to enforce daily limits and prevent misuse. Receiving notes is opt-in.</li>
+        <li><strong>Feature requests</strong> are read by the iDID team, so they are not end-to-end encrypted. Please don't include personal or health details.</li>
+        <li><strong>Help shape iDID</strong> is an optional form for volunteering to give feedback. It sends the iDID team only what you type in it: which roles fit you (for example, that you live with dissociation), how you'd like to take part, a name or pseudonym, and an email to reply to. Like feature requests, it isn't end-to-end encrypted. We use it only to contact you about giving feedback, and we delete it whenever you ask.</li>
       </ul>
 
-      <h2>Links to other services</h2>
-      <p>Find support and calendar export can open other organizations' websites (for example Psychology Today, HRSA or Google Calendar). Those sites only receive what's in the link you tap, such as a ZIP code or a neutral appointment title, and their own privacy policies apply.</p>
+      <h2 data-cms="links-to-other-services-heading" data-cms-type="text" data-cms-label="Links to other services: heading">Links to other services</h2>
+      <p data-cms="links-to-other-services-paragraph1" data-cms-type="rich" data-cms-label="Links to other services: paragraph 1 (Find support and calendar export can open…)">Find support and calendar export can open other organizations' websites (for example Psychology Today, HRSA or Google Calendar). Those sites only receive what's in the link you tap, such as a ZIP code or a neutral appointment title, and their own privacy policies apply.</p>
 
-      <h2>Your choices</h2>
-      <ul>
-        <li><b>Export</b> a full backup, a spreadsheet, or a clinician summary from Share &amp; export.</li>
-        <li><b>Share with your therapist</b> or anyone you choose: you pick exactly what they can see, agree to a plain summary first, and can remove their access at any time. The shared view is encrypted on your device with a key that lives only in the link you give them, so our servers can't read it.</li>
-        <li><b>Choose what each person can do</b> in your circle: view and add, view only, or only the information you select.</li>
-        <li><b>Hand your circle</b> to the person it's about, so they decide who sees what. You can stay in it as a member.</li>
-        <li><b>Use another device</b>: sign in with "I already use iDID" and your journal comes back, decrypted only on your device with your passphrase.</li>
-        <li><b>Delete</b> everything on a device from Settings → Delete all data.</li>
-        <li><b>Leave</b> the online circle or sign out at any time.</li>
+      <h2 data-cms="your-choices-heading" data-cms-type="text" data-cms-label="Your choices: heading">Your choices</h2>
+      <ul data-cms="your-choices-list1" data-cms-type="rich" data-cms-label="Your choices: list 1 (Export a full backup, a spreadsheet, or a…)">
+        <li><strong>Export</strong> a full backup, a spreadsheet, or a clinician summary from Share &amp; export.</li>
+        <li><strong>Share with your therapist</strong> or anyone you choose: you pick exactly what they can see, agree to a plain summary first, and can remove their access at any time. The shared view is encrypted on your device with a key that lives only in the link you give them, so our servers can't read it.</li>
+        <li><strong>Choose what each person can do</strong> in your circle: view and add, view only, or only the information you select.</li>
+        <li><strong>Hand your circle</strong> to the person it's about, so they decide who sees what. You can stay in it as a member.</li>
+        <li><strong>Use another device</strong>: sign in with "I already use iDID" and your journal comes back, decrypted only on your device with your passphrase.</li>
+        <li><strong>Delete</strong> everything on a device from Settings → Delete all data.</li>
+        <li><strong>Leave</strong> the online circle or sign out at any time.</li>
       </ul>
 
-      <h3 id="counts">Anonymous counts (off unless you turn them on)</h3>
-      <p>In Settings → Privacy, you can choose to <b>share anonymous counts</b> to help us learn which tools are useful. Here's exactly what that means:</p>
-      <ul>
+      <h3 id="counts" data-cms="your-choices-subheading1" data-cms-type="text" data-cms-label="Your choices: subheading 1 (Anonymous counts (off unless you turn them on))">Anonymous counts (off unless you turn them on)</h3>
+      <p data-cms="your-choices-paragraph1" data-cms-type="rich" data-cms-label="Your choices: paragraph 1 (In Settings → Privacy, you can choose to share…)">In Settings → Privacy, you can choose to <strong>share anonymous counts</strong> to help us learn which tools are useful. Here's exactly what that means:</p>
+      <ul data-cms="your-choices-list2" data-cms-type="rich" data-cms-label="Your choices: list 2 (While it's on, your device counts how many…)">
         <li>While it's on, your device counts how many times you open each screen of iDID (for example "Who's here: 4"), using only the app's own fixed screen names. It never includes anything you write, names, parts, moods or times.</li>
-        <li>Once a week, last week's counts are sent <b>without your account, device or circle</b>. Our server only adds them to totals for everyone together and keeps nothing else: no user ID, no device ID and no time of sending. Like any web request, the connection briefly passes through Cloudflare and Supabase, whose standard logs see an IP address, but iDID doesn't store it with the counts.</li>
+        <li>Once a week, last week's counts are sent <strong>without your account, device or circle</strong>. Our server only adds them to totals for everyone together and keeps nothing else: no user ID, no device ID and no time of sending. Like any web request, the connection briefly passes through Cloudflare and Supabase, whose standard logs see an IP address, but iDID doesn't store it with the counts.</li>
         <li>Only the iDID team can see the totals.</li>
         <li>Turning it off stops it straight away and deletes any counts not yet sent from your device.</li>
       </ul>
 
-      <h2 id="health-data">Consumer health data</h2>
-      <p>Some US states, including Washington (My Health My Data Act), Nevada and Connecticut, give you extra rights over "consumer health data". Because iDID is about mental health, we treat everything connected with your use of it as health data, even the fact that you have an account.</p>
-      <ul>
-        <li><b>What we collect:</b> what you write in iDID (journal entries, moods, parts, safety plans, appointments and the rest), which stays encrypted so we can't read it; your email address if you use the online circle; and the service details listed under "What our servers can see" above.</li>
-        <li><b>Where it comes from:</b> only from you and the people you invite into your circle.</li>
-        <li><b>Why:</b> only to run iDID for you: to store, sync and share what you choose, send sign-in codes and reminders you turn on, and keep the service safe from misuse. Never for advertising, profiling or research.</li>
-        <li><b>Who we share it with:</b> only the people you choose (your circle, or someone you send a shared view to), and the service providers below, who process it for us under contract and can't use it for anything else. We never sell it, and we never share it for advertising.</li>
-        <li><b>Consent:</b> we ask for it when you set up iDID and when you turn on the online circle. You can withdraw it at any time by leaving the circle or deleting your data.</li>
+      <h2 id="health-data" data-cms="health-data-heading" data-cms-type="text" data-cms-label="Consumer health data: heading">Consumer health data</h2>
+      <p data-cms="health-data-paragraph1" data-cms-type="rich" data-cms-label="Consumer health data: paragraph 1 (Some US states, including Washington (My…)">Some US states, including Washington (My Health My Data Act), Nevada and Connecticut, give you extra rights over "consumer health data". Because iDID is about mental health, we treat everything connected with your use of it as health data, even the fact that you have an account.</p>
+      <ul data-cms="health-data-list1" data-cms-type="rich" data-cms-label="Consumer health data: list 1 (What we collect: what you write in iDID…)">
+        <li><strong>What we collect:</strong> what you write in iDID (journal entries, moods, parts, safety plans, appointments and the rest), which stays encrypted so we can't read it; your email address if you use the online circle; and the service details listed under "What our servers can see" above.</li>
+        <li><strong>Where it comes from:</strong> only from you and the people you invite into your circle.</li>
+        <li><strong>Why:</strong> only to run iDID for you: to store, sync and share what you choose, send sign-in codes and reminders you turn on, and keep the service safe from misuse. Never for advertising, profiling or research.</li>
+        <li><strong>Who we share it with:</strong> only the people you choose (your circle, or someone you send a shared view to), and the service providers below, who process it for us under contract and can't use it for anything else. We never sell it, and we never share it for advertising.</li>
+        <li><strong>Consent:</strong> we ask for it when you set up iDID and when you turn on the online circle. You can withdraw it at any time by leaving the circle or deleting your data.</li>
       </ul>
 
-      <h2 id="rights">Your privacy rights</h2>
-      <p>Wherever you live, you can ask us to:</p>
-      <ul>
-        <li><b>Confirm</b> whether we hold data about you, and <b>get a copy</b> of it. (Most of it you can export yourself from Share &amp; export.)</li>
-        <li><b>Delete</b> your account and everything our servers hold for it. Signing out and deleting your data in the app removes it from that device.</li>
-        <li><b>Correct</b> your email address or other account details.</li>
-        <li><b>Withdraw consent</b>, and get a list of the service providers that have handled your data.</li>
+      <h2 id="rights" data-cms="rights-heading" data-cms-type="text" data-cms-label="Your privacy rights: heading">Your privacy rights</h2>
+      <p data-cms="rights-paragraph1" data-cms-type="rich" data-cms-label="Your privacy rights: paragraph 1 (Wherever you live, you can ask us to:)">Wherever you live, you can ask us to:</p>
+      <ul data-cms="rights-list1" data-cms-type="rich" data-cms-label="Your privacy rights: list 1 (Confirm whether we hold data about you, and…)">
+        <li><strong>Confirm</strong> whether we hold data about you, and <strong>get a copy</strong> of it. (Most of it you can export yourself from Share &amp; export.)</li>
+        <li><strong>Delete</strong> your account and everything our servers hold for it. Signing out and deleting your data in the app removes it from that device.</li>
+        <li><strong>Correct</strong> your email address or other account details.</li>
+        <li><strong>Withdraw consent</strong>, and get a list of the service providers that have handled your data.</li>
       </ul>
-      <p>Email <a href="mailto:privacy@idid.care">privacy@idid.care</a> from the address you sign in with. We'll answer within 45 days, usually much sooner, and won't charge you or treat you differently for asking. If we say no, you can appeal by replying to our answer, and we'll explain our decision. If you're still unhappy, you can contact your state attorney general.</p>
-      <p><b>California residents:</b> we don't sell or "share" personal information, and we don't use sensitive personal information to infer anything about you. So there's nothing to opt out of, though we honor Global Privacy Control signals anyway. You have the rights to know, delete, correct and limit described above.</p>
+      <p data-cms="rights-paragraph2" data-cms-type="rich" data-cms-label="Your privacy rights: paragraph 2 (Email privacy@idid.care from the address you…)">Email <a href="mailto:privacy@idid.care">privacy@idid.care</a> from the address you sign in with. We'll answer within 45 days, usually much sooner, and won't charge you or treat you differently for asking. If we say no, you can appeal by replying to our answer, and we'll explain our decision. If you're still unhappy, you can contact your state attorney general.</p>
+      <p data-cms="rights-paragraph3" data-cms-type="rich" data-cms-label="Your privacy rights: paragraph 3 (California residents: we don't sell or &quot;share&quot;…)"><strong>California residents:</strong> we don't sell or "share" personal information, and we don't use sensitive personal information to infer anything about you. So there's nothing to opt out of, though we honor Global Privacy Control signals anyway. You have the rights to know, delete, correct and limit described above.</p>
 
-      <h2 id="providers">Service providers we use</h2>
-      <p>These companies help run iDID. They only ever handle encrypted journal data, or the limited details listed here.</p>
-      <ul>
-        <li><b>Supabase</b> (database and sign-in, hosted in the United States): stores your email address and the encrypted copies of what you sync.</li>
-        <li><b>Cloudflare</b> (website and app hosting, security, the Turnstile sign-in check, and forwarding mail sent to idid.care addresses): sees ordinary web traffic, such as IP addresses.</li>
-        <li><b>Resend</b> (email delivery): sends sign-in codes, so it sees your email address and the code.</li>
-        <li><b>Ko-fi</b> (optional contributions at ko-fi.com/ididcare): if you choose to support iDID, Ko-fi and its payment processors handle your payment and see your payment details and any message you leave. Nothing from the app is sent to them, and contributing never unlocks or changes anything in iDID. Our Ko-fi page doesn't show a public list of supporters.</li>
-        <li><b>Your browser's push service</b> (Google, Apple or Mozilla, depending on your device): delivers reminders you turn on. The text is always general, like "You have an appointment in 1 hour".</li>
+      <h2 id="providers" data-cms="providers-heading" data-cms-type="text" data-cms-label="Service providers we use: heading">Service providers we use</h2>
+      <p data-cms="providers-paragraph1" data-cms-type="rich" data-cms-label="Service providers we use: paragraph 1 (These companies help run iDID. They only ever…)">These companies help run iDID. They only ever handle encrypted journal data, or the limited details listed here.</p>
+      <ul data-cms="providers-list1" data-cms-type="rich" data-cms-label="Service providers we use: list 1 (Supabase (database and sign-in, hosted in the…)">
+        <li><strong>Supabase</strong> (database and sign-in, hosted in the United States): stores your email address and the encrypted copies of what you sync.</li>
+        <li><strong>Cloudflare</strong> (website and app hosting, security, the Turnstile sign-in check, and forwarding mail sent to idid.care addresses): sees ordinary web traffic, such as IP addresses.</li>
+        <li><strong>Resend</strong> (email delivery): sends sign-in codes, so it sees your email address and the code.</li>
+        <li><strong>Ko-fi</strong> (optional contributions at ko-fi.com/ididcare): if you choose to support iDID, Ko-fi and its payment processors handle your payment and see your payment details and any message you leave. Nothing from the app is sent to them, and contributing never unlocks or changes anything in iDID. Our Ko-fi page doesn't show a public list of supporters.</li>
+        <li><strong>Your browser's push service</strong> (Google, Apple or Mozilla, depending on your device): delivers reminders you turn on. The text is always general, like "You have an appointment in 1 hour".</li>
       </ul>
-      <p>If we add or change a provider, we'll update this list first.</p>
+      <p data-cms="providers-paragraph2" data-cms-type="rich" data-cms-label="Service providers we use: paragraph 2 (If we add or change a provider, we'll update…)">If we add or change a provider, we'll update this list first.</p>
 
-      <h2 id="age">Age</h2>
-      <p>iDID is for people aged 13 and older. We don't knowingly collect information from children under 13. If you think a child under 13 has set up the online circle, email us and we'll delete the account.</p>
+      <h2 id="age" data-cms="age-heading" data-cms-type="text" data-cms-label="Age: heading">Age</h2>
+      <p data-cms="age-paragraph1" data-cms-type="rich" data-cms-label="Age: paragraph 1 (iDID is for people aged 13 and older. We don't…)">iDID is for people aged 13 and older. We don't knowingly collect information from children under 13. If you think a child under 13 has set up the online circle, email us and we'll delete the account.</p>
 
-      <h2 id="breach">If something goes wrong</h2>
-      <p>Because your journal is encrypted with keys we never hold, a break-in at our servers wouldn't reveal what you wrote. If there's ever unauthorized access to your information, we'll tell you without unreasonable delay, and within 60 days at the latest, and notify regulators such as the Federal Trade Commission as the law requires.</p>
+      <h2 id="breach" data-cms="breach-heading" data-cms-type="text" data-cms-label="If something goes wrong: heading">If something goes wrong</h2>
+      <p data-cms="breach-paragraph1" data-cms-type="rich" data-cms-label="If something goes wrong: paragraph 1 (Because your journal is encrypted with keys we…)">Because your journal is encrypted with keys we never hold, a break-in at our servers wouldn't reveal what you wrote. If there's ever unauthorized access to your information, we'll tell you without unreasonable delay, and within 60 days at the latest, and notify regulators such as the Federal Trade Commission as the law requires.</p>
 
-      <h2 id="changes">Changes to this policy</h2>
-      <p>If we change how we handle your information, we'll update this page and its date, and tell you in the app's What's new before the change applies. We'll never start selling data or using it for advertising.</p>
+      <h2 id="changes" data-cms="changes-heading" data-cms-type="text" data-cms-label="Changes to this policy: heading">Changes to this policy</h2>
+      <p data-cms="changes-paragraph1" data-cms-type="rich" data-cms-label="Changes to this policy: paragraph 1 (If we change how we handle your information,…)">If we change how we handle your information, we'll update this page and its date, and tell you in the app's What's new before the change applies. We'll never start selling data or using it for advertising.</p>
 
-      <h2>The honest limits</h2>
-      <ul>
-        <li>If you forget your passphrase <i>and</i> lose your recovery code, nobody can recover your journal, including us.</li>
+      <h2 data-cms="the-honest-limits-heading" data-cms-type="text" data-cms-label="The honest limits: heading">The honest limits</h2>
+      <ul data-cms="the-honest-limits-list1" data-cms-type="rich" data-cms-label="The honest limits: list 1 (If you forget your passphrase and lose your…)">
+        <li>If you forget your passphrase <em>and</em> lose your recovery code, nobody can recover your journal, including us.</li>
         <li>People in your circle can read what's shared with the circle. Use "Only me" for anything that must stay with you.</li>
         <li>When you remove someone from your circle or remove a therapist's access, they stop receiving anything new straight away. When the circle's owner removes someone, iDID also changes the circle's encryption key, so their old copy of the key can't open anything written later. Anything they already saw, saved or printed stays with them.</li>
         <li>Anyone holding a shared-view link can open it, so send it privately.</li>
         <li>Anything shown on screen can be seen by someone looking at your device, or by malware on it.</li>
       </ul>
-      <p>Security researchers and the technically curious can ask us for the full technical design at <a href="mailto:privacy@idid.care">privacy@idid.care</a>.</p>
+      <p data-cms="the-honest-limits-paragraph1" data-cms-type="rich" data-cms-label="The honest limits: paragraph 1 (Security researchers and the technically…)">Security researchers and the technically curious can ask us for the full technical design at <a href="mailto:privacy@idid.care">privacy@idid.care</a>.</p>
 
-      <h2>Not medical care</h2>
-      <p>iDID is a journaling and support tool, not a medical device. It doesn't diagnose or treat any condition and is no substitute for professional care. In an emergency, call 911. For crisis support in the US, call or text 988.</p>
-      <p>iDID isn't a healthcare provider or a health plan, so HIPAA doesn't apply to it. Instead, iDID is built so that we simply can't read your journal, and the state health-data laws above apply. See also our <a href="/terms">terms of use</a>.</p>
+      <h2 data-cms="not-medical-care-heading" data-cms-type="text" data-cms-label="Not medical care: heading">Not medical care</h2>
+      <p data-cms="not-medical-care-paragraph1" data-cms-type="rich" data-cms-label="Not medical care: paragraph 1 (iDID is a journaling and support tool, not a…)">iDID is a journaling and support tool, not a medical device. It doesn't diagnose or treat any condition and is no substitute for professional care. In an emergency, call 911. For crisis support in the US, call or text 988.</p>
+      <p data-cms="not-medical-care-paragraph2" data-cms-type="rich" data-cms-label="Not medical care: paragraph 2 (iDID isn't a healthcare provider or a health…)">iDID isn't a healthcare provider or a health plan, so HIPAA doesn't apply to it. Instead, iDID is built so that we simply can't read your journal, and the state health-data laws above apply. See also our <a href="/terms">terms of use</a>.</p>
 
-      <h2>Contact</h2>
-      <p>Questions about privacy: <a href="mailto:privacy@idid.care">privacy@idid.care</a>.</p>
+      <h2 data-cms="contact-heading" data-cms-type="text" data-cms-label="Contact: heading">Contact</h2>
+      <p data-cms="contact-paragraph1" data-cms-type="rich" data-cms-label="Contact: paragraph 1 (Questions about privacy: privacy@idid.care .)">Questions about privacy: <a href="mailto:privacy@idid.care">privacy@idid.care</a>.</p>
     </article>
   </div>
 </section>
+<!-- /cms:block -->
+<!-- /cms:area -->

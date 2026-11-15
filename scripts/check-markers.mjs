@@ -37,7 +37,7 @@ function elements(html) {
 
 // Strict: every "<" must start a complete allowlisted tag written as <tag> or <tag name="value" …>
 // (lowercase, single spaces, double-quoted values only). Anything else is refused, never guessed at.
-const TAG = /^<(\/?)([a-z][a-z0-9]*)((?: [a-z]+="[^"<>]*")*)(\/?)>/;
+const TAG = /^<(\/?)([a-z][a-z0-9]*)((?: [a-z]+="[^"<>]*")*)\s*(\/?)\s*>/;
 function checkRich(inner, id) {
   const errs = [];
   for (let i = inner.indexOf('<'); i >= 0; i = inner.indexOf('<', i + 1)) {

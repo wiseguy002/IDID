@@ -1,11 +1,11 @@
 name: Deploy to Cloudflare Pages
 # Website → idid.care (Pages project "idid-site"); app → app.idid.care (Pages project "idid-app").
 # Needs repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID (see docs/DEPLOY.md).
-# Studio drafts (branches studio/<hex>) deploy only the website, as a private preview at
-# https://studio-<hex>.idid-site.pages.dev. Only main deploys the app and the live site.
+# Mainframe drafts (branches mainframe/<hex>, older ones studio/<hex>) deploy only the website, as a private preview at
+# https://mainframe-<hex>.idid-site.pages.dev. Only main deploys the app and the live site.
 on:
   push:
-    branches: [main, 'studio/**']
+    branches: [main, 'mainframe/**', 'studio/**']
   workflow_dispatch:
 
 concurrency:
@@ -61,7 +61,7 @@ jobs:
         run: node --test tools/*.test.mjs
       - name: Build website
         run: node tools/build-site.mjs
-      - name: Check Studio markers and studio.json
+      - name: Check Mainframe markers and mainframe.json
         working-directory: .
         run: node scripts/check-markers.mjs --profile
       - name: Every page has the 988 crisis line

@@ -1,7 +1,7 @@
 // Copied from wiseguy002/weDID tools/check-markers.mjs (paths: optional profile entries are skipped when absent).
-// Checks Studio markers (contract §2-4) in page sources, partials and templates.
+// Checks Mainframe markers (contract §2-4) in page sources, partials and templates.
 //   node tools/check-markers.mjs            check site/pages, site/partials, site/templates
-//   node tools/check-markers.mjs --profile  also check studio.json (paths exist, theme contrast ≥ 4.5:1)
+//   node tools/check-markers.mjs --profile  also check mainframe.json (paths exist, theme contrast ≥ 4.5:1)
 // Exit 1 with a list of problems, 0 when clean. No packages needed.
 import { readFileSync, readdirSync, existsSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
@@ -126,7 +126,7 @@ export function checkFile(html, file) {
 // Blog post bodies (contract §7): only the rich-text allowlist (tags, href on a, class="note" on p, safe URLs).
 export const checkPost = (body, file) => checkRich(body, 'body').map((e) => `${file}: ${e.replace('rich field "body"', 'post body')}`);
 
-// ---- Profile (studio.json) ----
+// ---- Profile (mainframe.json) ----
 const lum = (hex) => {
   const c = hex.replace('#', '').match(/../g).map((x) => parseInt(x, 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
   return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
@@ -134,24 +134,24 @@ const lum = (hex) => {
 export const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 
 export function checkProfile(root) {
-  const errs = [], file = join(root, 'studio.json');
-  if (!existsSync(file)) return ['studio.json is missing'];
+  const errs = [], file = join(root, 'mainframe.json');
+  if (!existsSync(file)) return ['mainframe.json is missing'];
   const p = JSON.parse(readFileSync(file, 'utf8'));
-  const has = (path, what) => { if (!path || !existsSync(join(root, path))) errs.push(`studio.json: ${what} "${path}" does not exist`); };
+  const has = (path, what) => { if (!path || !existsSync(join(root, path))) errs.push(`mainframe.json: ${what} "${path}" does not exist`); };
   const glob = (pattern, what) => {
     const m = pattern.match(/^(.*)\/\*(\.[a-z]+)$/);
     if (!m) return has(pattern, what);
-    if (!existsSync(join(root, m[1])) || !readdirSync(join(root, m[1])).some((f) => f.endsWith(m[2]))) errs.push(`studio.json: ${what} "${pattern}" matches nothing`);
+    if (!existsSync(join(root, m[1])) || !readdirSync(join(root, m[1])).some((f) => f.endsWith(m[2]))) errs.push(`mainframe.json: ${what} "${pattern}" matches nothing`);
   };
-  if (p.contract !== 1) errs.push('studio.json: contract must be 1');
-  for (const k of ['name', 'id', 'repo', 'branch', 'liveUrl', 'previewUrl']) if (!p[k]) errs.push(`studio.json: missing ${k}`);
+  if (p.contract !== 1) errs.push('mainframe.json: contract must be 1');
+  for (const k of ['name', 'id', 'repo', 'branch', 'liveUrl', 'previewUrl']) if (!p[k]) errs.push(`mainframe.json: missing ${k}`);
   has(p.theme?.mark, 'theme.mark'); if (p.theme?.markDark) has(p.theme.markDark, 'theme.markDark');
   for (const mode of ['light', 'dark']) {
     const t = p.theme?.[mode] || {};
     for (const [fg, bg] of [['ink', 'page'], ['ink', 'panel'], ['muted', 'page'], ['sidebarInk', 'sidebar'], ['accentInk', 'accent'], ['danger', 'page']]) {
-      if (!/^#[0-9a-fA-F]{6}$/.test(t[fg] || '') || !/^#[0-9a-fA-F]{6}$/.test(t[bg] || '')) { errs.push(`studio.json: theme.${mode}.${fg}/${bg} must be #RRGGBB colors`); continue; }
+      if (!/^#[0-9a-fA-F]{6}$/.test(t[fg] || '') || !/^#[0-9a-fA-F]{6}$/.test(t[bg] || '')) { errs.push(`mainframe.json: theme.${mode}.${fg}/${bg} must be #RRGGBB colors`); continue; }
       const r = contrast(t[fg], t[bg]);
-      if (r < 4.5) errs.push(`studio.json: theme.${mode} ${fg} on ${bg} is ${r.toFixed(2)}:1 (needs 4.5:1)`);
+      if (r < 4.5) errs.push(`mainframe.json: theme.${mode} ${fg} on ${bg} is ${r.toFixed(2)}:1 (needs 4.5:1)`);
     }
   }
   glob(p.pages?.sources, 'pages.sources');
@@ -183,5 +183,5 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
   }
   if (process.argv.includes('--profile')) errs.push(...checkProfile(root));
   if (errs.length) { console.log(errs.join('\n')); console.log(`${errs.length} problem(s).`); process.exit(1); }
-  console.log(`Markers OK in ${n} file(s)${process.argv.includes('--profile') ? ', studio.json OK' : ''}.`);
+  console.log(`Markers OK in ${n} file(s)${process.argv.includes('--profile') ? ', mainframe.json OK' : ''}.`);
 }

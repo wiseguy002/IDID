@@ -5,7 +5,26 @@
       "WebFetch(domain:app.idid.care)",
       "WebFetch(domain:www.cloudflarestatus.com)",
       "WebFetch(domain:www.githubstatus.com)",
-      "WebFetch(domain:resend-status.com)"
+      "WebFetch(domain:resend-status.com)",
+      "Bash(node scripts/check-collateral.mjs)",
+      "Bash(node scripts/check-markers.mjs --profile)",
+      "Bash(npx tsc -b)",
+      "Bash(npm test)",
+      "Bash(npm ls *)",
+      "Bash(npm audit)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/scripts/check-databank.sh"
+          }
+        ]
+      }
     ]
   }
 }

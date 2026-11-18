@@ -2,6 +2,8 @@
 
 iDID is a private, end-to-end encrypted journal for dissociation, DID and trauma responses: a React + TypeScript PWA in `app/`, a static website in `site/`, and a Supabase backend in `supabase/`. Read `README.md` for the layout and `docs/SECURITY.md` before touching anything that stores, syncs or shares data.
 
+Read `docs/capabilities.md` (what iDID can and can't do today) before suggesting features, and update it at each release.
+
 ## Checks to run before pushing
 
 - App: `cd app && npx tsc -b && npm test && npm run build`. Use `tsc -b`: the root `tsconfig.json` only has references, so `tsc -p .` checks nothing.

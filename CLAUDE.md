@@ -56,3 +56,14 @@ idid.care's words can be edited in Mainframe at https://mainframecms.com (also h
 - Front matter may also hold `nav: no`, `sitemap: no`, `status: hidden` (page not built; menu and footer links to it dropped). `site/templates/article.html` is the "new page" template.
 - A Mainframe edit is a branch `mainframe/<hex>` (older drafts: `studio/<hex>`, still handled the same): CI checks it (app and database jobs are skipped) and deploy.yml deploys only the website as a preview at `https://mainframe-<hex>.idid-site.pages.dev`. Publish merges it to `main`, which deploys as usual.
 - Use `<strong>`/`<em>`, not `<b>`/`<i>`: Mainframe's text editor only keeps the first pair.
+
+## Login security (added 2026-11-17)
+
+- The preview sites at `*.idid-site.pages.dev` (Cloudflare Access app "idid-site - Cloudflare Pages", id `782baa91-548a-4b95-bca5-7200f081ea9f`) need Cloudflare Access independent MFA: Touch ID, security key or authenticator app, 24h sessions. It is set on both the app and its allow policy `acce0886-e9e4-4bec-88e0-4c9187850399` (the policy overrides the app). The policy was converted from a legacy app-scoped policy to a reusable one with `make_reusable`, so it now lives under `/access/policies/<id>`.
+- Only Rob's email is allowed. Nothing automated fetches the previews: the workflows and Mainframe only build links from the `previewUrl` pattern. Mainframe showing a preview inside its own page may be blocked by the login.
+- idid.care and app.idid.care are not behind Access and are unaffected.
+- Recipe: see "Login MFA recipe" in `~/.claude/CLAUDE.md`.
+
+## Decisions
+
+- 2026-11-17: Require Cloudflare Access MFA on the PR preview sites (`*.idid-site.pages.dev`). Public sites left as they are.

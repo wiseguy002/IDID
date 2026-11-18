@@ -9,8 +9,8 @@ Older status notes, the 14 November audit details and the full gotchas list are 
 
 - `app/` the PWA (version lives in `app/package.json`); `site/` the website; `supabase/` migrations and RLS tests
 - `docs/` SECURITY, RELEASING, DEPLOY, COLLATERAL, I18N, ADVISORY_GROUP, `features.json`, `capabilities.md`, `history.md`
-- `scripts/` collateral and Studio marker checks; `.github/workflows/` ci, deploy, preview, release
-- Studio (content manager): idid.care's words are edited at https://admin.wedid.care/content. Pieces here: `studio.json`, `data-cms` markers in `site/pages`, edits arrive as `studio/<hex>` branches. Details in `docs/history.md`.
+- `scripts/` collateral and Mainframe marker checks; `.github/workflows/` ci, deploy, preview, release
+- Mainframe (content manager, was Studio): idid.care's words are edited at https://mainframecms.com (also https://admin.wedid.care/content). Pieces here: `mainframe.json` (was `studio.json`), `data-cms` markers in `site/pages`, edits arrive as `mainframe/<hex>` branches (older `studio/<hex>` still handled). Details in `docs/history.md`.
 
 ## Checks to run before pushing
 
@@ -31,7 +31,7 @@ Older status notes, the 14 November audit details and the full gotchas list are 
 - Live database migrations live in `supabase/migrations/`, applied in filename order. Ask the owner before applying them to the live project.
 - User-facing text: plain, gentle, American English (color, organization, counselor, canceled). Never put private details in notifications.
 - RLS policies use `(select auth.uid())`, never bare `auth.uid()`; a test enforces it.
-- Use `<strong>`/`<em>`, not `<b>`/`<i>` (Studio's editor).
+- Use `<strong>`/`<em>`, not `<b>`/`<i>` (Mainframe's editor).
 
 ## Status (as of 14 November 2026)
 

@@ -1,4 +1,4 @@
-// Studio support in the website build: hidden pages and sections, menu/sitemap switches, markers removed.
+// Mainframe support in the website build: hidden pages and sections, menu/sitemap switches, markers removed.
 // Runs the real build on a copy of site/ so the checked-in sources are never touched.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -21,7 +21,7 @@ function build(change) {
 const edit = (dir, f, fn) => writeFileSync(join(dir, f), fn(readFileSync(join(dir, f), 'utf8')));
 const setMeta = (src, extra) => src.replace(/ -->\n/, ` | ${extra} -->\n`);
 
-test('built pages carry no Studio markers', () => {
+test('built pages carry no Mainframe markers', () => {
   const b = build(() => {});
   for (const f of ['index.html', 'learn.html', 'privacy.html', '404.html']) {
     const html = b.read(f);
@@ -64,7 +64,7 @@ test('a hidden section is left out of the page', () => {
   assert.match(home, /Begin gently/);
 });
 
-test('a "|" written by Studio as &#124; shows as a bar, not as &amp;#124;', () => {
+test('a "|" written by Mainframe as &#124; shows as a bar, not as &amp;#124;', () => {
   const b = build((dir) => edit(dir, 'pages/terms.html', (s) => s.replace(/title: [^|]*\|/, 'title: Terms &#124; iDID |')));
   const html = b.read('terms.html');
   assert.match(html, /<title>Terms &#124; iDID<\/title>/);

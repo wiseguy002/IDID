@@ -10,7 +10,7 @@ A private, end-to-end encrypted journal for dissociation, DID and trauma respons
 - **Website:** https://idid.care (static, in `site/`). **App:** https://app.idid.care (React + TypeScript installable web app, in `app/`, works offline).
 - **Hosting:** Cloudflare Pages (`idid-site`, `idid-app`) + Supabase (database, sign-in, realtime, one push-sending function). Email via Resend. Sign-in bot check via Cloudflare Turnstile.
 - **Code:** GitHub `wiseguy002/IDID`. Merge a PR to `main` and GitHub Actions deploys. Every PR gets a preview (`pr-<n>.idid-site.pages.dev` / `idid-app`). Supabase project `nnyoiljgxnpyuiersruz`.
-- **Website words** can be edited in Studio/Mainframe (admin.wedid.care/content); edits become `studio/<hex>` branches with previews.
+- **Website words** can be edited in Mainframe (was Studio; mainframecms.com, also admin.wedid.care/content); edits become `mainframe/<hex>` branches (older `studio/<hex>`) with previews.
 
 **Status tags:** ✅ Live · ⚙️ Live but off, or needs setup · 🧪 Built, never tried for real
 

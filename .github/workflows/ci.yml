@@ -5,12 +5,12 @@ permissions:
 on:
   pull_request:
   push:
-    branches: [main, 'studio/**']
+    branches: [main, 'mainframe/**', 'studio/**']
 
 jobs:
   app:
-    # Studio drafts change only website files: skip the app and database jobs for them.
-    if: ${{ !startsWith(github.ref, 'refs/heads/studio/') }}
+    # Mainframe drafts (mainframe/<hex>, older ones studio/<hex>) change only website files: skip the app and database jobs for them.
+    if: ${{ !startsWith(github.ref, 'refs/heads/studio/') && !startsWith(github.ref, 'refs/heads/mainframe/') }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -42,13 +42,13 @@ jobs:
         run: node scripts/check-collateral.mjs
       - name: Install Playwright, axe-core and html-validate for the site checks
         run: npm i --no-save playwright@1 axe-core@4.10.2 html-validate@9.4.1 && npx playwright install --with-deps chromium
-      - name: Website build tests and Studio markers
+      - name: Website build tests and Mainframe markers
         run: node --test site/tools/*.test.mjs && node scripts/check-markers.mjs --profile
       - name: Build and check website (links, layout, CSP, accessibility, valid HTML)
         run: node site/tools/build-site.mjs && NODE_PATH=$PWD/node_modules node site/tools/check-site.mjs
 
   database:
-    if: ${{ !startsWith(github.ref, 'refs/heads/studio/') }}
+    if: ${{ !startsWith(github.ref, 'refs/heads/studio/') && !startsWith(github.ref, 'refs/heads/mainframe/') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

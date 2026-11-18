@@ -26,3 +26,14 @@ idid.care's words can be edited in Studio at https://admin.wedid.care/content (c
 - Front matter may also hold `nav: no`, `sitemap: no`, `status: hidden` (page not built; menu and footer links to it dropped). `site/templates/article.html` is the "new page" template.
 - A Studio edit is a branch `studio/<hex>`: CI checks it (app and database jobs are skipped) and deploy.yml deploys only the website as a preview at `https://studio-<hex>.idid-site.pages.dev`. Publish merges it to `main`, which deploys as usual.
 - Use `<strong>`/`<em>`, not `<b>`/`<i>`: Studio's text editor only keeps the first pair.
+
+## 2026-11-17: Mainframe rename (from main, PR #42), moved from CLAUDE.md
+
+## Mainframe (content manager, added 2026-11-15 as Studio, renamed 2026-11-16)
+
+idid.care's words can be edited in Mainframe at https://mainframecms.com (also https://admin.wedid.care/content) (code: `~/Studio`, contract: `~/Studio/docs/CONTRACT.md`). Pieces in this repo:
+- `mainframe.json` (repo root; was `studio.json`): what Mainframe may edit, theme, locked files.
+- Markers in `site/pages/*.html` and `site/partials/foot.html` (`data-cms` fields, `<!-- cms:area/block -->` sections); `data-cms-lock` on the crisis bar and the footer disclaimer and "from weDID" line. The build removes all markers from the live HTML. `node scripts/check-markers.mjs --profile` checks them.
+- Front matter may also hold `nav: no`, `sitemap: no`, `status: hidden` (page not built; menu and footer links to it dropped). `site/templates/article.html` is the "new page" template.
+- A Mainframe edit is a branch `mainframe/<hex>` (older drafts: `studio/<hex>`, still handled the same): CI checks it (app and database jobs are skipped) and deploy.yml deploys only the website as a preview at `https://mainframe-<hex>.idid-site.pages.dev`. Publish merges it to `main`, which deploys as usual.
+- Use `<strong>`/`<em>`, not `<b>`/`<i>`: Mainframe's text editor only keeps the first pair.

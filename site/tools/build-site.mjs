@@ -2,7 +2,7 @@
 // Each page starts with a front-matter comment:
 //   <!-- title: … | description: … | keywords: … | nav: yes | sitemap: yes | status: published -->
 //   (keywords optional; nav, sitemap default yes; status: hidden = page not built, links to it dropped)
-// Studio markers (contract v1, ~/Studio/docs/CONTRACT.md): hidden blocks, the cms comments and the
+// Mainframe markers (contract v1, ~/Studio/docs/CONTRACT.md): hidden blocks, the cms comments and the
 // data-cms attributes are removed from the built pages, so the live HTML carries none of them.
 //
 // The site's Content-Security-Policy (see _headers) allows styles only from our own stylesheet, so
@@ -25,7 +25,7 @@ cpSync(join(root, 'well-known'), join(out, '.well-known'), { recursive: true });
 
 const head = readFileSync(join(root, 'partials/head.html'), 'utf8');
 const foot = readFileSync(join(root, 'partials/foot.html'), 'utf8');
-// Entities already in a value (Studio writes "|" as &#124;) are kept as they are.
+// Entities already in a value (Mainframe writes "|" as &#124;) are kept as they are.
 const esc = (s) => s.replace(/&(?![a-zA-Z][a-zA-Z0-9]*;|#[0-9]+;|#x[0-9a-fA-F]+;)/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const DEFAULT_KEYWORDS = 'dissociation journal, DID app, dissociative identity disorder, OSDD, trauma journal, mental health journal, private encrypted journal';
 
@@ -54,7 +54,7 @@ function moveStyles(html) {
   });
 }
 
-// ---------- Studio markers ----------
+// ---------- Mainframe markers ----------
 const stripMarkers = (html) => html
   .replace(/(<!-- cms:block [^>]*-->)\s*<template data-cms-hidden>[\s\S]*?<\/template>\s*(<!-- \/cms:block -->)/g, '$1$2')
   .replace(/[ \t]*<!-- \/?cms:(?:area|block)\b[^>]*-->\n?/g, '')

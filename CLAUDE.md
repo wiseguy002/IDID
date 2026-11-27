@@ -2,43 +2,62 @@
 
 iDID is a private, end-to-end encrypted journal for dissociation, DID and trauma responses: a React + TypeScript PWA in `app/`, a static website in `site/`, and a Supabase backend in `supabase/`. Read `README.md` for the layout and `docs/SECURITY.md` before touching anything that stores, syncs or shares data.
 
+Read `docs/capabilities.md` (what iDID can and can't do today) before suggesting features, and update it at each release.
+Older status notes, the 14 November audit details and the full gotchas list are in `docs/history.md`.
+
+## Where things are
+
+- `app/` the PWA (version lives in `app/package.json`); `site/` the website; `supabase/` migrations and RLS tests
+- `docs/` SECURITY, RELEASING, DEPLOY, COLLATERAL, I18N, ADVISORY_GROUP, `features.json`, `capabilities.md`, `history.md`
+- `scripts/` collateral and Mainframe marker checks; `.github/workflows/` ci, deploy, preview, release
+- Mainframe (content manager, was Studio): idid.care's words are edited at https://mainframecms.com (also https://admin.wedid.care/content). Pieces here: `mainframe.json` (was `studio.json`), `data-cms` markers in `site/pages`, edits arrive as `mainframe/<hex>` branches (older `studio/<hex>` still handled). Details in `docs/history.md`.
+
 ## Checks to run before pushing
 
 - App: `cd app && npx tsc -b && npm test && npm run build`. Use `tsc -b`: the root `tsconfig.json` only has references, so `tsc -p .` checks nothing.
 - Database: `supabase/tests/run.sh` (row-level security tests on a local Postgres).
-- Website: `cd site && npm run build && npm run check`. Needs Playwright, axe-core and html-validate; it serves pages with the real CSP and runs an accessibility audit in light and dark.
+- Website: `cd site && npm run build && npm run check` (needs Playwright, axe-core, html-validate).
 - Collateral: `node scripts/check-collateral.mjs`.
 
 ## Every user-facing change
 
 - Add a plain-language line under `## [Unreleased]` in `CHANGELOG.md` (see `docs/RELEASING.md`).
-- New feature: register it in `docs/features.json` and describe it in each material in its `requiredIn` (in-app help, fact sheet, and usually the home page, press release and README; privacy page and security doc for anything about data). CI fails otherwise.
-
-## Standard procedure: collateral audit
-
-After enough changes that help, website, press materials or docs may be out of date, do a full collateral audit following **`docs/COLLATERAL.md`**. It's due after any minor or major release with new features, after three patch releases, after any privacy, sharing or access change, after renames, and before press or outreach. `npm run release` prints a reminder when one is due. Log each audit in the table at the end of `docs/COLLATERAL.md`.
+- New feature: register it in `docs/features.json` and describe it in each material in its `requiredIn`. CI fails otherwise.
+- Collateral audit per `docs/COLLATERAL.md`: after a minor/major release with features, after three patch releases, after any privacy, sharing or access change, after renames, before press. Log it in the table at the end of that file.
 
 ## Conventions
 
-- Inline `style` attributes are fine in `site/pages`: the build moves them into classes because the CSP blocks inline styles.
-- Live database changes are migrations in `supabase/migrations/`, applied in filename order. Ask the owner before applying them to the live project.
-- Write user-facing text in plain, gentle language and American English (color, organization, counselor, canceled). Never put private details in notifications.
+- Inline `style` attributes are fine in `site/pages`: the build moves them into classes (CSP blocks inline styles).
+- Live database migrations live in `supabase/migrations/`, applied in filename order. Ask the owner before applying them to the live project.
+- User-facing text: plain, gentle, American English (color, organization, counselor, canceled). Never put private details in notifications.
+- RLS policies use `(select auth.uid())`, never bare `auth.uid()`; a test enforces it.
+- Supabase grants every new table and function to `anon` and `authenticated` by default (`supabase/tests/auth_stub.sql` mirrors this), so revoke what a table or function shouldn't expose.
+- Use `<strong>`/`<em>`, not `<b>`/`<i>` (Mainframe's editor).
 
-## Status and roadmap (updated 14 November 2026)
+## Status (as of 14 November 2026)
 
-- **Live:** v0.18.3 at app.idid.care and idid.care. Support iDID via Ko-fi (ko-fi.com/ididcare, public supporter list off) is linked from Settings and the site footer. Recent: security review fixes and an all-or-nothing circle key change (0.18.3), Spanish beta (core screens), circle key rotation after removing someone, Help shape iDID volunteer form, opt-in anonymous counts, terms and health-data privacy policy, sign-in CAPTCHA.
-- **`main` is protected:** every change goes through a PR with the `app`, `site` and `database` checks green. Rob says "merge" for each PR (see the merge rule under "How the owner likes to work"). Work on a branch, open a draft PR, reset the branch to `origin/main` after it merges.
-- **Done 14 November: security review fixes** (PR #30, merged and deployed; migration `20261121000000` live). Kind notes anonymous both ways, view-only members can't send alerts, invites canceled only by maker or owner, admin list closed, formula-safe CSV exports. Released as 0.18.3. Not tested: the invite buttons with two real accounts, an exported CSV in Excel or Google Sheets. Left as is: a writing member could pre-create a notification tag to hide one alert (needs the alert's id; low risk).
-- **Supabase security advisor (14 November, after the fixes):** 0 errors. All 21 warnings are expected: the app's own functions callable by signed-in users (each checks access itself), `add_feature_counts` and `get_care_share` open to visitors on purpose, `pg_net` in public, `rls_auto_enable` (Supabase's own event trigger that turns on RLS for new tables; can't be called directly), and leaked-password protection off (iDID signs in with email codes, no passwords). The one info item (`app_admins` has RLS and no policies) is intended.
-- **Done 14 November: weDID family brand** (PRs #33, #34, live). Family crisis bar wording ("If you are in crisis, call or text 988. In immediate danger, call 911.", clay links, numbers only on phones; 741741 in the footer), "from weDID" sign-off in the site footer and Settings → About only (with the Four Nevers: "No ads. No trackers. No selling data. No AI talking to you."), press page line, dark-mode `--check-icon`, and no "not alone" anywhere (on the family's words-to-avoid list). Never put "from weDID" on the icon, home-screen name, notifications, invites or circle/share screens. Family rules: `~/weDID` notes. Not tested: real phone, VoiceOver.
-- **Done 14 November: website audit** of idid.care and app.idid.care (PR #37, merged and live 14 November). Headers: no deprecated `interest-cohort`; COOP/CORP (press images and `/press/*` cross-origin); `object-src 'none'`. Pages send `Cache-Control: … no-transform` and are wrapped in `<!--email_off-->` (Cloudflare was scrambling `mailto:` links; Pages forces `no-store` on 404s, so the wrapper matters there). Hashed app files and versioned site CSS/JS cached a year (`immutable`). Both service workers now cache the final URL (Pages 308-redirects `.html`, and a redirected response can't answer a page load), which fixed the site's offline page and the app opening offline right after install. Press docs got canonical and OG tags; sitemap dates are real (full-history checkout); app.idid.care has robots.txt (allow all, indexing unchanged) and security.txt. Cloudflare zone **Browser Cache TTL set to "Respect Existing Headers"** (it was 4 hours, which replaced the `_headers` rules). Already fine: https and www → apex 301 (keeps path and query), real 404s, clean URLs, no analytics beacon, 0 npm vulnerabilities, no secrets. Tested on the preview and again live: headers, axe 0 (all pages and the 404, phone and desktop, light and dark), no beacon, real email addresses in the HTML, offline page and app offline, www redirect, both security.txt files. Not tested: real phones, VoiceOver. The small leftovers were fixed in PR #39 (live 14 November, checked live: 0 axe issues and no console warnings on every page of idid.care and app.idid.care): the out-of-scope manifest shortcut was removed, `mobile-web-app-capable` added, and onboarding sub-headings are `h2.h3`. Unused merged branches `claude/contrast-fixes` and `claude/jolly-mendel-ftx8mb` are still on GitHub (deleting was blocked by permissions).
-- **PR previews:** `.github/workflows/preview.yml` deploys each PR to `https://pr-<n>.idid-site.pages.dev` and `https://pr-<n>.idid-app.pages.dev` (skips Dependabot). Test headers and redirects there before merging.
-- **Next (waiting on the owner):** Native-speaker review of `app/src/i18n/es.ts`: an email is drafted in the owner's Gmail ("Would you review iDID's Spanish?"), no recipient yet; add the reviewer and attach `docs/i18n-review-es.csv` (see `docs/I18N.md`). Advisory group outreach (volunteer for now; see `docs/ADVISORY_GROUP.md`).
-- **On hold by the owner's choice:** Spanish phase 2 (remaining screens and website), Supabase backups, lawyer review.
-- **To check:** DNSSEC for idid.care was re-triggered on 14 November and is still "pending" (the domain's registry add period ends 17 November). Checked 14 November morning: still no DS record at `.care`, so not active yet. Next check 17 November. If it's still stuck after a second re-toggle, ask the owner to contact Cloudflare support with the DS record.
-- **RLS policies** call `(select auth.uid())`, never bare `auth.uid()` (faster at scale); an RLS test enforces it for new policies. `pg_net` sits in the public schema (installed by Supabase; leave unless Supabase recommends moving it). After using the dashboard SQL editor, its tab shows a "Leave site?" prompt that Claude in Chrome can't dismiss; the owner closes it.
-- **Not yet tested on a real phone:** the Turnstile sign-in check (tested only in automated browsers).
-- **Gotchas:** CI uses Node 24 and npm 11. Regenerate `app/package-lock.json` with that npm, or `npm ci` fails in CI. Live DB migrations are applied after the owner OKs them, in the dashboard SQL editor (project `nnyoiljgxnpyuiersruz`; Claude can do it through Claude in Chrome, which shares the owner's signed-in Chrome; set the editor text with `window.monaco.editor.getModels()[0].setValue(...)`), wrapped in `begin; … commit;` with an insert of the version into `supabase_migrations.schema_migrations`. No Supabase CLI or token on this Mac. Only "only me" records are left untouched by key rotation, because record ids come from the circle's first key (kept in the keyring). The keyring is written only by `rotate_circle_key`, in the same transaction as the new sealed keys. In Claude's sandbox: switching branches in `/Users/robwise/IDID` is blocked (it can't write `.claude/settings.json`), so work in a `git worktree` instead; `gh` needs the sandbox off (certificate check); `npm ci` needs `--cache "$TMPDIR/npm-cache"`. Database tests on this Mac: `brew install postgresql@16`, then `LC_ALL=C TMPDIR=/tmp PG_BIN=/opt/homebrew/opt/postgresql@16/bin PATH=/opt/homebrew/opt/postgresql@16/bin:$PATH supabase/tests/run.sh` outside the sandbox (short socket path and a locale are required). `auth_stub.sql` mirrors Supabase's default grants (every new table and function granted to `anon` and `authenticated`), so revoke what a table shouldn't expose.
+- **Live:** v0.18.3 at app.idid.care and idid.care (security review fixes, all-or-nothing circle key change). Ko-fi support linked from Settings and the site footer.
+- **`main` is protected:** every change is a PR with `app`, `site` and `database` checks green. PRs preview at `pr-<n>.idid-site.pages.dev` and `pr-<n>.idid-app.pages.dev`.
+- **Open PR:** #43 docs/capabilities (the databank).
+- **Supabase advisor:** 0 errors; the 21 warnings are expected (list in `docs/history.md`).
+
+## Next
+
+- Add the reviewer to the drafted Gmail "Would you review iDID's Spanish?" and attach `docs/i18n-review-es.csv` (see `docs/I18N.md`).
+- Advisory group outreach (volunteer for now; `docs/ADVISORY_GROUP.md`).
+- On hold by the owner's choice: Spanish phase 2 (remaining screens and website), Supabase backups, lawyer review.
+
+## Waiting on Rob
+
+- Native Spanish speaker to review `app/src/i18n/es.ts`.
+- DNSSEC for idid.care: re-check 17 November (was "pending", no DS record at `.care`). If still stuck after a second re-toggle, Rob contacts Cloudflare support with the DS record.
+
+## Known leftovers / not tested
+
+- Not tested: Turnstile sign-in check on a real phone; real phones and VoiceOver; invite buttons with two real accounts; exported CSV in Excel/Sheets.
+- A writing member could pre-create a notification tag to hide one alert (needs the alert's id; low risk). Left as is.
+- Unused merged branches `claude/contrast-fixes` and `claude/jolly-mendel-ftx8mb` remain on GitHub (deleting was blocked by permissions).
+- weDID family brand: never put "from weDID" on the icon, home-screen name, notifications, invites or circle/share screens; never use "not alone". Rules in `~/weDID` notes.
 
 ## How the owner likes to work
 
@@ -46,13 +65,17 @@ Plain language, recommendations rather than option lists, outcome first, then wh
 
 **Never merge or deploy a pull request until Rob says "merge" for that specific PR in chat.** This includes notes-only and docs PRs. Passing checks are not enough, and a "merge" for one PR does not cover later ones. Open the PR, report the link, and wait.
 
-**Always end with a next step.** Never tell the owner there's "nothing to do" or "nothing needed in the meantime." Every reply that finishes a piece of work ends with a recommended next step, plus what else could usefully be done next: website or content updates, security hardening, bug or health checks (live headers, `npm audit`, Supabase security and performance advisors, the site check, a collateral audit when due), or the next roadmap item. Recommend one clearly; offer a few alternatives only if they're genuinely useful.
+**Always end with a next step.** Never say there's "nothing to do". End every finished piece of work with one recommended next step (a roadmap item, site/content update, security hardening, health check such as live headers, `npm audit`, Supabase advisors, or a collateral audit when due).
 
-## Mainframe (content manager, added 2026-11-15 as Studio, renamed 2026-11-16)
+## Recipes and gotchas (short)
 
-idid.care's words can be edited in Mainframe at https://mainframecms.com (also https://admin.wedid.care/content) (code: `~/Studio`, contract: `~/Studio/docs/CONTRACT.md`). Pieces in this repo:
-- `mainframe.json` (repo root; was `studio.json`): what Mainframe may edit, theme, locked files.
-- Markers in `site/pages/*.html` and `site/partials/foot.html` (`data-cms` fields, `<!-- cms:area/block -->` sections); `data-cms-lock` on the crisis bar and the footer disclaimer and "from weDID" line. The build removes all markers from the live HTML. `node scripts/check-markers.mjs --profile` checks them.
-- Front matter may also hold `nav: no`, `sitemap: no`, `status: hidden` (page not built; menu and footer links to it dropped). `site/templates/article.html` is the "new page" template.
-- A Mainframe edit is a branch `mainframe/<hex>` (older drafts: `studio/<hex>`, still handled the same): CI checks it (app and database jobs are skipped) and deploy.yml deploys only the website as a preview at `https://mainframe-<hex>.idid-site.pages.dev`. Publish merges it to `main`, which deploys as usual.
-- Use `<strong>`/`<em>`, not `<b>`/`<i>`: Mainframe's text editor only keeps the first pair.
+- CI uses Node 24 and npm 11: regenerate `app/package-lock.json` with that npm or `npm ci` fails in CI.
+- Live DB migrations: after Rob OKs, run in the Supabase dashboard SQL editor (project `nnyoiljgxnpyuiersruz`) via Claude in Chrome, wrapped in `begin; … commit;` with an insert into `supabase_migrations.schema_migrations`. No Supabase CLI or token on this Mac. Full recipe in `docs/history.md`.
+- Claude's sandbox: switching branches in `/Users/robwise/IDID` is blocked, so use a `git worktree`; `gh` needs the sandbox off; `npm ci` needs `--cache "$TMPDIR/npm-cache"`.
+- Database tests on this Mac need `brew install postgresql@16` and a special command run outside the sandbox (in `docs/history.md`).
+- Cloudflare zone Browser Cache TTL must stay "Respect Existing Headers".
+- Release steps: `.claude/skills/ship-it/SKILL.md`. Databank reminder hook: `scripts/check-databank.sh`.
+
+## Decisions
+
+No dated decision lines were recorded in this file before 2026-11-17. Add new ones here, newest last, as `YYYY-MM-DD: decision`.

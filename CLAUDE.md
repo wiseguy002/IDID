@@ -38,7 +38,6 @@ Older status notes, the 14 November audit details and the full gotchas list are 
 
 - **Live:** v0.18.3 at app.idid.care and idid.care (security review fixes, all-or-nothing circle key change). Ko-fi support linked from Settings and the site footer.
 - **`main` is protected:** every change is a PR with `app`, `site` and `database` checks green. PRs preview at `pr-<n>.idid-site.pages.dev` and `pr-<n>.idid-app.pages.dev`.
-- **Open PR:** #43 docs/capabilities (the databank).
 - **Supabase advisor:** 0 errors; the 21 warnings are expected (list in `docs/history.md`).
 
 ## Next

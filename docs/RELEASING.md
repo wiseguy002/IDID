@@ -49,4 +49,4 @@ If the release adds a feature, register it in [`docs/features.json`](features.js
 Then:
 
 1. Commit (`Release v0.7.0`) and merge to `main`. The deploy workflow publishes the web app.
-2. Tag and push: `git tag v0.7.0 && git push origin v0.7.0`. The **Release** workflow checks that the tag matches the app version, runs the tests, and publishes a GitHub release with the notes from the changelog and a zip of the web build.
+2. Tag the merged commit, never the local branch: `git fetch origin && git tag v0.7.0 origin/main && git push origin v0.7.0`. The **Release** workflow checks that the tag matches the app version, runs the tests, and publishes a GitHub release with the notes from the changelog and a zip of the web build.

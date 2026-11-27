@@ -28,7 +28,7 @@ try {
   const readmePath = resolve(here, '../../README.md');
   writeFileSync(readmePath, readFileSync(readmePath, 'utf8').replace(/Current version: \d+\.\d+\.\d+/, `Current version: ${next}`));
   console.log(`Released ${next} (${today}) in CHANGELOG.md, package.json and README.md.`);
-  console.log(`Next: commit "Release v${next}", merge to main, then: git tag v${next} && git push origin v${next}`);
+  console.log(`Next: commit "Release v${next}", merge to main, then: git fetch origin && git tag v${next} origin/main && git push origin v${next}`);
   collateralReminder(readFileSync(logPath, 'utf8'), readFileSync(resolve(here, '../../docs/COLLATERAL.md'), 'utf8'));
 } catch (e) {
   console.error(e instanceof Error ? e.message : e);

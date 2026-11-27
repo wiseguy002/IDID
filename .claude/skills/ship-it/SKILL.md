@@ -53,7 +53,7 @@ Per `~/.claude/recipes/deploy-preflight.md`, all must pass before merging (mergi
 
 ## 5. Deploy (the project's own pipeline)
 - Merging to `main` triggers the GitHub Actions workflow `Deploy to Cloudflare Pages` (`.github/workflows/deploy.yml`). Don't also deploy by hand.
-- Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`; the `Release` workflow checks the tag matches `app/package.json`, tests, and publishes the GitHub release.
+- Tag the merged commit, never the local branch: run `git fetch origin`, check that `git show origin/main:app/package.json` says X.Y.Z, then `git tag vX.Y.Z origin/main && git push origin vX.Y.Z`. The `Release` workflow checks the tag matches `app/package.json`, tests, and publishes the GitHub release.
 - Watch the Actions runs (`gh run list`, `gh run view`) until they finish.
 
 ## 6. Verify live (use Claude in Chrome)

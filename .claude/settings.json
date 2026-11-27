@@ -8,7 +8,6 @@
       "WebFetch(domain:resend-status.com)",
       "Bash(node scripts/check-collateral.mjs)",
       "Bash(node scripts/check-markers.mjs --profile)",
-      "Bash(npx tsc -b)",
       "Bash(npm test)",
       "Bash(npm ls *)",
       "Bash(npm audit)"

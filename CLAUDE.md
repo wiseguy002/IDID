@@ -31,6 +31,7 @@ Older status notes, the 14 November audit details and the full gotchas list are 
 - Live database migrations live in `supabase/migrations/`, applied in filename order. Ask the owner before applying them to the live project.
 - User-facing text: plain, gentle, American English (color, organization, counselor, canceled). Never put private details in notifications.
 - RLS policies use `(select auth.uid())`, never bare `auth.uid()`; a test enforces it.
+- Supabase grants every new table and function to `anon` and `authenticated` by default (`supabase/tests/auth_stub.sql` mirrors this), so revoke what a table or function shouldn't expose.
 - Use `<strong>`/`<em>`, not `<b>`/`<i>` (Mainframe's editor).
 
 ## Status (as of 14 November 2026)

@@ -34,7 +34,7 @@ Steps only. If a step isn't covered here or in `CLAUDE.md`, `docs/RELEASING.md`,
 
 ## 5. Merge and deploy (only on Rob's "merge")
 - Merge the PR. Merging to `main` triggers the GitHub Actions workflow `Deploy to Cloudflare Pages` (`.github/workflows/deploy.yml`).
-- Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`; the `Release` workflow checks the tag matches `app/package.json`, tests, and publishes the GitHub release.
+- Tag the merged commit, never the local branch: run `git fetch origin`, check that `git show origin/main:app/package.json` says X.Y.Z, then `git tag vX.Y.Z origin/main && git push origin vX.Y.Z`. The `Release` workflow checks the tag matches `app/package.json`, tests, and publishes the GitHub release.
 - Watch the Actions runs (`gh run list`, `gh run view`) until they finish.
 
 ## 6. Live checks (use Claude in Chrome)

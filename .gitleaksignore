@@ -1,0 +1,2 @@
+# Supabase anon (public) key in app/.env.production. Public by design: it ships in the live app bundle; RLS protects the data.
+3e25549af21f97ae218a5914372b7c12f616903b:app/.env.production:jwt:5

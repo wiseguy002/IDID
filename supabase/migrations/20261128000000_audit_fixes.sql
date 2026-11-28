@@ -15,7 +15,7 @@ create trigger members_demoted_cancel_invites after update of role on public.cir
 
 -- 2. The server numbers new records too (it already did for changes). A made-up huge number on a new record
 --    would have become every device's sync position and stopped syncing.
-create function public.number_record() returns trigger language plpgsql as $$
+create function public.number_record() returns trigger language plpgsql set search_path = public as $$
 begin
   new.seq := nextval('public.records_seq');
   new.updated_at := now();

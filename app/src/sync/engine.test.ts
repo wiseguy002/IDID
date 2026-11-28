@@ -4,7 +4,7 @@ import { Store } from '../data/store';
 import { encryptJson, newAesKey } from '../data/crypto';
 import { FakeServer } from './fakeRemote';
 import { SyncEngine } from './engine';
-import { createAccount, createCircle, joinWithInvite, makeInvite, openAccount, openCircle } from './keys';
+import { createAccount, createCircle, joinWithInvite, makeInvite, openAccount, openCircle, reencryptCircle, rotateCircleKey } from './keys';
 import type { Entry } from '../types';
 
 const ITER = 100_000; // keep tests fast; production uses 600k
@@ -137,36 +137,42 @@ describe('end-to-end encrypted sync', () => {
 });
 
 describe('always-private records', () => {
-  it('ignore anything a circle member writes under the shared key, and keep deletions personal', async () => {
+  it('survive a member writing over them under the shared key, even after a key change', async () => {
     const server = new FakeServer();
     const aR = server.as('u-a'), bR = server.as('u-b');
     const aC = await createCircle(aR, await createAccount(aR, 'alpha pass phrase', ITER));
     const token = await makeInvite(aR, aC);
     const bC = await joinWithInvite(bR, await createAccount(bR, 'bravo pass phrase', ITER), token);
     const aStore = await device();
-    await aStore.put('safety', { id: 's1', visibility: 'private' } as never);
     await aStore.put('comfort', { id: 'c1' } as never);
-    const aEng = new SyncEngine(aStore, aR, aC, mem());
+    const aState = mem();
+    const aEng = new SyncEngine(aStore, aR, aC, aState);
     await aEng.sync();
 
-    // Bob forges shared-key rows for Alex's private kinds: a replacement and a deletion.
-    const bEng = new SyncEngine(await device(), bR, bC, mem());
-    const forge = async (kind: 'comfort' | 'safety', id: string, deleted: boolean) => {
-      const rid = await bEng.rid(kind, id);
-      const env = { kind, id, updatedAt: Date.now() + 1000, deleted, data: deleted ? null : { id, visibility: 'circle' } };
-      const ct = `c:${await encryptJson(bC.circleKey, env, `${bC.circleId}:${rid}`)}`;
-      await bR.push(bC.circleId, [{ rid, ct }]);
+    // Bob writes a shared-key deletion over Alex's private record.
+    const rid = await new SyncEngine(await device(), bR, bC, mem()).rid('comfort', 'c1');
+    const key = `${aC.circleId}:${rid}`;
+    const forge = async () => {
+      const env = { kind: 'comfort', id: 'c1', updatedAt: Date.now() + 1000, deleted: true, data: null };
+      await bR.push(bC.circleId, [{ rid, ct: `c:${await encryptJson(bC.circleKey, env, key)}` }]);
     };
-    await forge('comfort', 'c1', true);
-    await forge('safety', 's1', false);
-    await aEng.sync();
+
+    // A key change must not re-sign the forged row as Alex's own.
+    await forge();
+    await bR.removeMember(aC.circleId, 'u-b').catch(() => undefined);
+    const { session } = await rotateCircleKey(aR, aC);
+    await reencryptCircle(aR, session);
+    expect(server.records.get(key)?.updated_by).toBe('u-b');
+
+    // Alex's device keeps the record and puts its own copy back on the server.
+    const after = new SyncEngine(aStore, aR, session, aState);
+    await after.sync(); await after.sync();
     expect(aStore.get('comfort', 'c1')).toBeDefined();
-    expect(aStore.get('safety', 's1')?.visibility).toBe('private');
+    expect(server.records.get(key)?.ct.startsWith('p:u-a:')).toBe(true);
 
     // A real deletion of a private record is sealed with the personal key.
     await new Promise((r) => setTimeout(r, 1100));
     await aStore.remove('comfort', 'c1');
-    const sent = await aEng.encode(aStore.envelope('comfort', 'c1')!);
-    expect(sent.ct.startsWith('p:u-a:')).toBe(true);
+    expect((await after.encode(aStore.envelope('comfort', 'c1')!)).ct.startsWith('p:u-a:')).toBe(true);
   }, 30000);
 });

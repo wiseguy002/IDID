@@ -89,15 +89,11 @@ export class SyncEngine {
   }
 
   /**
-   * Someone else's row under the shared key may never touch something that is only ever sealed personally:
-   * an always-private kind, or this device's private safety plan or entry. (Your own other devices may, for
-   * example when you start sharing a safety plan.)
+   * Someone else's row under the shared key may never touch an always-private kind. (Your own rows may: older
+   * versions of the app saved private deletions that way.)
    */
   private forged(row: RecordRow, env: Envelope) {
-    if (!row.ct.startsWith('c:') || row.updated_by === this.s.userId) return false;
-    if (ALWAYS_PRIVATE.includes(env.kind)) return true;
-    const mine = this.store.envelope(env.kind, env.id);
-    return !!mine && !mine.deleted && this.isPrivate(mine);
+    return row.ct.startsWith('c:') && row.updated_by !== this.s.userId && ALWAYS_PRIVATE.includes(env.kind);
   }
 
   /**
@@ -198,7 +194,10 @@ export class SyncEngine {
           skippedFrom = Math.min(skippedFrom ?? r.seq, r.seq);
         }
         const env = got.env;
-        if (env && (await this.rid(env.kind, env.id)) === r.rid && !this.forged(r, env)) {
+        if (env && this.forged(r, env)) {
+          // Put this device's own copy back over it.
+          if (!this.readOnly && this.store.envelope(env.kind, env.id)) await this.store.requeue(env.kind, env.id);
+        } else if (env && (await this.rid(env.kind, env.id)) === r.rid) {
           await this.store.applyRemote(env);
           // Written with an earlier key (by a device that hadn't caught up yet): save it again with the current key.
           if (got.old && this.resaveOld && !this.readOnly && !env.deleted) await this.store.requeue(env.kind, env.id);

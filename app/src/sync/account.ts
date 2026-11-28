@@ -288,11 +288,14 @@ export async function circleAccounts() {
  */
 export async function removeAccount(userId: string): Promise<{ rotated: boolean; cancelled: number; rekeyError?: string }> {
   if (!remote || !keys?.circleId) return { rotated: false, cancelled: 0 };
+  // Count unused invites first: the server cancels them as soon as someone is removed.
+  const unused = state.role === 'owner' ? (await inviteStatuses().catch(() => new Map<string, InviteRow>())) : new Map<string, InviteRow>();
+  const waiting = [...unused.values()].filter((i) => !i.used_by).length;
   await remote.removeMember(keys.circleId, userId);
   if (state.role !== 'owner') return { rotated: false, cancelled: 0 };
   try {
     const { cancelled } = await changeCircleKey();
-    return { rotated: true, cancelled };
+    return { rotated: true, cancelled: Math.max(cancelled, waiting) };
   } catch (e) {
     return { rotated: false, cancelled: 0, rekeyError: e instanceof Error ? e.message : String(e) };
   }

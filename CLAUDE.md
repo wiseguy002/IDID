@@ -54,7 +54,7 @@ Older status notes, the 14 November audit details and the full gotchas list are 
 ## 28 November 2026 audit
 
 - Fixed on branch `claude/site-audit-1128` (waiting for "merge"). After merge: apply migration `20261128000000_audit_fixes.sql` and redeploy the `send-push` function, both only after Rob's OK.
-- Still open: invite links visible to view-only people (needs a product choice: make invitations private, which drops the "who is this invite for" hint); member public keys not verified; per-person quotas on server tables; draft branches deploy with the production Cloudflare token (needs a GitHub environment); unsent requests unencrypted until sent; app JavaScript is one 970 kB file; hidden website pages can still be linked from page text.
+- Still open: private safety plans and entries can still be overwritten by a circle writer (needs a design that tells a real "share" from a forged one); invite links visible to view-only people (needs a product choice: make invitations private, which drops the "who is this invite for" hint); member public keys not verified; per-person quotas on server tables; draft branches deploy with the production Cloudflare token (needs a GitHub environment); unsent requests unencrypted until sent; app JavaScript is one 970 kB file; hidden website pages can still be linked from page text.
 - security.txt expires 12 November 2027: renew by October 2027.
 
 ## Known leftovers / not tested

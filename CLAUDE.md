@@ -39,17 +39,18 @@ Older status notes, the 14 November audit details and the full gotchas list are 
 - **Live:** v0.18.3 at app.idid.care and idid.care (security review fixes, all-or-nothing circle key change). Ko-fi support linked from Settings and the site footer.
 - **`main` is protected:** every change is a PR with `app`, `site` and `database` checks green. PRs preview at `pr-<n>.idid-site.pages.dev` and `pr-<n>.idid-app.pages.dev`.
 - **Supabase advisor:** 0 errors; the 21 warnings are expected (list in `docs/history.md`).
+- **Health check 28 November 2026:** `npm audit` 0 vulnerabilities, live security headers present on both sites, advisors unchanged (9 unused-index notes, normal at low traffic).
 
 ## Next
 
-- Add the reviewer to the drafted Gmail "Would you review iDID's Spanish?" and attach `docs/i18n-review-es.csv` (see `docs/I18N.md`).
+- Spanish review email: the Gmail draft "Would you review iDID's Spanish?" is gone (not sent; checked 28 November). Redraft it once Rob names the reviewer, then he attaches `docs/i18n-review-es.csv` (see `docs/I18N.md`).
 - Advisory group outreach (volunteer for now; `docs/ADVISORY_GROUP.md`).
 - On hold by the owner's choice: Spanish phase 2 (remaining screens and website), Supabase backups, lawyer review.
 
 ## Waiting on Rob
 
 - Native Spanish speaker to review `app/src/i18n/es.ts`.
-- DNSSEC for idid.care: re-check 17 November (was "pending", no DS record at `.care`). If still stuck after a second re-toggle, Rob contacts Cloudflare support with the DS record.
+- DNSSEC for idid.care: **done** (checked 28 November 2026: DS record live at `.care`, answers validate).
 
 ## Known leftovers / not tested
 
@@ -78,3 +79,4 @@ Plain language, recommendations rather than option lists, outcome first, then wh
 ## Decisions
 
 No dated decision lines were recorded in this file before 2026-11-17. Add new ones here, newest last, as `YYYY-MM-DD: decision`.
+2026-11-28: DNSSEC for idid.care confirmed live; no Cloudflare support contact needed.

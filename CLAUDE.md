@@ -74,9 +74,11 @@ Plain language, recommendations rather than option lists, outcome first, then wh
 - Claude's sandbox: switching branches in `/Users/robwise/IDID` is blocked, so use a `git worktree`; `gh` needs the sandbox off; `npm ci` needs `--cache "$TMPDIR/npm-cache"`.
 - Database tests on this Mac need `brew install postgresql@16` and a special command run outside the sandbox (in `docs/history.md`).
 - Cloudflare zone Browser Cache TTL must stay "Respect Existing Headers".
+- PR previews (`*.idid-site.pages.dev`) sit behind a Cloudflare Access login with a second step (MFA, set on both the app and its allow policy), owner only. idid.care and app.idid.care are public. A preview shown inside Mainframe may be blocked by that login.
 - Release steps: `.claude/skills/ship-it/SKILL.md`. Databank reminder hook: `scripts/check-databank.sh`.
 
 ## Decisions
 
 No dated decision lines were recorded in this file before 2026-11-17. Add new ones here, newest last, as `YYYY-MM-DD: decision`.
+2026-11-17: Require Cloudflare Access MFA on the PR preview sites (`*.idid-site.pages.dev`); public sites unchanged.
 2026-11-28: DNSSEC for idid.care confirmed live; no Cloudflare support contact needed.

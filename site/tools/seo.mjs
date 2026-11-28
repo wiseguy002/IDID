@@ -3,7 +3,7 @@
 const SITE = 'https://idid.care';
 const APP = 'https://app.idid.care';
 
-const text = (html) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "'").replace(/\s+/g, ' ').trim();
+const text = (html) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "'").replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 
 /** Questions and answers from <details class="faq"><summary>Q</summary><div class="answer">A</div></details>. */
 export function faqsFrom(html) {

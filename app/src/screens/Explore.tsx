@@ -43,7 +43,7 @@ export default function Explore() {
             {BADGES.map((b) => {
               const got = p.earned.some((x) => x.id === b.id);
               return (
-                <div key={b.id} className="card" style={{ margin: 0, padding: '.75rem', textAlign: 'center', boxShadow: 'none', background: got ? 'var(--accent-soft)' : 'var(--surface-2)', opacity: got ? 1 : 0.75 }}
+                <div key={b.id} className="card" style={{ margin: 0, padding: '.75rem', textAlign: 'center', boxShadow: 'none', background: got ? 'var(--accent-soft)' : 'var(--surface-2)' }}
                   aria-label={`${b.name}: ${got ? 'earned' : 'not yet'}. ${b.about}`}>
                   <div style={{ width: 44, height: 44, borderRadius: '50%', margin: '0 auto .35rem', display: 'grid', placeItems: 'center', background: got ? 'var(--accent)' : 'var(--line)', color: got ? 'var(--accent-ink)' : 'var(--muted)' }}>
                     <Icon name={got ? b.icon : 'lock'} size={20} />

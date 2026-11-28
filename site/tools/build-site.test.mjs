@@ -42,6 +42,15 @@ test('a hidden page is not built, leaves the sitemap, menu and footer', () => {
   assert.match(foot, /href="\/privacy"/);
 });
 
+test('hiding a page whose footer item carries Mainframe markers drops the footer link too', () => {
+  for (const name of ['share', 'press']) {
+    const b = build((dir) => edit(dir, `pages/${name}.html`, (s) => setMeta(s, 'status: hidden')));
+    const foot = b.read('index.html').match(/<footer[\s\S]*?<\/footer>/)[0];
+    assert.doesNotMatch(foot, new RegExp(`href="/${name}"`), name);
+    assert.match(foot, /href="\/privacy"/);
+  }
+});
+
 test('nav: no keeps the page but drops its top-menu link; sitemap: no drops it from the sitemap', () => {
   const b = build((dir) => {
     edit(dir, 'pages/press.html', (s) => setMeta(s, 'nav: no'));

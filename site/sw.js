@@ -2,7 +2,14 @@
 // The version placeholder below is replaced at build time with a hash of site.css + site.js, so each deploy gets fresh assets.
 const CACHE = 'idid-site-__V__';
 const CORE = ['/', '/learn', '/privacy', '/assets/site.css?v=__V__', '/assets/site.js?v=__V__', '/assets/logo.svg', '/errors/offline'];
-self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE))); });
+// The offline page must be saved; a page that is hidden (so missing) must not stop the rest.
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(async (c) => {
+    await c.add('/errors/offline');
+    await Promise.allSettled(CORE.map((u) => c.add(u)));
+  }));
+});
 self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });

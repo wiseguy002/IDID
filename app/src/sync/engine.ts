@@ -7,7 +7,7 @@ import { decryptJson, encryptJson } from '../data/crypto';
 import { ALWAYS_PRIVATE, type Envelope, type Store } from '../data/store';
 import type { CheckOnAlert, Observation } from '../types';
 import { KEYRING_RID, readKeyring, type CircleSession } from './keys';
-import type { Remote, ReminderRow } from './remote';
+import type { RecordRow, Remote, ReminderRow } from './remote';
 
 /** The circle's key changed; reopen the circle to get the new one. */
 export class RekeyNeeded extends Error { constructor() { super('The circle key changed.'); } }
@@ -55,8 +55,8 @@ export class SyncEngine {
 
   /** "Only me" entries, private safety plans, and personal kinds (board, body, meds, comfort, prep…) use the personal key. */
   private isPrivate(env: Envelope) {
+    if (ALWAYS_PRIVATE.includes(env.kind)) return true; // their deletions too
     if (env.deleted) return false;
-    if (ALWAYS_PRIVATE.includes(env.kind)) return true;
     const v = (env.data as { visibility?: string } | null)?.visibility;
     return (env.kind === 'entries' || env.kind === 'safety') && v === 'private';
   }
@@ -86,6 +86,18 @@ export class SyncEngine {
       if (ct.startsWith(`p:${this.s.userId}:`)) return { env: await decryptJson<Envelope>(this.s.personalKey, ct.slice(3 + this.s.userId.length), aad) };
     } catch { /* fall through */ }
     return { env: null }; // someone else's private entry
+  }
+
+  /**
+   * Someone else's row under the shared key may never touch something that is only ever sealed personally:
+   * an always-private kind, or this device's private safety plan or entry. (Your own other devices may, for
+   * example when you start sharing a safety plan.)
+   */
+  private forged(row: RecordRow, env: Envelope) {
+    if (!row.ct.startsWith('c:') || row.updated_by === this.s.userId) return false;
+    if (ALWAYS_PRIVATE.includes(env.kind)) return true;
+    const mine = this.store.envelope(env.kind, env.id);
+    return !!mine && !mine.deleted && this.isPrivate(mine);
   }
 
   /**
@@ -186,7 +198,7 @@ export class SyncEngine {
           skippedFrom = Math.min(skippedFrom ?? r.seq, r.seq);
         }
         const env = got.env;
-        if (env && (await this.rid(env.kind, env.id)) === r.rid) {
+        if (env && (await this.rid(env.kind, env.id)) === r.rid && !this.forged(r, env)) {
           await this.store.applyRemote(env);
           // Written with an earlier key (by a device that hadn't caught up yet): save it again with the current key.
           if (got.old && this.resaveOld && !this.readOnly && !env.deleted) await this.store.requeue(env.kind, env.id);

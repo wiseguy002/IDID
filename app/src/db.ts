@@ -6,6 +6,7 @@ import { useSyncExternalStore } from 'react';
 import { openIdb } from './data/idb';
 import { Store, useStoreVersion, type Kind, type KindMap } from './data/store';
 import { defaultDevice, defaultPrefs } from './lib/defaults';
+import { clearLocalData, stopPush } from './lib/localData';
 import type { DeviceSettings, Entry, Prefs, Settings } from './types';
 import { APP_VERSION } from './version';
 
@@ -146,8 +147,9 @@ export async function importAll(b: Partial<Backup> & { app: string }, mode: 'mer
 
 export async function wipeAll() {
   store.lock();
+  await stopPush();
   await persist.destroy();
-  try { localStorage.removeItem(DEVICE_KEY); localStorage.removeItem('idid.checkin.dismissed'); localStorage.removeItem('idid.account'); localStorage.removeItem('idid.sample'); } catch { /* ignore */ }
+  try { clearLocalData(localStorage); } catch { /* ignore */ }
   location.reload();
 }
 

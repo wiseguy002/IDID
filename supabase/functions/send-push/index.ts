@@ -20,6 +20,12 @@ const NUDGES = [
   'Time for a small reset: stretch, sip water, look outside.',
 ];
 
+/** Only real browser push services, so a made-up address can't make the server call somewhere else. */
+const PUSH_HOSTS = /(^|\.)(fcm\.googleapis\.com|push\.services\.mozilla\.com|push\.apple\.com|notify\.windows\.com)$/;
+function allowed(endpoint: string) {
+  try { const u = new URL(endpoint); return u.protocol === 'https:' && PUSH_HOSTS.test(u.hostname); } catch { return false; }
+}
+
 function message(kind: string, minutesBefore: number | null, tag: string) {
   if (kind === 'observation') return 'Someone in your circle wondered if you noticed something. Open iDID when you are ready.';
   if (tag.startsWith('nudge-')) return NUDGES[(Number(tag.slice(6)) || 0) % NUDGES.length];
@@ -51,8 +57,9 @@ Deno.serve(async (req) => {
     const { data: subs } = await db.from('push_subscriptions').select('id, endpoint, p256dh, auth').eq('user_id', r.user_id);
     const payload = JSON.stringify({ title: 'iDID', body: message(r.kind, r.minutes_before, r.tag), tag: r.tag, kind: r.kind });
     for (const s of subs ?? []) {
+      if (!allowed(s.endpoint)) continue;
       try {
-        await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payload, { TTL: 3600, urgency: 'normal' });
+        await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payload, { TTL: 3600, urgency: 'normal', timeout: 10_000 });
         sent++;
       } catch (e) {
         const code = (e as { statusCode?: number }).statusCode;

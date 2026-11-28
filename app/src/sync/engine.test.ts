@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { memoryPersist } from '../data/idb';
 import { Store } from '../data/store';
-import { newAesKey } from '../data/crypto';
+import { encryptJson, newAesKey } from '../data/crypto';
 import { FakeServer } from './fakeRemote';
 import { SyncEngine } from './engine';
 import { createAccount, createCircle, joinWithInvite, makeInvite, openAccount, openCircle } from './keys';
@@ -133,5 +133,40 @@ describe('end-to-end encrypted sync', () => {
     const other = await device();
     await new SyncEngine(other, r, s, mem()).sync();
     expect(other.all('entries')).toHaveLength(1);
+  }, 30000);
+});
+
+describe('always-private records', () => {
+  it('ignore anything a circle member writes under the shared key, and keep deletions personal', async () => {
+    const server = new FakeServer();
+    const aR = server.as('u-a'), bR = server.as('u-b');
+    const aC = await createCircle(aR, await createAccount(aR, 'alpha pass phrase', ITER));
+    const token = await makeInvite(aR, aC);
+    const bC = await joinWithInvite(bR, await createAccount(bR, 'bravo pass phrase', ITER), token);
+    const aStore = await device();
+    await aStore.put('safety', { id: 's1', visibility: 'private' } as never);
+    await aStore.put('comfort', { id: 'c1' } as never);
+    const aEng = new SyncEngine(aStore, aR, aC, mem());
+    await aEng.sync();
+
+    // Bob forges shared-key rows for Alex's private kinds: a replacement and a deletion.
+    const bEng = new SyncEngine(await device(), bR, bC, mem());
+    const forge = async (kind: 'comfort' | 'safety', id: string, deleted: boolean) => {
+      const rid = await bEng.rid(kind, id);
+      const env = { kind, id, updatedAt: Date.now() + 1000, deleted, data: deleted ? null : { id, visibility: 'circle' } };
+      const ct = `c:${await encryptJson(bC.circleKey, env, `${bC.circleId}:${rid}`)}`;
+      await bR.push(bC.circleId, [{ rid, ct }]);
+    };
+    await forge('comfort', 'c1', true);
+    await forge('safety', 's1', false);
+    await aEng.sync();
+    expect(aStore.get('comfort', 'c1')).toBeDefined();
+    expect(aStore.get('safety', 's1')?.visibility).toBe('private');
+
+    // A real deletion of a private record is sealed with the personal key.
+    await new Promise((r) => setTimeout(r, 1100));
+    await aStore.remove('comfort', 'c1');
+    const sent = await aEng.encode(aStore.envelope('comfort', 'c1')!);
+    expect(sent.ct.startsWith('p:u-a:')).toBe(true);
   }, 30000);
 });

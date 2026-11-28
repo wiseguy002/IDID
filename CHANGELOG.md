@@ -14,23 +14,27 @@ Write each entry for the people who use iDID, in plain language. Add new changes
 
 ## [Unreleased]
 
+### Security
+- Stronger protection for your private records: another person in your circle can no longer overwrite or delete them.
+- Signing out now stops notifications and clears unsent requests on that device.
+- Removing someone, or making them view only, now cancels unused invite links in the circle.
+- Further tightening of the app, the notification sender and the server rules.
+
 ### Fixed
+- Delete all data now also removes unsent requests, the sign-in session and other small settings left on this device.
+- Calendar files keep semicolons in a location or note instead of splitting the text.
 - Email links on idid.care work again for everyone: Cloudflare no longer scrambles them, so they show the real address even without JavaScript.
 - If your connection drops, idid.care shows its gentle offline page again, and the app opens offline right after you first install it.
+- On the website in dark mode, the check marks in lists now use the dark-mode color instead of the light one.
+- Hiding a website page no longer leaves a dead footer link or breaks the offline page.
+- Delete all data also stops push reminders to this device.
 
 ### Changed
 - Stronger, more current security settings on idid.care and the app, and faster repeat visits: the app's files and the website's style and script are now kept by your browser until they change.
 - The app now has its own robots.txt and security contact file, like the website.
-
-### Changed
 - Gentler wording in three places: the "What did I miss?" screen now says losing time isn't your fault, one kind note now reads "I'm thinking of you today.", and the "Not alone" badge is now called "Trusted person".
-
-### Changed
 - The crisis bar at the top of idid.care now uses the same words as our sister sites: "If you are in crisis, call or text 988. In immediate danger, call 911." On phones it shows just the numbers. The Crisis Text Line (text HOME to 741741) is now in the footer.
 - Settings → About iDID and the website footer now say iDID is from weDID (wedid.care), with our promise: no ads, no trackers, no selling data, no AI talking to you.
-
-### Fixed
-- On the website in dark mode, the check marks in lists now use the dark-mode color instead of the light one.
 
 ## [0.18.3] - 2026-11-14
 

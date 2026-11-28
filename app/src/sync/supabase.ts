@@ -66,7 +66,7 @@ export class SupabaseRemote implements Remote {
   async deleteCircle(circleId: string) { check(await this.sb.from('circles').delete().eq('id', circleId)); }
   async removeMember(circleId: string, userId: string) { check(await this.sb.from('circle_members').delete().eq('circle_id', circleId).eq('user_id', userId)); }
   async pull(circleId: string, afterSeq: number, limit: number) {
-    return check(await this.sb.from('records').select('rid,ct,seq').eq('circle_id', circleId).gt('seq', afterSeq).order('seq').limit(limit)) as RecordRow[];
+    return check(await this.sb.from('records').select('rid,ct,seq,updated_by').eq('circle_id', circleId).gt('seq', afterSeq).order('seq').limit(limit)) as RecordRow[];
   }
   async getRecord(circleId: string, rid: string) {
     const rows = check(await this.sb.from('records').select('rid,ct,seq').eq('circle_id', circleId).eq('rid', rid).limit(1)) as RecordRow[];

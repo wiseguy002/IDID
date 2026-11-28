@@ -4,7 +4,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
-import { dirname, extname, join, resolve } from 'node:path';
+import { dirname, extname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
@@ -13,7 +13,7 @@ const dist = resolve(dirname(fileURLToPath(import.meta.url)), '../dist');
 const types = { '.webmanifest': 'application/manifest+json', '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.pdf': 'application/pdf', '.xml': 'application/xml', '.txt': 'text/plain' };
 const fileFor = (p) => {
   const clean = decodeURIComponent(p.split('#')[0].split('?')[0]);
-  for (const c of [clean, clean + '.html', join(clean, 'index.html')]) { const f = join(dist, c); if (existsSync(f) && !f.endsWith('/')) try { readFileSync(f); return f; } catch { /* dir */ } }
+  for (const c of [clean, clean + '.html', join(clean, 'index.html')]) { const f = join(dist, c); if (f.startsWith(dist + sep) && existsSync(f) && !f.endsWith('/')) try { readFileSync(f); return f; } catch { /* dir */ } }
   return null;
 };
 // The same Content-Security-Policy the live site sends (from _headers), so blocked styles or scripts fail here.

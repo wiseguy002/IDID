@@ -7,6 +7,7 @@ import { factsFor, getActivity, getDevice, persist, store, subscribeDevice, upda
 import { nextTip } from '../lib/progress';
 import { doseTimesBetween } from '../lib/body';
 import { unlockVault } from '../data/vault';
+import { stopPush } from '../lib/localData';
 import { APP_VERSION } from '../version';
 import { checkInTimes, remindersBetween } from '../lib/schedule';
 import { nudgeTimesBetween } from '../lib/nudges';
@@ -378,6 +379,9 @@ export function syncNow() { return engine?.sync(); }
 export async function signOut() {
   stopEngine?.(); stopEngine = null; engine = null; keys = null; remote = null;
   await store.dropLocal(SESSION); await store.dropLocal('sync');
+  // Nothing waiting for this account may reach the next one: its notifications and unsent requests.
+  await stopPush();
+  try { localStorage.removeItem('idid.requests.queue'); } catch { /* ignore */ }
   if (cloudConfigured()) await supabase().auth.signOut().catch(() => undefined);
   set({ phase: cloudConfigured() ? 'signed-out' : 'off', circleId: null, email: '', status: 'idle' });
 }

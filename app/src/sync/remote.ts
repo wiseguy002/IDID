@@ -13,7 +13,7 @@ export interface MembershipRow { circle_id: string; user_id: string; role: Circl
 export interface InviteRow { id: string; created_at: string; expires_at: string; used_by: string | null; used_at: string | null; role: 'member' | 'viewer'; created_by: string }
 /** A care-team share as its owner sees it (the summary itself is ciphertext). */
 export interface CareShareRow { id: string; views: number; last_viewed_at: string | null; updated_at: string; expires_at: string | null }
-export interface RecordRow { rid: string; ct: string; seq: number }
+export interface RecordRow { rid: string; ct: string; seq: number; /** The account that last wrote it (set by the server). */ updated_by?: string }
 export interface ReminderRow { user_id: string; kind: 'appointment' | 'checkin' | 'observation' | 'kindness' | 'tip' | 'checkon' | 'med'; fire_at: string; tag: string; minutes_before?: number | null }
 export interface PushSub { endpoint: string; p256dh: string; auth: string }
 

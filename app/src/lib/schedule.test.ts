@@ -61,3 +61,9 @@ describe('calendar export', () => {
     expect(u.searchParams.get('recur')).toBe('RRULE:FREQ=WEEKLY;INTERVAL=2');
   });
 });
+
+describe('calendar text escaping', () => {
+  it('escapes semicolons so calendar apps do not split the text', () => {
+    expect(toIcs(base({ location: 'Room 4; back door' }), { neutralTitle: true, includeNotes: false }, 0)).toContain('LOCATION:Room 4\\; back door');
+  });
+});

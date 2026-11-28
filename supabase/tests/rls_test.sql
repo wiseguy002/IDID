@@ -288,6 +288,31 @@ reset role;
 select pg_temp.expect((select ct = 'k:ring-v2' from public.records where circle_id = :'cid' and rid = 'keyring-circle-v1'), 'only rotate_circle_key can change the keyring, not the owner or members directly');
 reset role;
 
+-- ---------- Fixes from the 28 November 2026 review ----------
+reset role; select set_config('request.jwt.claim.sub', '', false);
+insert into auth.users values ('00000000-0000-0000-0000-0000000000d1', 'd1@example.test'), ('00000000-0000-0000-0000-0000000000d2', 'd2@example.test');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000d1');
+select public.create_circle('s1.d1') as dcid \gset
+insert into public.invites (circle_id, wrapped_circle_key, role) values (:'dcid', 'v1.w', 'viewer') returning id as dv \gset
+insert into public.invites (circle_id, wrapped_circle_key) values (:'dcid', 'v1.w') returning id as spare \gset
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000d2');
+select public.accept_invite(:'dv', 's1.d2');
+delete from public.circle_members where circle_id = :'dcid' and user_id = auth.uid();
+select pg_temp.expect_error(format($q$select public.accept_invite(%L, 's1.d2')$q$, :'spare'), 'a view-only person cannot leave and come back as a writer with an unused invite');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000d1');
+insert into public.invites (circle_id, wrapped_circle_key) values (:'dcid', 'v1.w') returning id as m1 \gset
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000d2');
+select public.accept_invite(:'m1', 's1.d2');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000d1');
+insert into public.invites (circle_id, wrapped_circle_key) values (:'dcid', 'v1.w') returning id as spare2 \gset
+select public.set_member_role(:'dcid', '00000000-0000-0000-0000-0000000000d2', 'viewer');
+select pg_temp.expect((select count(*) = 0 from public.invites where id = :'spare2'), 'making someone view only cancels unused invites');
+insert into public.records (circle_id, rid, ct, seq) values (:'dcid', 'rid-00000000000000d1', 'x', 9000000000000);
+select pg_temp.expect((select seq < 9000000000000 from public.records where rid = 'rid-00000000000000d1'), 'the server numbers new records itself');
+insert into public.feedback (kind, title, created_at) values ('idea', 'backdated', now() - interval '3 days');
+select pg_temp.expect((select created_at > now() - interval '1 minute' from public.feedback where title = 'backdated'), 'requests cannot be backdated past the daily limit');
+reset role;
+
 -- ---------- Policy performance ----------
 select pg_temp.expect((select count(*) = 0 from pg_policies where schemaname = 'public'
   and (coalesce(qual, '') || ' ' || coalesce(with_check, '')) ~ '(?<!SELECT )auth\.uid\(\)'),

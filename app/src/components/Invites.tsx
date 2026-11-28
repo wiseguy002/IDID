@@ -8,7 +8,6 @@ import { useAll } from '../db';
 import { useApp } from '../state';
 import {
   cancelInvitation, circleAccounts, currentUserId, inviteStatuses, invitePerson, refreshRole, removeAccount, renewInvitation, setAccess, statusOf, transferCircle, useAccount,
-  type InviteStatus,
 } from '../sync/account';
 import type { InviteRow, MembershipRow } from '../sync/remote';
 import type { Invitation, Member } from '../types';
@@ -53,8 +52,6 @@ export function useRoster() {
   useEffect(() => { refresh(); }, [refresh, a.lastSyncedAt]);
   return { connected: a.phase === 'connected', isOwner: a.role === 'owner', canInvite: a.role === 'owner' || a.role === 'member', accounts, rows, refresh };
 }
-
-export const STATUS_LABEL: Record<InviteStatus, string> = { waiting: 'Invited · waiting', joined: 'Joined', expired: 'Invite expired', cancelled: 'Invite canceled' };
 
 /** One invitation with its status and what you can do about it. */
 function InviteRowView({ inv, row, onChange, onSend }: { inv: Invitation; row?: InviteRow; onChange: () => void; onSend: (i: Invitation, expiresAt?: string) => void }) {

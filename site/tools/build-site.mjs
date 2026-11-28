@@ -78,7 +78,7 @@ if (hidden.includes('index') || hidden.includes('404')) throw new Error('The hom
 // linking to hidden pages, are left out.
 const dropLinks = (html, names, re) => names.reduce((h, n) => h.replace(re(n), ''), html);
 const headT = dropLinks(head, offNav, (n) => new RegExp(`\\n\\s*<a href="/${n}"[^\\n]*</a>(?=\\n)`, 'g'));
-const footT = dropLinks(foot, hidden, (n) => new RegExp(`<li><a href="/${n}(?:#[^"]*)?"[^>]*>[\\s\\S]*?</li>`, 'g'));
+const footT = dropLinks(foot, hidden, (n) => new RegExp(`<li[^>]*><a href="/${n}(?:#[^"]*)?"[^>]*>[\\s\\S]*?</li>`, 'g'));
 
 const pages = [];
 const built = [];

@@ -7,6 +7,7 @@ import { factsFor, getActivity, getDevice, persist, store, subscribeDevice, upda
 import { nextTip } from '../lib/progress';
 import { doseTimesBetween } from '../lib/body';
 import { unlockVault } from '../data/vault';
+import { stopPush } from '../lib/localData';
 import { APP_VERSION } from '../version';
 import { checkInTimes, remindersBetween } from '../lib/schedule';
 import { nudgeTimesBetween } from '../lib/nudges';
@@ -287,11 +288,14 @@ export async function circleAccounts() {
  */
 export async function removeAccount(userId: string): Promise<{ rotated: boolean; cancelled: number; rekeyError?: string }> {
   if (!remote || !keys?.circleId) return { rotated: false, cancelled: 0 };
+  // Count unused invites first: the server cancels them as soon as someone is removed.
+  const unused = state.role === 'owner' ? (await inviteStatuses().catch(() => new Map<string, InviteRow>())) : new Map<string, InviteRow>();
+  const waiting = [...unused.values()].filter((i) => !i.used_by).length;
   await remote.removeMember(keys.circleId, userId);
   if (state.role !== 'owner') return { rotated: false, cancelled: 0 };
   try {
     const { cancelled } = await changeCircleKey();
-    return { rotated: true, cancelled };
+    return { rotated: true, cancelled: Math.max(cancelled, waiting) };
   } catch (e) {
     return { rotated: false, cancelled: 0, rekeyError: e instanceof Error ? e.message : String(e) };
   }
@@ -378,6 +382,9 @@ export function syncNow() { return engine?.sync(); }
 export async function signOut() {
   stopEngine?.(); stopEngine = null; engine = null; keys = null; remote = null;
   await store.dropLocal(SESSION); await store.dropLocal('sync');
+  // Nothing waiting for this account may reach the next one: its notifications and unsent requests.
+  await stopPush();
+  try { localStorage.removeItem('idid.requests.queue'); } catch { /* ignore */ }
   if (cloudConfigured()) await supabase().auth.signOut().catch(() => undefined);
   set({ phase: cloudConfigured() ? 'signed-out' : 'off', circleId: null, email: '', status: 'idle' });
 }

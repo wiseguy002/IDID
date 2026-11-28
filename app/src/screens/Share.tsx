@@ -91,7 +91,7 @@ export default function Share() {
           <div><h3>Feelings</h3><Bars data={s.feelings} max={5} color="var(--accent-2)" /></div>
         </div>
         <h3 style={{ marginTop: '1rem' }}>Entries</h3>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label="Entries table">
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.82rem' }}>
             <thead><tr style={{ textAlign: 'left', borderBottom: '1px solid var(--line)' }}>
               <th style={{ padding: '.3rem' }}>When</th><th>Where</th><th>Triggers</th><th>Mood</th><th>{w.One}(s)</th><th>Duration</th><th>Notes</th></tr></thead>

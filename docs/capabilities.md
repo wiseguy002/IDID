@@ -69,7 +69,7 @@ A private, end-to-end encrypted journal for dissociation, DID and trauma respons
 ## Comfort and languages
 - ✅ Themes: Morning, Meadow, Dusk (dark), High contrast. 4 text sizes, calm motion, readable font. No sounds, vibration or flashing.
 - ✅ **English** and **Español (beta)**: setup, lock, sign-in, Home, Pause, safety plan, What did I miss?, Spanish crisis options (988 press 2, text AYUDA). Other app screens fall back to English.
-- 🧪 Spanish has **no native-speaker review yet** (draft email in Rob's Gmail, no recipient).
+- 🧪 Spanish has **no native-speaker review yet** (review email to be redrafted once a reviewer is named).
 - Not yet in Spanish: Timeline, Log, Patterns, Circle, Settings, Help, Explore, Garden, Who's here, voice notes, inner board, appointments, website, privacy/terms, push notifications and emails.
 
 ## Website (idid.care)
@@ -81,7 +81,6 @@ A private, end-to-end encrypted journal for dissociation, DID and trauma respons
 - Anyone holding a shared-view link can open it. Calendar and CSV exports leave the encryption.
 - A writing member could pre-create a notification tag to hide one alert (low risk, left as is).
 - Supabase advisor: 21 expected warnings, 0 errors.
-- **DNSSEC** for idid.care still "pending" at the registry; recheck (was due 17 Nov).
 - Two merged branches still on GitHub (`claude/contrast-fixes`, `claude/jolly-mendel-ftx8mb`).
 - Not tested: real phones, VoiceOver, the invite buttons with two real accounts, exported CSV in Excel/Sheets, Turnstile on a real phone.
 

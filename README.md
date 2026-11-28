@@ -62,7 +62,7 @@ The first screen has **"Explore with a sample circle"**, which loads fictional d
 - **App:** React + TypeScript PWA in `app/` (installable, works offline).
 - **On-device data:** an in-memory store backed by per-record AES-GCM ciphertext in IndexedDB (`app/src/data/`).
 - **Online circle:** Supabase (Postgres + auth + realtime) stores only ciphertext. Schema and row-level security are in `supabase/migrations/`, the push sender in `supabase/functions/send-push/`, and the sync engine in `app/src/sync/`.
-- **Website:** `site/`, a fast static site for [idid.care](https://idid.care) (about, Learn, privacy, Spread the word, press kit), with generated social images, icons, QR code and printable flyer (`site/tools/`).
+- **Website:** `site/`, a fast static site for [idid.care](https://idid.care) (Learn, privacy, terms, for clinicians, Spread the word, press kit), with generated social images, icons, QR code and printable flyer (`site/tools/`).
 - **Hosting:** Cloudflare Pages, with the website at **idid.care** and the app at **app.idid.care**, deployed by `.github/workflows/deploy.yml` (see [docs/DEPLOY.md](docs/DEPLOY.md)). CI runs type checks, unit tests, the build, website checks, and database security tests on every pull request.
 
 **Go live:** [docs/DEPLOY.md](docs/DEPLOY.md) · **Setup guide:** [docs/SETUP.md](docs/SETUP.md) · **Security model:** [docs/SECURITY.md](docs/SECURITY.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Releasing:** [docs/RELEASING.md](docs/RELEASING.md)

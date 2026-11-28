@@ -6,6 +6,7 @@
  *  identity   ──seal────▶ circle key   (one sealed copy per member)
  *  invite secret (only in the link #fragment) ──HKDF──▶ wraps circle key for the invitee
  */
+import { ALWAYS_PRIVATE, type Envelope } from '../data/store';
 import {
   PBKDF2_ITERATIONS, deriveKeyFromPassphrase, deriveKeyFromSecret, exportPrivate, fromB64, importPrivate, newAesKey,
   newIdentity, openSealedKey, randomBytes, sealKey, toB64, unwrapAesKey, wrapAesKey, encryptJson, decryptJson, type Identity,
@@ -199,7 +200,12 @@ export async function reencryptCircle(remote: Remote, s: CircleSession) {
       const aad = `${s.circleId}:${r.rid}`;
       try { await decryptJson(s.circleKey, r.ct.slice(2), aad); continue; } catch { /* not on the new key yet */ }
       for (const k of oldKeys) {
-        try { out.push({ rid: r.rid, ct: `c:${await encryptJson(s.circleKey, await decryptJson(k, r.ct.slice(2), aad), aad)}` }); break; } catch { /* try an older key */ }
+        try {
+          const env = await decryptJson<Envelope>(k, r.ct.slice(2), aad);
+          // Never re-sign someone else's write to a private kind: it would then look like the owner's own.
+          if (!(ALWAYS_PRIVATE.includes(env.kind) && r.updated_by !== s.userId)) out.push({ rid: r.rid, ct: `c:${await encryptJson(s.circleKey, env, aad)}` });
+          break;
+        } catch { /* try an older key */ }
       }
     }
     if (out.length) await remote.push(s.circleId, out);

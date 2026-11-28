@@ -81,7 +81,7 @@ class FakeRemote implements Remote {
   async removeMember(c: string, u: string) { this.s.members = this.s.members.filter((m) => !(m.circle_id === c && m.user_id === u)); }
   async pull(c: string, after: number, limit: number) {
     this.member(c);
-    return [...this.s.records.values()].filter((r) => r.circle_id === c && r.seq > after).sort((a, b) => a.seq - b.seq).slice(0, limit).map(({ rid, ct, seq }) => ({ rid, ct, seq }));
+    return [...this.s.records.values()].filter((r) => r.circle_id === c && r.seq > after).sort((a, b) => a.seq - b.seq).slice(0, limit).map(({ rid, ct, seq, updated_by }) => ({ rid, ct, seq, updated_by }));
   }
   async getRecord(c: string, rid: string) {
     this.member(c);
@@ -114,7 +114,7 @@ class FakeRemote implements Remote {
     if (!rows.length) return;
     this.writer(c);
     if (rows.some((r) => r.rid === KEYRING)) throw new Error('rls: only the owner can change the keyring');
-    for (const r of rows) this.s.records.set(`${c}:${r.rid}`, { circle_id: c, rid: r.rid, ct: r.ct, seq: ++this.s.seq });
+    for (const r of rows) this.s.records.set(`${c}:${r.rid}`, { circle_id: c, rid: r.rid, ct: r.ct, seq: ++this.s.seq, updated_by: this.uid });
     for (const l of this.s.listeners.get(c) ?? []) l();
   }
   subscribe(c: string, fn: () => void) {

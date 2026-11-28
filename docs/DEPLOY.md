@@ -7,7 +7,7 @@
 
 Both deploy automatically on every merge to `main` (`.github/workflows/deploy.yml`). Your domain is already on Cloudflare, so DNS and HTTPS certificates are set up for you when you attach the custom domains.
 
-> **Status (12 November 2026):** the Pages projects `idid-site` and `idid-app` exist; `idid.care`, `www.idid.care` and `app.idid.care` are attached with DNS records; the www → idid.care redirect, Always Use HTTPS and minimum TLS 1.2 are on. What remains: the GitHub secrets (step 2), the first deploy (step 3), and email routing (step 6).
+> **Status (28 November 2026):** set up and live; merges to `main` deploy both sites. The steps below are for rebuilding from scratch.
 
 ## 1. Create a Cloudflare API token (once)
 
@@ -20,7 +20,6 @@ Both deploy automatically on every merge to `main` (`.github/workflows/deploy.ym
 Repository → **Settings → Secrets and variables → Actions**:
 
 - **Secrets**: `CLOUDFLARE_API_TOKEN` (the token) and `CLOUDFLARE_ACCOUNT_ID`.
-- **Variables** (optional until the online circle is set up, see `docs/SETUP.md`): `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `VAPID_PUBLIC_KEY`.
 
 ## 3. First deploy
 
@@ -59,6 +58,7 @@ In Supabase → **Authentication → URL Configuration**, set **Site URL** to `h
 ## Checking before you deploy
 
 ```bash
+npm i --no-save playwright@1 axe-core@4.10.2 html-validate@9.4.1 && npx playwright install chromium   # once
 node site/tools/build-site.mjs && node site/tools/check-site.mjs   # website: links, phone layout, no third-party requests
 cd site && npm install && npm run assets                           # regenerate images, icons and the flyer after design changes
 ```

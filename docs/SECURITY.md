@@ -86,6 +86,8 @@ iDID is built so that the people running the server **cannot read your journal**
 - **Kind notes** are anonymous: the server keeps the sender only for rate limits, and signed-in users can read just the note's message, icon and times (column grants, with the table-wide grant Supabase adds removed). The notification row for a note is recorded as the recipient's own, so the sender can't see or cancel it. Database tests run with Supabase's default grants so rules like these are tested as they behave live.
 - Browser extensions and malware on a device can see anything shown on screen.
 
+- **Not yet closed (28 November 2026 review):** a circle writer can overwrite a safety plan or an entry that was marked "only me" if they know its id (always-private kinds are protected). invite links are stored in the circle's shared records, so a view-only person could pass one to a second account while it is unused. Member public keys are taken from the server without a second check, so a breached server could swap one before a key change. Feature requests written offline wait unencrypted in browser storage until sent. Several server tables have no per-person quota.
+
 ## Infrastructure hardening
 
 - **Domain:** idid.care is registered with Cloudflare and signed with DNSSEC. CAA records allow only the certificate authorities Cloudflare uses (Let's Encrypt, Google Trust Services, SSL.com, DigiCert, Sectigo). SSL mode is Full (strict), TLS 1.2 is the minimum, and every page sends HSTS with preload.

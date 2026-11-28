@@ -134,7 +134,7 @@ export default function Insights() {
           )}
           <div className="card"><h3>Where it happens</h3><Bars data={s.locations} color="var(--warm)" /></div>
           <div className="card"><h3>When it happens</h3>
-            <div className="heat" role="table" aria-label="Moments by day and time of day">
+            <div className="heat" role="group" aria-label="Moments by day and time of day">
               <div /> {['Night', 'Morn', 'Aft', 'Eve'].map((h) => <div key={h} className="muted">{h}</div>)}
               {s.heat.map((r) => [
                 <div key={r.day} className="muted" style={{ justifyItems: 'start' }}>{r.day}</div>,

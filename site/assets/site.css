@@ -110,7 +110,6 @@ section { padding-block: clamp(3.5rem, 8vw, 6rem); }
 .band .card { background: var(--bg); }
 .card .icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); margin-bottom: .9rem; }
 .card p { color: var(--muted); margin: 0; }
-.card.feature-lg { padding: 2rem; }
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
 @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
 .list-check { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
@@ -119,7 +118,6 @@ section { padding-block: clamp(3.5rem, 8vw, 6rem); }
 .list-check li::before { content: ""; position: absolute; left: 0; top: .2em; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft) var(--check-icon) center/14px no-repeat; }
 .quote { font-family: var(--serif); font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.45; }
 .notice { background: var(--warm-soft); border-radius: var(--radius); padding: 1.2rem 1.4rem; }
-.pill { display: inline-block; padding: .2rem .7rem; border-radius: 999px; background: var(--accent-soft); font-size: .82rem; font-weight: 600; color: var(--ink); }
 .steps-n { counter-reset: s; list-style: none; padding: 0; display: grid; gap: 1rem; }
 .steps-n li { counter-increment: s; display: grid; grid-template-columns: 44px 1fr; gap: .9rem; align-items: start; }
 .steps-n li::before { content: counter(s); width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; }
